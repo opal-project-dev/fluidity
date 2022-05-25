@@ -2,8 +2,10 @@ import React, { useCallback } from "react";
 import { Card, Heading, Box, Flex, Button } from "theme-ui";
 import { InfoMessage } from "../InfoMessage";
 import { useStabilityView } from "./context/StabilityViewContext";
+import { DisabledEditableRow } from "../Trove/Editor";
 import { RemainingLQTY } from "./RemainingLQTY";
 import { Yield } from "./Yield";
+import { COIN } from "../../strings";
 
 export const NoDeposit: React.FC = props => {
   const { dispatchEvent } = useStabilityView();
@@ -21,6 +23,13 @@ export const NoDeposit: React.FC = props => {
         </Flex>
       </Heading>
       <Box sx={{ p: [2, 3] }}>
+          <DisabledEditableRow
+            label="Deposit"
+            inputId="deposit-lusd"
+            amount="0.00"
+            unit={COIN}
+          />
+
         <InfoMessage title="You have no OUSD in the Stability Pool.">
           You can earn AUT and LQTY rewards by depositing OUSD.
         </InfoMessage>
