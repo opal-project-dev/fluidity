@@ -283,6 +283,19 @@ const theme: Theme = {
             ":enabled:hover": { color: "success" }
         },
 
+        connect: {
+            ...button,
+
+            color: "white",
+            backgroundColor: "secondary",
+            transition: "border 200ms",
+
+            ":enabled:hover": {
+                border: 1,
+                borderColor: "accent"
+            }
+        },
+
         colors: {
             ...button,
 
@@ -526,7 +539,7 @@ const theme: Theme = {
             p: 0,
             m: 0,
             borderColor: "muted",
-            mr: "25vw",
+            mr: "0",
             height: "100%",
             // ...headerGradient
         },

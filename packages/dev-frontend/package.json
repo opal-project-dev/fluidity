@@ -4,11 +4,12 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
+    "@emotion/react": "11.9.0",
     "@ethersproject/abi": "5.4.0",
-    "@fortawesome/fontawesome-svg-core": "1.2.34",
-    "@fortawesome/free-regular-svg-icons": "5.15.2",
-    "@fortawesome/free-solid-svg-icons": "5.15.2",
-    "@fortawesome/react-fontawesome": "0.1.14",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
     "@popperjs/core": "2.9.1",
     "@testing-library/dom": "7.30.0",
     "@testing-library/jest-dom": "5.11.9",
@@ -40,8 +41,7 @@
     "react-scripts": "4.0.3",
     "source-map-explorer": "2.5.2",
     "theme-ui": "0.6.0-canary.1544.5359f8a1e408a4dfeb74a9ae39688270286e534a.0",
-    "typescript": "^4.6.2",
-    "@emotion/react": "11.9.0"
+    "typescript": "^4.6.2"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",

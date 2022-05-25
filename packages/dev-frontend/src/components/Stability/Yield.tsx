@@ -44,11 +44,12 @@ export const Yield: React.FC = () => {
     <Badge variant="muted">
       <Text>OPAL APR {aprPercentage.toString(2)}%</Text>
       <InfoIcon
+        placement="top"
         tooltip={
           <Card variant="tooltip" sx={{ width: ["220px", "518px"] }}>
             <Paragraph>
               An <Text sx={{ fontWeight: "bold" }}>estimate</Text> of the OPAL return on the OUSD
-              deposited to the Stability Pool over the next year, not including your AUT gains from
+              deposited to the Stability Pool </Paragraph><Paragraph>over the next year, not including your AUT gains from
               liquidations.
             </Paragraph>
             <Paragraph sx={{ fontSize: "12px", fontFamily: "monospace", mt: 2 }}>

@@ -4,7 +4,8 @@ import { Icon } from "./Icon";
 import { OpalLogo } from "./OpalLogo";
 import { Link } from "./Link";
 
-const logoHeight = "32px";
+const logoHeight = "40px";
+
 export const SideNav: React.FC = () => {
     const [isVisible, setIsVisible] = useState(false);
     const overlay = useRef<HTMLDivElement>(null);
@@ -27,8 +28,8 @@ export const SideNav: React.FC = () => {
                 >
                     <Icon name="times" size="2x" />
                 </Button>
-                <OpalLogo height={logoHeight} p={2} sx={{zIndex: 99}}/>
-                <Box as="nav" sx={{ m: 3, mt: 1, p: 0, zIndex: 99}} onClick={() => setIsVisible(false)}>
+                <OpalLogo height={logoHeight} p={2} sx={{width: "80%", zIndex: 99}}/>
+                <Box as="nav" sx={{ m: 3, mt: 1, p: 0, zIndex: 99, textAlign: "center"}} onClick={() => setIsVisible(false)}>
                     <Link to="/">Dashboard</Link>
                     <Link to="/farm">Farm</Link>
                     <Link to="/liquidate">Liquidate</Link>

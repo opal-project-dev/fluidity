@@ -18,12 +18,12 @@ export const Header: React.FC = () => {
                 justifyContent: "space-between",
                 flex: 1,
             }}>
-                <Flex sx={{ flexBasis: ["50%", "20%"] }}>
+                <Flex sx={{ flexBasis: ["40%", "25%"] }}>
                     <OpalLogo height={logoHeight} />
                 </Flex>
                 <Nav />
                 <Flex sx={{
-                    flexBasis: ["50%", "20%"],
+                    flexBasis: ["60%", "25%"],
                     justifyContent: "flex-end"
                 }}>
                     <UserAccount />

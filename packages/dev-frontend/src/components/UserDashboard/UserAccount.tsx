@@ -34,11 +34,11 @@ const AccountButton: React.FC<AccountButtonProps> = props => {
     if(!isWalletConnected(props.account)) {
         return <Button
             onClick={() => props.activate(injected)}
-            variant="colors"
+            variant="connect"
             sx={{ px: 3, py: 2 }}>
             <Flex sx={{ flexDirection: "column" }}>
-                <Text as="span" sx={{ fontSize: 1 }}>
-                    🦊 Connect Wallet
+                <Text as="span" sx={{ fontSize: [0, 1] }}>
+                    Connect Wallet
                 </Text>
             </Flex>
         </Button>
