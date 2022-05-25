@@ -139,6 +139,7 @@ export const Adjusting: React.FC = () => {
   const collateralMaxedOut = collateral.eq(maxCollateral);
   const collateralRatio =
     !collateral.isZero && !netDebt.isZero ? updatedTrove.collateralRatio(price) : undefined;
+  const liquidationPrice = !collateral.isZero && !netDebt.isZero ? updatedTrove.liquidationPrice() : undefined;
   const collateralRatioChange = Difference.between(collateralRatio, trove.collateralRatio(price));
 
   const [troveChange, description] = validateTroveChange(
@@ -252,7 +253,7 @@ export const Adjusting: React.FC = () => {
           }
         />
 
-        <CollateralRatio value={collateralRatio} change={collateralRatioChange} />
+        <CollateralRatio value={collateralRatio} liqPrice={liquidationPrice} change={collateralRatioChange} />
 
         {description ?? (
           <ActionDescription>

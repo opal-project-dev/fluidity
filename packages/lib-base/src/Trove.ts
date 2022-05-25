@@ -479,6 +479,11 @@ export class Trove {
     return this.collateralRatio(price).lt(CRITICAL_COLLATERAL_RATIO);
   }
 
+  /** Calculate the Trove's liquidation price for AUT. */
+  liquidationPrice(): Decimal {
+      return this.debt.mulDiv(MINIMUM_COLLATERAL_RATIO, this.collateral);
+  }
+
   /** Whether the Trove is sufficiently collateralized to be opened during recovery mode. */
   isOpenableInRecoveryMode(price: Decimalish): boolean {
     return this.collateralRatio(price).gte(CRITICAL_COLLATERAL_RATIO);

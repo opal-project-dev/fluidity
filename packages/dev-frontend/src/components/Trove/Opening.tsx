@@ -63,6 +63,7 @@ export const Opening: React.FC = () => {
   const collateralMaxedOut = collateral.eq(maxCollateral);
   const collateralRatio =
     !collateral.isZero && !borrowAmount.isZero ? trove.collateralRatio(price) : undefined;
+  const liquidationPrice = !collateral.isZero && !borrowAmount.isZero ? trove.liquidationPrice() : undefined;
 
   const [troveChange, description] = validateTroveChange(
     EMPTY_TROVE,
@@ -187,7 +188,7 @@ export const Opening: React.FC = () => {
           }
         />
 
-        <CollateralRatio value={collateralRatio} />
+        <CollateralRatio value={collateralRatio} liqPrice={liquidationPrice}/>
 
         {description ?? (
           <ActionDescription>

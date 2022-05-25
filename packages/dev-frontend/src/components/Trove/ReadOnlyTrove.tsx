@@ -41,7 +41,7 @@ export const ReadOnlyTrove: React.FC = () => {
             unit={COIN}
           />
 
-          <CollateralRatio value={trove.collateralRatio(price)} />
+          <CollateralRatio value={trove.collateralRatio(price)} liqPrice={trove.liquidationPrice()} />
         </Box>
 
         <Flex variant="layout.actions">

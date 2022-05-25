@@ -703,6 +703,7 @@ export class Trove {
     // (undocumented)
     get isEmpty(): boolean;
     isOpenableInRecoveryMode(price: Decimalish): boolean;
+    liquidationPrice(): Decimal;
     // (undocumented)
     multiply(multiplier: Decimalish): Trove;
     get netDebt(): Decimal;
