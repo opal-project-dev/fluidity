@@ -41,7 +41,7 @@ The constructor for this class is marked as internal. Third-party code should no
 |  [create(params, borrowingRate)](./lib-base.trove.create.md) | <code>static</code> | Calculate the result of an [openTrove()](./lib-base.transactableliquity.opentrove.md) transaction. |
 |  [equals(that)](./lib-base.trove.equals.md) |  |  |
 |  [isOpenableInRecoveryMode(price)](./lib-base.trove.isopenableinrecoverymode.md) |  | Whether the Trove is sufficiently collateralized to be opened during recovery mode. |
-|  [liquidationPrice()](./lib-base.trove.liquidationprice.md) |  |  |
+|  [liquidationPrice()](./lib-base.trove.liquidationprice.md) |  | Calculate the Trove's liquidation price for AUT. |
 |  [multiply(multiplier)](./lib-base.trove.multiply.md) |  |  |
 |  [recreate(that, borrowingRate)](./lib-base.trove.recreate.md) | <code>static</code> | Calculate the parameters of an [openTrove()](./lib-base.transactableliquity.opentrove.md) transaction that will result in the given Trove. |
 |  [setCollateral(collateral)](./lib-base.trove.setcollateral.md) |  |  |

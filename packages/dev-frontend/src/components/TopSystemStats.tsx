@@ -83,14 +83,14 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
             case "redeem-fee":
                 return {
                     "name": "Redemption fee",
-                    "tooltip": "The Redemption Fee is a one-off fee charged as a percentage of the redeemed amount (in AUT). The fee varies from 0.5% depending on OUSD redemption volumes.",
+                    "tooltip": "The Redemption Fee is a one-off fee charged as a percentage of the redeemed amount (in NTN). The fee varies from 0.5% depending on OUSD redemption volumes.",
                     "body": redemptionFeePct.toString(2)
                 }
             case "tvl":
                 return {
                     "name": "TVL",
-                    "tooltip": "The Total Value Locked (TVL) is the total value of AUT locked as collateral in the system, given in AUT and USD.",
-                    "body": <>{total.collateral.shorten()} <Text sx={{ fontSize: 2 }}>&nbsp;AUT</Text></>
+                    "tooltip": "The Total Value Locked (TVL) is the total value of NTN locked as collateral in the system, given in NTN and USD.",
+                    "body": <>{total.collateral.shorten()} <Text sx={{ fontSize: 2 }}>&nbsp;NTN</Text></>
                 }
             case "troves":
                 return {
@@ -119,7 +119,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
             case "tcr":
                 return {
                     "name": "TCR",
-                    "tooltip": "The ratio of the Dollar value of the entire system collateral at the current AUT:USD price, to the entire system debt.",
+                    "tooltip": "The ratio of the Dollar value of the entire system collateral at the current NTN:USD price, to the entire system debt.",
                     "body": totalCollateralRatioPct.prettify()
                 }
             case "recovery":
@@ -130,7 +130,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
                 }
             case "aut-balance":
                 return {
-                    "name": "AUT",
+                    "name": "NTN",
                     "body": accountBalance.prettify(4)
                     }
             case "lusd-balance":
@@ -145,7 +145,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
                 }
             case "aut-price":
                 return {
-                    "name": "AUT",
+                    "name": "NTN",
                     "body": <>{price.prettify()}<Text sx={{ fontSize: 2 }}>&nbsp;USD</Text></>
                     }
             case "lqty-price":

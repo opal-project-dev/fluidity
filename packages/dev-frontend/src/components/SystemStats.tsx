@@ -17,7 +17,7 @@ const Balances: React.FC = () => {
     return (
         <Box sx={{ mb: 3 }}>
             <Heading>My Account Balances</Heading>
-            <Statistic name="AUT"> {accountBalance.prettify(4)}</Statistic>
+            <Statistic name="NTN"> {accountBalance.prettify(4)}</Statistic>
             <Statistic name={COIN}> {lusdBalance.prettify()}</Statistic>
             <Statistic name={GT}>{lqtyBalance.prettify()}</Statistic>
         </Box>
@@ -32,7 +32,7 @@ const PriceFeed: React.FC = () => {
     return (
         <Box>
             <Heading>Price feed</Heading>
-            <Statistic name="AUT">${price.prettify()}</Statistic>
+            <Statistic name="NTN">${price.prettify()}</Statistic>
         </Box>
     );
 };
@@ -103,7 +103,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
             {showStat("redeem-fee") &&
                 <Statistic
                     name="Redemption Fee"
-                    tooltip="The Redemption Fee is a one-off fee charged as a percentage of the redeemed amount (in AUT). The fee varies from 0.5% depending on OUSD redemption volumes."
+                    tooltip="The Redemption Fee is a one-off fee charged as a percentage of the redeemed amount (in NTN). The fee varies from 0.5% depending on OUSD redemption volumes."
                 >
                     {redemptionFeePct.toString(2)}
                 </Statistic>
@@ -111,9 +111,9 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
             {showStat("tvl") &&
                 <Statistic
                     name="TVL"
-                    tooltip="The Total Value Locked (TVL) is the total value of AUT locked as collateral in the system, given in AUT and USD."
+                    tooltip="The Total Value Locked (TVL) is the total value of NTN locked as collateral in the system, given in NTN and USD."
                 >
-                    {total.collateral.shorten()} <Text sx={{ fontSize: 1 }}>&nbsp;AUT</Text>
+                    {total.collateral.shorten()} <Text sx={{ fontSize: 1 }}>&nbsp;NTN</Text>
                     <Text sx={{ fontSize: 1 }}>
                         &nbsp;(${Decimal.from(total.collateral.mul(price)).shorten()})
                     </Text>
@@ -150,7 +150,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
             {showStat("tcr") &&
                 <Statistic
                     name="Total Collateral Ratio"
-                    tooltip="The ratio of the Dollar value of the entire system collateral at the current AUT:USD price, to the entire system debt."
+                    tooltip="The ratio of the Dollar value of the entire system collateral at the current NTN:USD price, to the entire system debt."
                 >
                     {totalCollateralRatioPct.prettify()}
                 </Statistic>

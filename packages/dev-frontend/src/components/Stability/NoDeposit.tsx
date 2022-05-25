@@ -31,7 +31,7 @@ export const NoDeposit: React.FC = props => {
           />
 
         <InfoMessage title="You have no OUSD in the Stability Pool.">
-          You can earn AUT and LQTY rewards by depositing OUSD.
+          You can earn NTN and OPAL rewards by depositing OUSD.
         </InfoMessage>
 
         <Flex variant="layout.actions">

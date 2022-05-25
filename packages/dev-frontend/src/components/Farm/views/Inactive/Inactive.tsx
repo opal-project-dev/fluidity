@@ -32,12 +32,12 @@ export const Inactive: React.FC = () => {
       </Heading>
       <Box sx={{ p: [2, 3] }}>
         <InfoMessage title="You aren't farming OPAL.">
-          <Paragraph>You can farm OPAL by staking your Uniswap AUT/OUSD LP tokens.</Paragraph>
+          <Paragraph>You can farm OPAL by staking your Uniswap NTN/OUSD LP tokens.</Paragraph>
 
           <Paragraph sx={{ mt: 2 }}>
             You can obtain LP tokens by adding liquidity to the{" "}
             <Link href={uniLink(addresses["lusdToken"])} target="_blank">
-              AUT/OUSD pool on Uniswap. <Icon name="external-link-alt" size="xs" />
+              NTN/OUSD pool on Uniswap. <Icon name="external-link-alt" size="xs" />
             </Link>
           </Paragraph>
         </InfoMessage>

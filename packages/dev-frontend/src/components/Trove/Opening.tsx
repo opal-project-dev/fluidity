@@ -114,7 +114,7 @@ export const Opening: React.FC = () => {
           maxAmount={maxCollateral.toString()}
           maxedOut={collateralMaxedOut}
           editingState={editingState}
-          unit="AUT"
+          unit="NTN"
           editedAmount={collateral.toString(4)}
           setEditedAmount={(amount: string) => setCollateral(Decimal.from(amount))}
         />
@@ -192,7 +192,7 @@ export const Opening: React.FC = () => {
 
         {description ?? (
           <ActionDescription>
-            Start by entering the amount of AUT you'd like to deposit as collateral.
+            Start by entering the amount of NTN you'd like to deposit as collateral.
           </ActionDescription>
         )}
 

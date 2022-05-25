@@ -67,7 +67,7 @@ const TokenBalances: React.FC = () => {
     const { accountBalance, lusdBalance, lqtyBalance } = useLiquitySelector(balanceSelector);
 
     const tokens: tokenBalance[] = [
-        { symbol: "AUT", balance: accountBalance },
+        { symbol: "NTN", balance: accountBalance },
         { symbol: "OUSD", balance: lusdBalance },
         { symbol: "OPAL", balance: lqtyBalance },
     ];

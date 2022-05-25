@@ -20,7 +20,7 @@ export const NoTrove: React.FC = props => {
             label="Collateral"
             inputId="trove-collateral"
             amount="0.00"
-            unit="AUT"
+            unit="NTN"
           />
 
           <DisabledEditableRow

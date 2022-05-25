@@ -79,7 +79,7 @@ export const ActiveDeposit: React.FC = () => {
             inputId="deposit-gain"
             amount={stabilityDeposit.collateralGain.prettify(4)}
             color={stabilityDeposit.collateralGain.nonZero && "success"}
-            unit="AUT"
+            unit="NTN"
           />
 
           <Flex sx={{ alignItems: "center" }}>
@@ -113,11 +113,11 @@ export const ActiveDeposit: React.FC = () => {
             &nbsp;Adjust
           </Button>
 
-          <ClaimRewards disabled={!hasGain && !hasReward}>Claim AUT and OPAL</ClaimRewards>
+          <ClaimRewards disabled={!hasGain && !hasReward}>Claim NTN and OPAL</ClaimRewards>
         </Flex>
 
         {hasTrove && (
-          <ClaimAndMove disabled={!hasGain}>Claim OPAL and move AUT to Trove</ClaimAndMove>
+          <ClaimAndMove disabled={!hasGain}>Claim OPAL and move NTN to Trove</ClaimAndMove>
         )}
       </Box>
 

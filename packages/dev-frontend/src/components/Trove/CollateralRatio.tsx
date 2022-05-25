@@ -72,7 +72,7 @@ export const CollateralRatio: React.FC<CollateralRatioProps> = ({ value, liqPric
                     <InfoIcon
                         tooltip={
                             <Card variant="tooltip" sx={{width: "220px" }}>
-                                The price of AUT under which your trove can be liquidated during normal operation.
+                                The price of NTN under which your trove can be liquidated during normal operation.
                             </Card>
                         }
                         />

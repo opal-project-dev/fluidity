@@ -4,6 +4,8 @@
 
 ## Trove.liquidationPrice() method
 
+Calculate the Trove's liquidation price for AUT.
+
 <b>Signature:</b>
 
 ```typescript
