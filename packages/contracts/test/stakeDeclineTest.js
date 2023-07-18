@@ -54,7 +54,7 @@ contract("TroveManager", async accounts => {
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
     );
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(
+    const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
       lpRewardsAddress,
       multisig
@@ -71,14 +71,14 @@ contract("TroveManager", async accounts => {
     borrowerOperations = contracts.borrowerOperations;
     hintHelpers = contracts.hintHelpers;
 
-    lqtyStaking = LQTYContracts.lqtyStaking;
-    lqtyToken = LQTYContracts.lqtyToken;
-    communityIssuance = LQTYContracts.communityIssuance;
-    lockupContractFactory = LQTYContracts.lockupContractFactory;
+    lqtyStaking = OPLContracts.lqtyStaking;
+    lqtyToken = OPLContracts.lqtyToken;
+    communityIssuance = OPLContracts.communityIssuance;
+    lockupContractFactory = OPLContracts.lockupContractFactory;
 
-    await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-    await deploymentHelper.connectLQTYContracts(LQTYContracts);
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+    await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+    await deploymentHelper.connectOPLContracts(OPLContracts);
+    await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
   });
 
   it("A given trove's stake decline is negligible with adjustments and tiny liquidations", async () => {

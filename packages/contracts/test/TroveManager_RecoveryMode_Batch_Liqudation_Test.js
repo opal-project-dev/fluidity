@@ -50,7 +50,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
     );
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(
+    const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
       lpRewardsAddress,
       multisig
@@ -61,9 +61,9 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
     priceFeed = contracts.priceFeedTestnet;
     sortedTroves = contracts.sortedTroves;
 
-    await deploymentHelper.connectLQTYContracts(LQTYContracts);
-    await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+    await deploymentHelper.connectOPLContracts(OPLContracts);
+    await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+    await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
   });
 
   context("Batch liquidations", () => {

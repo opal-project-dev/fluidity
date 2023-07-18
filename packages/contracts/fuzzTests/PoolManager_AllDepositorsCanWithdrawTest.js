@@ -245,7 +245,7 @@ contract(
 
       beforeEach(async () => {
         contracts = await deploymentHelper.deployLiquityCore();
-        const LQTYContracts = await deploymentHelper.deployLQTYContracts(
+        const OPLContracts = await deploymentHelper.deployOPLContracts(
           bountyAddress,
           lpRewardsAddress
         );
@@ -258,9 +258,9 @@ contract(
         borrowerOperations = contracts.borrowerOperations;
         sortedTroves = contracts.sortedTroves;
 
-        await deploymentHelper.connectLQTYContracts(LQTYContracts);
-        await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-        await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+        await deploymentHelper.connectOPLContracts(OPLContracts);
+        await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+        await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
       });
 
       // mixed deposits/liquidations

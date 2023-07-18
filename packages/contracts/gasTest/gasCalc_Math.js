@@ -27,10 +27,7 @@ contract("Gas costs for math functions", async accounts => {
 
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(
-      bountyAddress,
-      lpRewardsAddress
-    );
+    const OPLContracts = await deploymentHelper.deployOPLContracts(bountyAddress, lpRewardsAddress);
 
     priceFeed = contracts.priceFeedTestnet;
     oneuToken = contracts.oneuToken;
@@ -42,14 +39,14 @@ contract("Gas costs for math functions", async accounts => {
     borrowerOperations = contracts.borrowerOperations;
     hintHelpers = contracts.hintHelpers;
 
-    gtStaking = LQTYContracts.gtStaking;
-    lqtyToken = LQTYContracts.lqtyToken;
-    communityIssuance = LQTYContracts.communityIssuance;
-    lockupContractFactory = LQTYContracts.lockupContractFactory;
+    gtStaking = OPLContracts.gtStaking;
+    lqtyToken = OPLContracts.lqtyToken;
+    communityIssuance = OPLContracts.communityIssuance;
+    lockupContractFactory = OPLContracts.lockupContractFactory;
 
-    await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-    await deploymentHelper.connectLQTYContracts(LQTYContracts);
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+    await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+    await deploymentHelper.connectOPLContracts(OPLContracts);
+    await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
   });
 
   // performs n runs of exponentiation on a random base

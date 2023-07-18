@@ -3,7 +3,7 @@ const deploymentHelper = require("../utils/deploymentHelpers.js");
 const { BNConverter } = require("../utils/BNConverter.js");
 const testHelpers = require("../utils/testHelpers.js");
 
-const LQTYStakingTester = artifacts.require("LQTYStakingTester");
+const OPLStakingTester = artifacts.require("OPLStakingTester");
 const TroveManagerTester = artifacts.require("TroveManagerTester");
 const NonPayable = artifacts.require("./NonPayable.sol");
 
@@ -26,7 +26,7 @@ const GAS_PRICE = 10000000;
  *
  */
 
-contract("LQTYStaking revenue share tests", async accounts => {
+contract("OPLStaking revenue share tests", async accounts => {
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
 
   const [owner, A, B, C, D, E, F, G, whale] = accounts;
@@ -50,15 +50,15 @@ contract("LQTYStaking revenue share tests", async accounts => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
     contracts = await deploymentHelper.deployONEUTokenTester(contracts);
-    const LQTYContracts = await deploymentHelper.deployLQTYTesterContractsHardhat(
+    const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
       bountyAddress,
       lpRewardsAddress,
       multisig
     );
 
-    await deploymentHelper.connectLQTYContracts(LQTYContracts);
-    await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+    await deploymentHelper.connectOPLContracts(OPLContracts);
+    await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+    await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
 
     nonPayable = await NonPayable.new();
     priceFeed = contracts.priceFeedTestnet;
@@ -71,25 +71,25 @@ contract("LQTYStaking revenue share tests", async accounts => {
     borrowerOperations = contracts.borrowerOperations;
     hintHelpers = contracts.hintHelpers;
 
-    lqtyToken = LQTYContracts.lqtyToken;
-    lqtyStaking = LQTYContracts.lqtyStaking;
+    lqtyToken = OPLContracts.lqtyToken;
+    lqtyStaking = OPLContracts.lqtyStaking;
   });
 
   it("stake(): reverts if amount is zero", async () => {
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
 
     // console.log(`A lqty bal: ${await lqtyToken.balanceOf(A)}`)
 
     // A makes stake
     await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await assertRevert(lqtyStaking.stake(0, { from: A }), "LQTYStaking: Amount must be non-zero");
+    await assertRevert(lqtyStaking.stake(0, { from: A }), "OPLStaking: Amount must be non-zero");
   });
 
-  it("AUT fee per LQTY staked increases when a redemption fee is triggered and totalStakes > 0", async () => {
+  it("AUT fee per OPL staked increases when a redemption fee is triggered and totalStakes > 0", async () => {
     await openTrove({
       extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
@@ -111,10 +111,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: C }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig, gasPrice: GAS_PRICE });
 
     // console.log(`A lqty bal: ${await lqtyToken.balanceOf(A)}`)
@@ -152,7 +152,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(expected_F_AUT_After.eq(F_AUT_After));
   });
 
-  it("AUT fee per LQTY staked doesn't change when a redemption fee is triggered and totalStakes == 0", async () => {
+  it("AUT fee per OPL staked doesn't change when a redemption fee is triggered and totalStakes == 0", async () => {
     await openTrove({
       extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
@@ -179,10 +179,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: D }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig, gasPrice: GAS_PRICE });
 
     // Check AUT fee per unit staked is zero
@@ -210,7 +210,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.equal(F_AUT_After, "0");
   });
 
-  it("ONEU fee per LQTY staked increases when a redemption fee is triggered and totalStakes > 0", async () => {
+  it("ONEU fee per OPL staked increases when a redemption fee is triggered and totalStakes > 0", async () => {
     await openTrove({
       extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
@@ -237,10 +237,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: D }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
@@ -283,7 +283,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(expected_F_ONEU_After.eq(F_ONEU_After));
   });
 
-  it("ONEU fee per LQTY staked doesn't change when a redemption fee is triggered and totalStakes == 0", async () => {
+  it("ONEU fee per OPL staked doesn't change when a redemption fee is triggered and totalStakes == 0", async () => {
     await openTrove({
       extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
@@ -310,10 +310,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: D }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
 
     // Check ONEU fee per unit staked is zero
@@ -348,7 +348,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.equal(F_ONEU_After, "0");
   });
 
-  it("LQTY Staking: A single staker earns all AUT and LQTY fees that occur", async () => {
+  it("OPL Staking: A single staker earns all AUT and OPL fees that occur", async () => {
     await openTrove({
       extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
@@ -375,10 +375,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: D }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
@@ -483,10 +483,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: D }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
@@ -591,10 +591,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: D }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
@@ -667,10 +667,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: D }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A
+    // multisig transfers OPL to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
@@ -734,7 +734,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
   });
 
   // - multi depositors, several rewards
-  it("LQTY Staking: Multiple stakers earn the correct share of all AUT and LQTY fees, based on their stake size", async () => {
+  it("OPL Staking: Multiple stakers earn the correct share of all AUT and OPL fees, based on their stake size", async () => {
     await openTrove({
       extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
@@ -776,10 +776,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
       extraParams: { from: G }
     });
 
-    // FF time one year so owner can transfer LQTY
+    // FF time one year so owner can transfer OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A, B, C
+    // multisig transfers OPL to staker A, B, C
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
     await lqtyToken.transfer(B, dec(200, 18), { from: multisig });
     await lqtyToken.transfer(C, dec(300, 18), { from: multisig });
@@ -792,10 +792,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
     await lqtyStaking.stake(dec(200, 18), { from: B });
     await lqtyStaking.stake(dec(300, 18), { from: C });
 
-    // Confirm staking contract holds 600 LQTY
-    // console.log(`lqty staking LQTY bal: ${await lqtyToken.balanceOf(lqtyStaking.address)}`)
+    // Confirm staking contract holds 600 OPL
+    // console.log(`lqty staking OPL bal: ${await lqtyToken.balanceOf(lqtyStaking.address)}`)
     assert.equal(await lqtyToken.balanceOf(lqtyStaking.address), dec(600, 18));
-    assert.equal(await lqtyStaking.totalLQTYStaked(), dec(600, 18));
+    assert.equal(await lqtyStaking.totalOPLStaked(), dec(600, 18));
 
     // F redeems
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(
@@ -831,14 +831,14 @@ contract("LQTYStaking revenue share tests", async accounts => {
     const emittedONEUFee_2 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_2));
     assert.isTrue(emittedONEUFee_2.gt(toBN("0")));
 
-    // D obtains LQTY from owner and makes a stake
+    // D obtains OPL from owner and makes a stake
     await lqtyToken.transfer(D, dec(50, 18), { from: multisig });
     await lqtyToken.approve(lqtyStaking.address, dec(50, 18), { from: D });
     await lqtyStaking.stake(dec(50, 18), { from: D });
 
-    // Confirm staking contract holds 650 LQTY
+    // Confirm staking contract holds 650 OPL
     assert.equal(await lqtyToken.balanceOf(lqtyStaking.address), dec(650, 18));
-    assert.equal(await lqtyStaking.totalLQTYStaked(), dec(650, 18));
+    assert.equal(await lqtyStaking.totalOPLStaked(), dec(650, 18));
 
     // G redeems
     const redemptionTx_3 = await th.redeemCollateralAndGetTxObject(
@@ -940,7 +940,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
 
     //Confirm pool Size is now 0
     assert.equal(await lqtyToken.balanceOf(lqtyStaking.address), "0");
-    assert.equal(await lqtyStaking.totalLQTYStaked(), "0");
+    assert.equal(await lqtyStaking.totalOPLStaked(), "0");
 
     // Get A-D AUT and ONEU balances
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
@@ -1002,7 +1002,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
 
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-    // multisig transfers LQTY to staker A and the non-payable proxy
+    // multisig transfers OPL to staker A and the non-payable proxy
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
     await lqtyToken.transfer(nonPayable.address, dec(100, 18), { from: multisig });
 
@@ -1011,7 +1011,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(A_stakeTx.receipt.status);
 
     //  A tells proxy to make a stake
-    const proxystakeTxData = await th.getTransactionData("stake(uint256)", ["0x56bc75e2d63100000"]); // proxy stakes 100 LQTY
+    const proxystakeTxData = await th.getTransactionData("stake(uint256)", ["0x56bc75e2d63100000"]); // proxy stakes 100 OPL
     await nonPayable.forward(lqtyStaking.address, proxystakeTxData, { from: A });
 
     // B makes a redemption, creating AUT gain for proxy
@@ -1029,7 +1029,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     //  A tells proxy to unstake
     const proxyUnStakeTxData = await th.getTransactionData("unstake(uint256)", [
       "0x56bc75e2d63100000"
-    ]); // proxy stakes 100 LQTY
+    ]); // proxy stakes 100 OPL
     const proxyUnstakeTxPromise = nonPayable.forward(lqtyStaking.address, proxyUnStakeTxData, {
       from: A
     });
@@ -1063,10 +1063,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
   });
 
   it("Test requireCallerIsTroveManager", async () => {
-    const lqtyStakingTester = await LQTYStakingTester.new();
+    const lqtyStakingTester = await OPLStakingTester.new();
     await assertRevert(
       lqtyStakingTester.requireCallerIsTroveManager(),
-      "LQTYStaking: caller is not TroveM"
+      "OPLStaking: caller is not TroveM"
     );
   });
 });

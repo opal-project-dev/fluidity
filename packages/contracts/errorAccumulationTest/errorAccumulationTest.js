@@ -22,10 +22,7 @@ contract("TroveManager", async accounts => {
 
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(
-      bountyAddress,
-      lpRewardsAddress
-    );
+    const OPLContracts = await deploymentHelper.deployOPLContracts(bountyAddress, lpRewardsAddress);
 
     oneuToken = contracts.oneuToken;
     priceFeed = contracts.priceFeedTestnet;
@@ -36,14 +33,14 @@ contract("TroveManager", async accounts => {
     defaultPool = contracts.defaultPool;
     borrowerOperations = contracts.borrowerOperations;
 
-    lqtyStaking = LQTYContracts.lqtyStaking;
-    lqtyToken = LQTYContracts.lqtyToken;
-    communityIssuance = LQTYContracts.communityIssuance;
-    lockupContractFactory = LQTYContracts.lockupContractFactory;
+    lqtyStaking = OPLContracts.lqtyStaking;
+    lqtyToken = OPLContracts.lqtyToken;
+    communityIssuance = OPLContracts.communityIssuance;
+    lockupContractFactory = OPLContracts.lockupContractFactory;
 
-    await deploymentHelper.connectLQTYContracts(LQTYContracts);
-    await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+    await deploymentHelper.connectOPLContracts(OPLContracts);
+    await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+    await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
   });
 
   // --- Check accumulation from repeatedly applying rewards ---
