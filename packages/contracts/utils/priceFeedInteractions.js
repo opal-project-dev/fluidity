@@ -1,12 +1,11 @@
 // Vanilla node.js script.
 
-/* 
-* Script now deprecated. 
-* TODO: replace with a script that deploys a PriceFeed.sol instance to mainnet, and interacts with it 
-* (i.e. gets the price).
-*
-*/
-
+/*
+ * Script now deprecated.
+ * TODO: replace with a script that deploys a PriceFeed.sol instance to mainnet, and interacts with it
+ * (i.e. gets the price).
+ *
+ */
 
 // const ethers = require('ethers');
 // const oracleABIs = require('./oracleABIs.js')
@@ -58,13 +57,12 @@
 //     // res.wait()
 //     const recordedTroveManagerAddressTestnet = await testnetPriceFeed.troveManagerAddress()
 //     console.log(`recorded TroveManager Address is ${recordedTroveManagerAddressTestnet}`)
-   
 
 //     // Call the testnet Chainlink aggregator directly
 //     const price_aggregatorTestnet = (await testnetAggregator.latestAnswer()).toString();
 //     const timestamp_aggregatorTestnet = (await testnetAggregator.latestTimestamp()).toString()
 //     const latestAnswerID_aggregatorTestnet = (await testnetAggregator.latestRound()).toString()
-//     console.log(`Testnet: Latest ETH:USD price from aggregator: ${price_aggregatorTestnet}`);
+//     console.log(`Testnet: Latest AUT:USD price from aggregator: ${price_aggregatorTestnet}`);
 //     console.log(`Testnet: Timestamp of latest price from aggregator: ${timestamp_aggregatorTestnet}`);
 //     console.log(`Testnet: ID of latest price answer from  aggregator: ${latestAnswerID_aggregatorTestnet}`)
 //     console.log('\n')
@@ -72,10 +70,10 @@
 //     // Call our testnet PriceFeed - get current price, and timestamp
 //     const price_PriceFeedTestnet = await testnetPriceFeed.getLatestPrice_Testnet()
 //     const timestamp_PriceFeedTestnet = await testnetPriceFeed.getLatestTimestamp_Testnet()
-//     console.log(`Testnet: Latest ETH:USD price from deployed PriceFeed: ${price_PriceFeedTestnet}`)
+//     console.log(`Testnet: Latest AUT:USD price from deployed PriceFeed: ${price_PriceFeedTestnet}`)
 //     console.log(`Testnet: Timestamp of latest price from deployed PriceFeed: ${timestamp_PriceFeedTestnet}`)
 //     console.log('\n')
-   
+
 //     let price = await testnetPriceFeed.getPrice()
 //     console.log (`stored'price' variable in testnet PriceFeed contract is ${price}`)
 
@@ -90,11 +88,11 @@
 
 //     // // --- Mainnet ---
 
-//     // Calling the mainnet Chainlink aggregator directly 
+//     // Calling the mainnet Chainlink aggregator directly
 //     const price_aggregatorMainnet = (await mainnetAggregator.currentAnswer()).toString();
 //     const timestamp_aggregatorMainnet = (await mainnetAggregator.updatedHeight()).toString()
 //     const latestAnswerID_aggregatorMainnet = (await mainnetAggregator.latestCompletedAnswer()).toString()
-//     console.log(`Mainnet: Latest ETH:USD price from aggregator: ${price_aggregatorMainnet}`);
+//     console.log(`Mainnet: Latest AUT:USD price from aggregator: ${price_aggregatorMainnet}`);
 //     console.log(`Mainnet: Timestamp of latest price from aggregator: ${timestamp_aggregatorMainnet}`);
 //     console.log(`Mainnet: ID of latest price answer from aggregator: ${latestAnswerID_aggregatorMainnet}`)
 //     console.log('\n')
@@ -103,7 +101,7 @@
 //     const price_PriceFeedMainnet = (await mainnetPriceFeed.getLatestPrice()).toString()
 //     const timestap_PriceFeedMainnet = (await mainnetPriceFeed.getLatestTimestamp()).toString()
 //     const latestAnswerID_PriceFeedMainnet = (await mainnetPriceFeed.getLatestAnswerID()).toString()
-//     console.log(`Mainnet: Latest ETH:USD price from deployed PriceFeed: ${price_PriceFeedMainnet}`)
+//     console.log(`Mainnet: Latest AUT:USD price from deployed PriceFeed: ${price_PriceFeedMainnet}`)
 //     console.log(`Mainnet: Timestamp of latest price from deployed PriceFeed: ${timestap_PriceFeedMainnet}`)
 //     console.log(`Mainnet: ID of latest price answer from deployed PriceFeed: ${latestAnswerID_PriceFeedMainnet}`)
 //     console.log('\n')
@@ -132,9 +130,9 @@
 
 //     /* updatePrice() is a tx (21k) + SStore (5k) + emit event (1.5k) = 27.5k gas
 
-//     Therefore, expected gas cost of a getLatestPrice() call is within a Trove function is (35k - 27.5k) 
+//     Therefore, expected gas cost of a getLatestPrice() call is within a Trove function is (35k - 27.5k)
 //     = 7500 gas upper bound.
-    
-//     To check, deploy an instance of FunctionCaller contract to ropsten and mainnet, 
+
+//     To check, deploy an instance of FunctionCaller contract to ropsten and mainnet,
 //     with a wrapped getLatestPrice() call. */
 // })();
