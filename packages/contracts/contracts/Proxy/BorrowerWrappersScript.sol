@@ -66,7 +66,7 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
 
     function claimCollateralAndOpenTrove(
         uint _maxFee,
-        uint _LUSDAmount,
+        uint _ONEUAmount,
         address _upperHint,
         address _lowerHint
     ) external payable {
@@ -85,7 +85,7 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         // Open trove with obtained collateral, plus collateral sent by user
         borrowerOperations.openTrove{value: totalCollateral}(
             _maxFee,
-            _LUSDAmount,
+            _ONEUAmount,
             _upperHint,
             _lowerHint
         );
@@ -106,21 +106,21 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         uint lqtyBalanceAfter = lqtyToken.balanceOf(address(this));
         uint claimedCollateral = collBalanceAfter.sub(collBalanceBefore);
 
-        // Add claimed AUT to trove, get more LUSD and stake it into the Stability Pool
+        // Add claimed AUT to trove, get more ONEU and stake it into the Stability Pool
         if (claimedCollateral > 0) {
             _requireUserHasTrove(address(this));
-            uint LUSDAmount = _getNetLUSDAmount(claimedCollateral);
+            uint ONEUAmount = _getNetONEUAmount(claimedCollateral);
             borrowerOperations.adjustTrove{value: claimedCollateral}(
                 _maxFee,
                 0,
-                LUSDAmount,
+                ONEUAmount,
                 true,
                 _upperHint,
                 _lowerHint
             );
-            // Provide withdrawn LUSD to Stability Pool
-            if (LUSDAmount > 0) {
-                stabilityPool.provideToSP(LUSDAmount, address(0));
+            // Provide withdrawn ONEU to Stability Pool
+            if (ONEUAmount > 0) {
+                stabilityPool.provideToSP(ONEUAmount, address(0));
             }
         }
 
@@ -144,26 +144,26 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         lqtyStaking.unstake(0);
 
         uint gainedCollateral = address(this).balance.sub(collBalanceBefore); // stack too deep issues :'(
-        uint gainedLUSD = lusdToken.balanceOf(address(this)).sub(lusdBalanceBefore);
+        uint gainedONEU = lusdToken.balanceOf(address(this)).sub(lusdBalanceBefore);
 
-        uint netLUSDAmount;
-        // Top up trove and get more LUSD, keeping ICR constant
+        uint netONEUAmount;
+        // Top up trove and get more ONEU, keeping ICR constant
         if (gainedCollateral > 0) {
             _requireUserHasTrove(address(this));
-            netLUSDAmount = _getNetLUSDAmount(gainedCollateral);
+            netONEUAmount = _getNetONEUAmount(gainedCollateral);
             borrowerOperations.adjustTrove{value: gainedCollateral}(
                 _maxFee,
                 0,
-                netLUSDAmount,
+                netONEUAmount,
                 true,
                 _upperHint,
                 _lowerHint
             );
         }
 
-        uint totalLUSD = gainedLUSD.add(netLUSDAmount);
-        if (totalLUSD > 0) {
-            stabilityPool.provideToSP(totalLUSD, address(0));
+        uint totalONEU = gainedONEU.add(netONEUAmount);
+        if (totalONEU > 0) {
+            stabilityPool.provideToSP(totalONEU, address(0));
 
             // Providing to Stability Pool also triggers LQTY claim, so stake it if any
             uint lqtyBalanceAfter = lqtyToken.balanceOf(address(this));
@@ -174,13 +174,13 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         }
     }
 
-    function _getNetLUSDAmount(uint _collateral) internal returns (uint) {
+    function _getNetONEUAmount(uint _collateral) internal returns (uint) {
         uint price = priceFeed.fetchPrice();
         uint ICR = troveManager.getCurrentICR(address(this), price);
 
-        uint LUSDAmount = _collateral.mul(price).div(ICR);
+        uint ONEUAmount = _collateral.mul(price).div(ICR);
         uint borrowingRate = troveManager.getBorrowingRateWithDecay();
-        uint netDebt = LUSDAmount.mul(LiquityMath.DECIMAL_PRECISION).div(
+        uint netDebt = ONEUAmount.mul(LiquityMath.DECIMAL_PRECISION).div(
             LiquityMath.DECIMAL_PRECISION.add(borrowingRate)
         );
 

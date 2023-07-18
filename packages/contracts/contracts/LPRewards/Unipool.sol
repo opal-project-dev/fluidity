@@ -50,7 +50,7 @@ contract LPTokenWrapper is ILPTokenWrapper {
 }
 
 /*
- * On deployment a new Uniswap pool will be created for the pair LUSD/AUT and its token will be set here.
+ * On deployment a new Uniswap pool will be created for the pair ONEU/AUT and its token will be set here.
 
  * Essentially the way it works is:
 

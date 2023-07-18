@@ -7,7 +7,7 @@ interface IPool {
     // --- Events ---
 
     event AUTBalanceUpdated(uint _newBalance);
-    event LUSDBalanceUpdated(uint _newBalance);
+    event ONEUBalanceUpdated(uint _newBalance);
     event ActivePoolAddressChanged(address _newActivePoolAddress);
     event DefaultPoolAddressChanged(address _newDefaultPoolAddress);
     event StabilityPoolAddressChanged(address _newStabilityPoolAddress);
@@ -17,9 +17,9 @@ interface IPool {
 
     function getAUT() external view returns (uint);
 
-    function getLUSDDebt() external view returns (uint);
+    function getONEUDebt() external view returns (uint);
 
-    function increaseLUSDDebt(uint _amount) external;
+    function increaseONEUDebt(uint _amount) external;
 
-    function decreaseLUSDDebt(uint _amount) external;
+    function decreaseONEUDebt(uint _amount) external;
 }

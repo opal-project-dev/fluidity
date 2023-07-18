@@ -9,7 +9,7 @@ import "../DefaultPool.sol";
 import "../StabilityPool.sol";
 import "../GasPool.sol";
 import "../CollSurplusPool.sol";
-import "../LUSDToken.sol";
+import "../ONEUToken.sol";
 import "./PriceFeedTestnet.sol";
 import "../SortedTroves.sol";
 import "./EchidnaProxy.sol";
@@ -27,7 +27,7 @@ contract EchidnaTester {
     uint private constant INITIAL_BALANCE = 1e24;
     uint private MCR;
     uint private CCR;
-    uint private LUSD_GAS_COMPENSATION;
+    uint private ONEU_GAS_COMPENSATION;
 
     TroveManager public troveManager;
     BorrowerOperations public borrowerOperations;
@@ -36,7 +36,7 @@ contract EchidnaTester {
     StabilityPool public stabilityPool;
     GasPool public gasPool;
     CollSurplusPool public collSurplusPool;
-    LUSDToken public lusdToken;
+    ONEUToken public lusdToken;
     PriceFeedTestnet priceFeedTestnet;
     SortedTroves sortedTroves;
 
@@ -51,7 +51,7 @@ contract EchidnaTester {
         defaultPool = new DefaultPool();
         stabilityPool = new StabilityPool();
         gasPool = new GasPool();
-        lusdToken = new LUSDToken(
+        lusdToken = new ONEUToken(
             address(troveManager),
             address(stabilityPool),
             address(borrowerOperations)
@@ -129,7 +129,7 @@ contract EchidnaTester {
 
         MCR = borrowerOperations.MCR();
         CCR = borrowerOperations.CCR();
-        LUSD_GAS_COMPENSATION = borrowerOperations.LUSD_GAS_COMPENSATION();
+        ONEU_GAS_COMPENSATION = borrowerOperations.ONEU_GAS_COMPENSATION();
         require(MCR > 0);
         require(CCR > 0);
 
@@ -156,7 +156,7 @@ contract EchidnaTester {
 
     function redeemCollateralExt(
         uint _i,
-        uint _LUSDAmount,
+        uint _ONEUAmount,
         address _firstRedemptionHint,
         address _upperPartialRedemptionHint,
         address _lowerPartialRedemptionHint,
@@ -164,7 +164,7 @@ contract EchidnaTester {
     ) external {
         uint actor = _i % NUMBER_OF_ACTORS;
         echidnaProxies[actor].redeemCollateralPrx(
-            _LUSDAmount,
+            _ONEUAmount,
             _firstRedemptionHint,
             _upperPartialRedemptionHint,
             _lowerPartialRedemptionHint,
@@ -179,37 +179,37 @@ contract EchidnaTester {
     function getAdjustedAUT(uint actorBalance, uint _AUT, uint ratio) internal view returns (uint) {
         uint price = priceFeedTestnet.getPrice();
         require(price > 0);
-        uint minAUT = ratio.mul(LUSD_GAS_COMPENSATION).div(price);
+        uint minAUT = ratio.mul(ONEU_GAS_COMPENSATION).div(price);
         require(actorBalance > minAUT);
         uint AUT = minAUT + (_AUT % (actorBalance - minAUT));
         return AUT;
     }
 
-    function getAdjustedLUSD(uint AUT, uint _LUSDAmount, uint ratio) internal view returns (uint) {
+    function getAdjustedONEU(uint AUT, uint _ONEUAmount, uint ratio) internal view returns (uint) {
         uint price = priceFeedTestnet.getPrice();
-        uint LUSDAmount = _LUSDAmount;
-        uint compositeDebt = LUSDAmount.add(LUSD_GAS_COMPENSATION);
+        uint ONEUAmount = _ONEUAmount;
+        uint compositeDebt = ONEUAmount.add(ONEU_GAS_COMPENSATION);
         uint ICR = LiquityMath._computeCR(AUT, compositeDebt, price);
         if (ICR < ratio) {
             compositeDebt = AUT.mul(price).div(ratio);
-            LUSDAmount = compositeDebt.sub(LUSD_GAS_COMPENSATION);
+            ONEUAmount = compositeDebt.sub(ONEU_GAS_COMPENSATION);
         }
-        return LUSDAmount;
+        return ONEUAmount;
     }
 
-    function openTroveExt(uint _i, uint _AUT, uint _LUSDAmount) public payable {
+    function openTroveExt(uint _i, uint _AUT, uint _ONEUAmount) public payable {
         uint actor = _i % NUMBER_OF_ACTORS;
         EchidnaProxy echidnaProxy = echidnaProxies[actor];
         uint actorBalance = address(echidnaProxy).balance;
 
         // we pass in CCR instead of MCR in case it’s the first one
         uint AUT = getAdjustedAUT(actorBalance, _AUT, CCR);
-        uint LUSDAmount = getAdjustedLUSD(AUT, _LUSDAmount, CCR);
+        uint ONEUAmount = getAdjustedONEU(AUT, _ONEUAmount, CCR);
 
         //console.log('AUT', AUT);
-        //console.log('LUSDAmount', LUSDAmount);
+        //console.log('ONEUAmount', ONEUAmount);
 
-        echidnaProxy.openTrovePrx(AUT, LUSDAmount, address(0), address(0), 0);
+        echidnaProxy.openTrovePrx(AUT, ONEUAmount, address(0), address(0), 0);
 
         numberOfTroves = troveManager.getTroveOwnersCount();
         assert(numberOfTroves > 0);
@@ -220,13 +220,13 @@ contract EchidnaTester {
     function openTroveRawExt(
         uint _i,
         uint _AUT,
-        uint _LUSDAmount,
+        uint _ONEUAmount,
         address _upperHint,
         address _lowerHint,
         uint _maxFee
     ) public payable {
         uint actor = _i % NUMBER_OF_ACTORS;
-        echidnaProxies[actor].openTrovePrx(_AUT, _LUSDAmount, _upperHint, _lowerHint, _maxFee);
+        echidnaProxies[actor].openTrovePrx(_AUT, _ONEUAmount, _upperHint, _lowerHint, _maxFee);
     }
 
     function addCollExt(uint _i, uint _AUT) external payable {
@@ -259,7 +259,7 @@ contract EchidnaTester {
         echidnaProxies[actor].withdrawCollPrx(_amount, _upperHint, _lowerHint);
     }
 
-    function withdrawLUSDExt(
+    function withdrawONEUExt(
         uint _i,
         uint _amount,
         address _upperHint,
@@ -267,12 +267,12 @@ contract EchidnaTester {
         uint _maxFee
     ) external {
         uint actor = _i % NUMBER_OF_ACTORS;
-        echidnaProxies[actor].withdrawLUSDPrx(_amount, _upperHint, _lowerHint, _maxFee);
+        echidnaProxies[actor].withdrawONEUPrx(_amount, _upperHint, _lowerHint, _maxFee);
     }
 
-    function repayLUSDExt(uint _i, uint _amount, address _upperHint, address _lowerHint) external {
+    function repayONEUExt(uint _i, uint _amount, address _upperHint, address _lowerHint) external {
         uint actor = _i % NUMBER_OF_ACTORS;
-        echidnaProxies[actor].repayLUSDPrx(_amount, _upperHint, _lowerHint);
+        echidnaProxies[actor].repayONEUPrx(_amount, _upperHint, _lowerHint);
     }
 
     function closeTroveExt(uint _i) external {
@@ -295,7 +295,7 @@ contract EchidnaTester {
         uint debtChange = _debtChange;
         if (_isDebtIncrease) {
             // TODO: add current amount already withdrawn:
-            debtChange = getAdjustedLUSD(AUT, uint(_debtChange), MCR);
+            debtChange = getAdjustedONEU(AUT, uint(_debtChange), MCR);
         }
         // TODO: collWithdrawal, debtChange
         echidnaProxy.adjustTrovePrx(
@@ -343,7 +343,7 @@ contract EchidnaTester {
         echidnaProxies[actor].withdrawFromSPPrx(_amount);
     }
 
-    // LUSD Token
+    // ONEU Token
 
     function transferExt(uint _i, address recipient, uint256 amount) external returns (bool) {
         uint actor = _i % NUMBER_OF_ACTORS;
@@ -446,7 +446,7 @@ contract EchidnaTester {
             //else return false;
 
             // Minimum debt (gas compensation)
-            if (troveManager.getTroveDebt(currentTrove) < LUSD_GAS_COMPENSATION) {
+            if (troveManager.getTroveDebt(currentTrove) < ONEU_GAS_COMPENSATION) {
                 return false;
             }
             // Uncomment to check that the condition is meaningful
@@ -513,18 +513,18 @@ contract EchidnaTester {
         return true;
     }
 
-    // Total LUSD matches
-    function echidna_LUSD_global_balances() public view returns (bool) {
+    // Total ONEU matches
+    function echidna_ONEU_global_balances() public view returns (bool) {
         uint totalSupply = lusdToken.totalSupply();
         uint gasPoolBalance = lusdToken.balanceOf(address(gasPool));
 
-        uint activePoolBalance = activePool.getLUSDDebt();
-        uint defaultPoolBalance = defaultPool.getLUSDDebt();
+        uint activePoolBalance = activePool.getONEUDebt();
+        uint defaultPoolBalance = defaultPool.getONEUDebt();
         if (totalSupply != activePoolBalance + defaultPoolBalance) {
             return false;
         }
 
-        uint stabilityPoolBalance = stabilityPool.getTotalLUSDDeposits();
+        uint stabilityPoolBalance = stabilityPool.getTotalONEUDeposits();
         address currentTrove = sortedTroves.getFirst();
         uint trovesBalance;
         while (currentTrove != address(0)) {

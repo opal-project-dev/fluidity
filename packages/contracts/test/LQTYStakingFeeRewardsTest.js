@@ -17,10 +17,10 @@ const ZERO = th.toBN("0");
 
 const GAS_PRICE = 10000000;
 
-/* NOTE: These tests do not test for specific AUT and LUSD gain values. They only test that the
+/* NOTE: These tests do not test for specific AUT and ONEU gain values. They only test that the
  * gains are non-zero, occur when they should, and are in correct proportion to the user's stake.
  *
- * Specific AUT/LUSD gain values will depend on the final fee schedule used, and the final choices for
+ * Specific AUT/ONEU gain values will depend on the final fee schedule used, and the final choices for
  * parameters BETA and MINUTE_DECAY_FACTOR in the TroveManager, which are still TBD based on economic
  * modelling.
  *
@@ -49,7 +49,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts = await deploymentHelper.deployLUSDTokenTester(contracts);
+    contracts = await deploymentHelper.deployONEUTokenTester(contracts);
     const LQTYContracts = await deploymentHelper.deployLQTYTesterContractsHardhat(
       bountyAddress,
       lpRewardsAddress,
@@ -91,22 +91,22 @@ contract("LQTYStaking revenue share tests", async accounts => {
 
   it("AUT fee per LQTY staked increases when a redemption fee is triggered and totalStakes > 0", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
@@ -146,7 +146,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     // Check AUT fee per unit staked has increased by correct amount
     const F_AUT_After = await lqtyStaking.F_AUT();
 
-    // Expect fee per unit staked = fee/100, since there is 100 LUSD totalStaked
+    // Expect fee per unit staked = fee/100, since there is 100 ONEU totalStaked
     const expected_F_AUT_After = emittedAUTFee.div(toBN("100"));
 
     assert.isTrue(expected_F_AUT_After.eq(F_AUT_After));
@@ -154,27 +154,27 @@ contract("LQTYStaking revenue share tests", async accounts => {
 
   it("AUT fee per LQTY staked doesn't change when a redemption fee is triggered and totalStakes == 0", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });
@@ -210,29 +210,29 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.equal(F_AUT_After, "0");
   });
 
-  it("LUSD fee per LQTY staked increases when a redemption fee is triggered and totalStakes > 0", async () => {
+  it("ONEU fee per LQTY staked increases when a redemption fee is triggered and totalStakes > 0", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });
@@ -247,9 +247,9 @@ contract("LQTYStaking revenue share tests", async accounts => {
     await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
     await lqtyStaking.stake(dec(100, 18), { from: A });
 
-    // Check LUSD fee per unit staked is zero
-    const F_LUSD_Before = await lqtyStaking.F_AUT();
-    assert.equal(F_LUSD_Before, "0");
+    // Check ONEU fee per unit staked is zero
+    const F_ONEU_Before = await lqtyStaking.F_AUT();
+    assert.equal(F_ONEU_Before, "0");
 
     const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
     // B redeems
@@ -268,44 +268,44 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(baseRate.gt(toBN("0")));
 
     // D draws debt
-    const tx = await borrowerOperations.withdrawLUSD(th._100pct, dec(27, 18), D, D, { from: D });
+    const tx = await borrowerOperations.withdrawONEU(th._100pct, dec(27, 18), D, D, { from: D });
 
-    // Check LUSD fee value in event is non-zero
-    const emittedLUSDFee = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(tx));
-    assert.isTrue(emittedLUSDFee.gt(toBN("0")));
+    // Check ONEU fee value in event is non-zero
+    const emittedONEUFee = toBN(th.getONEUFeeFromONEUBorrowingEvent(tx));
+    assert.isTrue(emittedONEUFee.gt(toBN("0")));
 
-    // Check LUSD fee per unit staked has increased by correct amount
-    const F_LUSD_After = await lqtyStaking.F_LUSD();
+    // Check ONEU fee per unit staked has increased by correct amount
+    const F_ONEU_After = await lqtyStaking.F_ONEU();
 
-    // Expect fee per unit staked = fee/100, since there is 100 LUSD totalStaked
-    const expected_F_LUSD_After = emittedLUSDFee.div(toBN("100"));
+    // Expect fee per unit staked = fee/100, since there is 100 ONEU totalStaked
+    const expected_F_ONEU_After = emittedONEUFee.div(toBN("100"));
 
-    assert.isTrue(expected_F_LUSD_After.eq(F_LUSD_After));
+    assert.isTrue(expected_F_ONEU_After.eq(F_ONEU_After));
   });
 
-  it("LUSD fee per LQTY staked doesn't change when a redemption fee is triggered and totalStakes == 0", async () => {
+  it("ONEU fee per LQTY staked doesn't change when a redemption fee is triggered and totalStakes == 0", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });
@@ -316,9 +316,9 @@ contract("LQTYStaking revenue share tests", async accounts => {
     // multisig transfers LQTY to staker A
     await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
 
-    // Check LUSD fee per unit staked is zero
-    const F_LUSD_Before = await lqtyStaking.F_AUT();
-    assert.equal(F_LUSD_Before, "0");
+    // Check ONEU fee per unit staked is zero
+    const F_ONEU_Before = await lqtyStaking.F_AUT();
+    assert.equal(F_ONEU_Before, "0");
 
     const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
     // B redeems
@@ -337,40 +337,40 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(baseRate.gt(toBN("0")));
 
     // D draws debt
-    const tx = await borrowerOperations.withdrawLUSD(th._100pct, dec(27, 18), D, D, { from: D });
+    const tx = await borrowerOperations.withdrawONEU(th._100pct, dec(27, 18), D, D, { from: D });
 
-    // Check LUSD fee value in event is non-zero
-    const emittedLUSDFee = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(tx));
-    assert.isTrue(emittedLUSDFee.gt(toBN("0")));
+    // Check ONEU fee value in event is non-zero
+    const emittedONEUFee = toBN(th.getONEUFeeFromONEUBorrowingEvent(tx));
+    assert.isTrue(emittedONEUFee.gt(toBN("0")));
 
-    // Check LUSD fee per unit staked did not increase, is still zero
-    const F_LUSD_After = await lqtyStaking.F_LUSD();
-    assert.equal(F_LUSD_After, "0");
+    // Check ONEU fee per unit staked did not increase, is still zero
+    const F_ONEU_After = await lqtyStaking.F_ONEU();
+    assert.equal(F_ONEU_After, "0");
   });
 
   it("LQTY Staking: A single staker earns all AUT and LQTY fees that occur", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });
@@ -418,28 +418,28 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(emittedAUTFee_2.gt(toBN("0")));
 
     // D draws debt
-    const borrowingTx_1 = await borrowerOperations.withdrawLUSD(th._100pct, dec(104, 18), D, D, {
+    const borrowingTx_1 = await borrowerOperations.withdrawONEU(th._100pct, dec(104, 18), D, D, {
       from: D
     });
 
-    // Check LUSD fee value in event is non-zero
-    const emittedLUSDFee_1 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_1));
-    assert.isTrue(emittedLUSDFee_1.gt(toBN("0")));
+    // Check ONEU fee value in event is non-zero
+    const emittedONEUFee_1 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_1));
+    assert.isTrue(emittedONEUFee_1.gt(toBN("0")));
 
     // B draws debt
-    const borrowingTx_2 = await borrowerOperations.withdrawLUSD(th._100pct, dec(17, 18), B, B, {
+    const borrowingTx_2 = await borrowerOperations.withdrawONEU(th._100pct, dec(17, 18), B, B, {
       from: B
     });
 
-    // Check LUSD fee value in event is non-zero
-    const emittedLUSDFee_2 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_2));
-    assert.isTrue(emittedLUSDFee_2.gt(toBN("0")));
+    // Check ONEU fee value in event is non-zero
+    const emittedONEUFee_2 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_2));
+    assert.isTrue(emittedONEUFee_2.gt(toBN("0")));
 
     const expectedTotalAUTGain = emittedAUTFee_1.add(emittedAUTFee_2);
-    const expectedTotalLUSDGain = emittedLUSDFee_1.add(emittedLUSDFee_2);
+    const expectedTotalONEUGain = emittedONEUFee_1.add(emittedONEUFee_2);
 
     const A_AUTBalance_Before = toBN(await web3.eth.getBalance(A));
-    const A_LUSDBalance_Before = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_Before = toBN(await lusdToken.balanceOf(A));
 
     // A un-stakes
     const GAS_Used = th.gasUsed(
@@ -447,38 +447,38 @@ contract("LQTYStaking revenue share tests", async accounts => {
     );
 
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
-    const A_LUSDBalance_After = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_After = toBN(await lusdToken.balanceOf(A));
 
     const A_AUTGain = A_AUTBalance_After.sub(A_AUTBalance_Before).add(toBN(GAS_Used * GAS_PRICE));
-    const A_LUSDGain = A_LUSDBalance_After.sub(A_LUSDBalance_Before);
+    const A_ONEUGain = A_ONEUBalance_After.sub(A_ONEUBalance_Before);
 
     assert.isAtMost(th.getDifference(expectedTotalAUTGain, A_AUTGain), 1000);
-    assert.isAtMost(th.getDifference(expectedTotalLUSDGain, A_LUSDGain), 1000);
+    assert.isAtMost(th.getDifference(expectedTotalONEUGain, A_ONEUGain), 1000);
   });
 
-  it("stake(): Top-up sends out all accumulated AUT and LUSD gains to the staker", async () => {
+  it("stake(): Top-up sends out all accumulated AUT and ONEU gains to the staker", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });
@@ -526,28 +526,28 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(emittedAUTFee_2.gt(toBN("0")));
 
     // D draws debt
-    const borrowingTx_1 = await borrowerOperations.withdrawLUSD(th._100pct, dec(104, 18), D, D, {
+    const borrowingTx_1 = await borrowerOperations.withdrawONEU(th._100pct, dec(104, 18), D, D, {
       from: D
     });
 
-    // Check LUSD fee value in event is non-zero
-    const emittedLUSDFee_1 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_1));
-    assert.isTrue(emittedLUSDFee_1.gt(toBN("0")));
+    // Check ONEU fee value in event is non-zero
+    const emittedONEUFee_1 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_1));
+    assert.isTrue(emittedONEUFee_1.gt(toBN("0")));
 
     // B draws debt
-    const borrowingTx_2 = await borrowerOperations.withdrawLUSD(th._100pct, dec(17, 18), B, B, {
+    const borrowingTx_2 = await borrowerOperations.withdrawONEU(th._100pct, dec(17, 18), B, B, {
       from: B
     });
 
-    // Check LUSD fee value in event is non-zero
-    const emittedLUSDFee_2 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_2));
-    assert.isTrue(emittedLUSDFee_2.gt(toBN("0")));
+    // Check ONEU fee value in event is non-zero
+    const emittedONEUFee_2 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_2));
+    assert.isTrue(emittedONEUFee_2.gt(toBN("0")));
 
     const expectedTotalAUTGain = emittedAUTFee_1.add(emittedAUTFee_2);
-    const expectedTotalLUSDGain = emittedLUSDFee_1.add(emittedLUSDFee_2);
+    const expectedTotalONEUGain = emittedONEUFee_1.add(emittedONEUFee_2);
 
     const A_AUTBalance_Before = toBN(await web3.eth.getBalance(A));
-    const A_LUSDBalance_Before = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_Before = toBN(await lusdToken.balanceOf(A));
 
     // A tops up
     const GAS_Used = th.gasUsed(
@@ -555,38 +555,38 @@ contract("LQTYStaking revenue share tests", async accounts => {
     );
 
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
-    const A_LUSDBalance_After = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_After = toBN(await lusdToken.balanceOf(A));
 
     const A_AUTGain = A_AUTBalance_After.sub(A_AUTBalance_Before).add(toBN(GAS_Used * GAS_PRICE));
-    const A_LUSDGain = A_LUSDBalance_After.sub(A_LUSDBalance_Before);
+    const A_ONEUGain = A_ONEUBalance_After.sub(A_ONEUBalance_Before);
 
     assert.isAtMost(th.getDifference(expectedTotalAUTGain, A_AUTGain), 1000);
-    assert.isAtMost(th.getDifference(expectedTotalLUSDGain, A_LUSDGain), 1000);
+    assert.isAtMost(th.getDifference(expectedTotalONEUGain, A_ONEUGain), 1000);
   });
 
   it("getPendingAUTGain(): Returns the staker's correct pending AUT gain", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });
@@ -640,29 +640,29 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isAtMost(th.getDifference(expectedTotalAUTGain, A_AUTGain), 1000);
   });
 
-  it("getPendingLUSDGain(): Returns the staker's correct pending LUSD gain", async () => {
+  it("getPendingONEUGain(): Returns the staker's correct pending ONEU gain", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });
@@ -710,68 +710,68 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(emittedAUTFee_2.gt(toBN("0")));
 
     // D draws debt
-    const borrowingTx_1 = await borrowerOperations.withdrawLUSD(th._100pct, dec(104, 18), D, D, {
+    const borrowingTx_1 = await borrowerOperations.withdrawONEU(th._100pct, dec(104, 18), D, D, {
       from: D
     });
 
-    // Check LUSD fee value in event is non-zero
-    const emittedLUSDFee_1 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_1));
-    assert.isTrue(emittedLUSDFee_1.gt(toBN("0")));
+    // Check ONEU fee value in event is non-zero
+    const emittedONEUFee_1 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_1));
+    assert.isTrue(emittedONEUFee_1.gt(toBN("0")));
 
     // B draws debt
-    const borrowingTx_2 = await borrowerOperations.withdrawLUSD(th._100pct, dec(17, 18), B, B, {
+    const borrowingTx_2 = await borrowerOperations.withdrawONEU(th._100pct, dec(17, 18), B, B, {
       from: B
     });
 
-    // Check LUSD fee value in event is non-zero
-    const emittedLUSDFee_2 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_2));
-    assert.isTrue(emittedLUSDFee_2.gt(toBN("0")));
+    // Check ONEU fee value in event is non-zero
+    const emittedONEUFee_2 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_2));
+    assert.isTrue(emittedONEUFee_2.gt(toBN("0")));
 
-    const expectedTotalLUSDGain = emittedLUSDFee_1.add(emittedLUSDFee_2);
-    const A_LUSDGain = await lqtyStaking.getPendingLUSDGain(A);
+    const expectedTotalONEUGain = emittedONEUFee_1.add(emittedONEUFee_2);
+    const A_ONEUGain = await lqtyStaking.getPendingONEUGain(A);
 
-    assert.isAtMost(th.getDifference(expectedTotalLUSDGain, A_LUSDGain), 1000);
+    assert.isAtMost(th.getDifference(expectedTotalONEUGain, A_ONEUGain), 1000);
   });
 
   // - multi depositors, several rewards
   it("LQTY Staking: Multiple stakers earn the correct share of all AUT and LQTY fees, based on their stake size", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(10000, 18)),
+      extraONEUAmount: toBN(dec(10000, 18)),
       ICR: toBN(dec(10, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: E }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: F }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: G }
     });
@@ -818,18 +818,18 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(emittedAUTFee_2.gt(toBN("0")));
 
     // F draws debt
-    const borrowingTx_1 = await borrowerOperations.withdrawLUSD(th._100pct, dec(104, 18), F, F, {
+    const borrowingTx_1 = await borrowerOperations.withdrawONEU(th._100pct, dec(104, 18), F, F, {
       from: F
     });
-    const emittedLUSDFee_1 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_1));
-    assert.isTrue(emittedLUSDFee_1.gt(toBN("0")));
+    const emittedONEUFee_1 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_1));
+    assert.isTrue(emittedONEUFee_1.gt(toBN("0")));
 
     // G draws debt
-    const borrowingTx_2 = await borrowerOperations.withdrawLUSD(th._100pct, dec(17, 18), G, G, {
+    const borrowingTx_2 = await borrowerOperations.withdrawONEU(th._100pct, dec(17, 18), G, G, {
       from: G
     });
-    const emittedLUSDFee_2 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_2));
-    assert.isTrue(emittedLUSDFee_2.gt(toBN("0")));
+    const emittedONEUFee_2 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_2));
+    assert.isTrue(emittedONEUFee_2.gt(toBN("0")));
 
     // D obtains LQTY from owner and makes a stake
     await lqtyToken.transfer(D, dec(50, 18), { from: multisig });
@@ -851,11 +851,11 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.isTrue(emittedAUTFee_3.gt(toBN("0")));
 
     // G draws debt
-    const borrowingTx_3 = await borrowerOperations.withdrawLUSD(th._100pct, dec(17, 18), G, G, {
+    const borrowingTx_3 = await borrowerOperations.withdrawONEU(th._100pct, dec(17, 18), G, G, {
       from: G
     });
-    const emittedLUSDFee_3 = toBN(th.getLUSDFeeFromLUSDBorrowingEvent(borrowingTx_3));
-    assert.isTrue(emittedLUSDFee_3.gt(toBN("0")));
+    const emittedONEUFee_3 = toBN(th.getONEUFeeFromONEUBorrowingEvent(borrowingTx_3));
+    assert.isTrue(emittedONEUFee_3.gt(toBN("0")));
 
     /*  
     Expected rewards:
@@ -865,10 +865,10 @@ contract("LQTYStaking revenue share tests", async accounts => {
     C_AUT: (300* AUTFee_1)/600 + (300* AUTFee_2)/600 + (300*AUT_Fee_3)/650
     D_AUT:                                             (100*AUT_Fee_3)/650
 
-    A_LUSD: (100*LUSDFee_1 )/600 + (100* LUSDFee_2)/600 + (100*LUSDFee_3)/650
-    B_LUSD: (200* LUSDFee_1)/600 + (200* LUSDFee_2)/600 + (200*LUSDFee_3)/650
-    C_LUSD: (300* LUSDFee_1)/600 + (300* LUSDFee_2)/600 + (300*LUSDFee_3)/650
-    D_LUSD:                                               (100*LUSDFee_3)/650
+    A_ONEU: (100*ONEUFee_1 )/600 + (100* ONEUFee_2)/600 + (100*ONEUFee_3)/650
+    B_ONEU: (200* ONEUFee_1)/600 + (200* ONEUFee_2)/600 + (200*ONEUFee_3)/650
+    C_ONEU: (300* ONEUFee_1)/600 + (300* ONEUFee_2)/600 + (300*ONEUFee_3)/650
+    D_ONEU:                                               (100*ONEUFee_3)/650
     */
 
     // Expected AUT gains
@@ -892,35 +892,35 @@ contract("LQTYStaking revenue share tests", async accounts => {
 
     const expectedAUTGain_D = toBN("50").mul(emittedAUTFee_3).div(toBN("650"));
 
-    // Expected LUSD gains:
-    const expectedLUSDGain_A = toBN("100")
-      .mul(emittedLUSDFee_1)
+    // Expected ONEU gains:
+    const expectedONEUGain_A = toBN("100")
+      .mul(emittedONEUFee_1)
       .div(toBN("600"))
-      .add(toBN("100").mul(emittedLUSDFee_2).div(toBN("600")))
-      .add(toBN("100").mul(emittedLUSDFee_3).div(toBN("650")));
+      .add(toBN("100").mul(emittedONEUFee_2).div(toBN("600")))
+      .add(toBN("100").mul(emittedONEUFee_3).div(toBN("650")));
 
-    const expectedLUSDGain_B = toBN("200")
-      .mul(emittedLUSDFee_1)
+    const expectedONEUGain_B = toBN("200")
+      .mul(emittedONEUFee_1)
       .div(toBN("600"))
-      .add(toBN("200").mul(emittedLUSDFee_2).div(toBN("600")))
-      .add(toBN("200").mul(emittedLUSDFee_3).div(toBN("650")));
+      .add(toBN("200").mul(emittedONEUFee_2).div(toBN("600")))
+      .add(toBN("200").mul(emittedONEUFee_3).div(toBN("650")));
 
-    const expectedLUSDGain_C = toBN("300")
-      .mul(emittedLUSDFee_1)
+    const expectedONEUGain_C = toBN("300")
+      .mul(emittedONEUFee_1)
       .div(toBN("600"))
-      .add(toBN("300").mul(emittedLUSDFee_2).div(toBN("600")))
-      .add(toBN("300").mul(emittedLUSDFee_3).div(toBN("650")));
+      .add(toBN("300").mul(emittedONEUFee_2).div(toBN("600")))
+      .add(toBN("300").mul(emittedONEUFee_3).div(toBN("650")));
 
-    const expectedLUSDGain_D = toBN("50").mul(emittedLUSDFee_3).div(toBN("650"));
+    const expectedONEUGain_D = toBN("50").mul(emittedONEUFee_3).div(toBN("650"));
 
     const A_AUTBalance_Before = toBN(await web3.eth.getBalance(A));
-    const A_LUSDBalance_Before = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_Before = toBN(await lusdToken.balanceOf(A));
     const B_AUTBalance_Before = toBN(await web3.eth.getBalance(B));
-    const B_LUSDBalance_Before = toBN(await lusdToken.balanceOf(B));
+    const B_ONEUBalance_Before = toBN(await lusdToken.balanceOf(B));
     const C_AUTBalance_Before = toBN(await web3.eth.getBalance(C));
-    const C_LUSDBalance_Before = toBN(await lusdToken.balanceOf(C));
+    const C_ONEUBalance_Before = toBN(await lusdToken.balanceOf(C));
     const D_AUTBalance_Before = toBN(await web3.eth.getBalance(D));
-    const D_LUSDBalance_Before = toBN(await lusdToken.balanceOf(D));
+    const D_ONEUBalance_Before = toBN(await lusdToken.balanceOf(D));
 
     // A-D un-stake
     const A_GAS_Used = th.gasUsed(
@@ -942,60 +942,60 @@ contract("LQTYStaking revenue share tests", async accounts => {
     assert.equal(await lqtyToken.balanceOf(lqtyStaking.address), "0");
     assert.equal(await lqtyStaking.totalLQTYStaked(), "0");
 
-    // Get A-D AUT and LUSD balances
+    // Get A-D AUT and ONEU balances
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
-    const A_LUSDBalance_After = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_After = toBN(await lusdToken.balanceOf(A));
     const B_AUTBalance_After = toBN(await web3.eth.getBalance(B));
-    const B_LUSDBalance_After = toBN(await lusdToken.balanceOf(B));
+    const B_ONEUBalance_After = toBN(await lusdToken.balanceOf(B));
     const C_AUTBalance_After = toBN(await web3.eth.getBalance(C));
-    const C_LUSDBalance_After = toBN(await lusdToken.balanceOf(C));
+    const C_ONEUBalance_After = toBN(await lusdToken.balanceOf(C));
     const D_AUTBalance_After = toBN(await web3.eth.getBalance(D));
-    const D_LUSDBalance_After = toBN(await lusdToken.balanceOf(D));
+    const D_ONEUBalance_After = toBN(await lusdToken.balanceOf(D));
 
-    // Get AUT and LUSD gains
+    // Get AUT and ONEU gains
     const A_AUTGain = A_AUTBalance_After.sub(A_AUTBalance_Before).add(toBN(A_GAS_Used * GAS_PRICE));
-    const A_LUSDGain = A_LUSDBalance_After.sub(A_LUSDBalance_Before);
+    const A_ONEUGain = A_ONEUBalance_After.sub(A_ONEUBalance_Before);
     const B_AUTGain = B_AUTBalance_After.sub(B_AUTBalance_Before).add(toBN(B_GAS_Used * GAS_PRICE));
-    const B_LUSDGain = B_LUSDBalance_After.sub(B_LUSDBalance_Before);
+    const B_ONEUGain = B_ONEUBalance_After.sub(B_ONEUBalance_Before);
     const C_AUTGain = C_AUTBalance_After.sub(C_AUTBalance_Before).add(toBN(C_GAS_Used * GAS_PRICE));
-    const C_LUSDGain = C_LUSDBalance_After.sub(C_LUSDBalance_Before);
+    const C_ONEUGain = C_ONEUBalance_After.sub(C_ONEUBalance_Before);
     const D_AUTGain = D_AUTBalance_After.sub(D_AUTBalance_Before).add(toBN(D_GAS_Used * GAS_PRICE));
-    const D_LUSDGain = D_LUSDBalance_After.sub(D_LUSDBalance_Before);
+    const D_ONEUGain = D_ONEUBalance_After.sub(D_ONEUBalance_Before);
 
     // Check gains match expected amounts
     assert.isAtMost(th.getDifference(expectedAUTGain_A, A_AUTGain), 1000);
-    assert.isAtMost(th.getDifference(expectedLUSDGain_A, A_LUSDGain), 1000);
+    assert.isAtMost(th.getDifference(expectedONEUGain_A, A_ONEUGain), 1000);
     assert.isAtMost(th.getDifference(expectedAUTGain_B, B_AUTGain), 1000);
-    assert.isAtMost(th.getDifference(expectedLUSDGain_B, B_LUSDGain), 1000);
+    assert.isAtMost(th.getDifference(expectedONEUGain_B, B_ONEUGain), 1000);
     assert.isAtMost(th.getDifference(expectedAUTGain_C, C_AUTGain), 1000);
-    assert.isAtMost(th.getDifference(expectedLUSDGain_C, C_LUSDGain), 1000);
+    assert.isAtMost(th.getDifference(expectedONEUGain_C, C_ONEUGain), 1000);
     assert.isAtMost(th.getDifference(expectedAUTGain_D, D_AUTGain), 1000);
-    assert.isAtMost(th.getDifference(expectedLUSDGain_D, D_LUSDGain), 1000);
+    assert.isAtMost(th.getDifference(expectedONEUGain_D, D_ONEUGain), 1000);
   });
 
   it("unstake(): reverts if caller has AUT gains and can't receive AUT", async () => {
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: whale }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(20000, 18)),
+      extraONEUAmount: toBN(dec(20000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: A }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(30000, 18)),
+      extraONEUAmount: toBN(dec(30000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(40000, 18)),
+      extraONEUAmount: toBN(dec(40000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: C }
     });
     await openTrove({
-      extraLUSDAmount: toBN(dec(50000, 18)),
+      extraONEUAmount: toBN(dec(50000, 18)),
       ICR: toBN(dec(2, 18)),
       extraParams: { from: D }
     });

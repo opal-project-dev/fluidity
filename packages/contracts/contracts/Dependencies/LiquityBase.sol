@@ -24,10 +24,10 @@ contract LiquityBase is BaseMath, ILiquityBase {
     // Critical system collateral ratio. If the system's total collateral ratio (TCR) falls below the CCR, Recovery Mode is triggered.
     uint public constant CCR = 1500000000000000000; // 150%
 
-    // Amount of LUSD to be locked in gas pool on opening troves
-    uint public constant LUSD_GAS_COMPENSATION = 200e18;
+    // Amount of ONEU to be locked in gas pool on opening troves
+    uint public constant ONEU_GAS_COMPENSATION = 200e18;
 
-    // Minimum amount of net LUSD debt a trove must have
+    // Minimum amount of net ONEU debt a trove must have
     uint public constant MIN_NET_DEBT = 1800e18;
     // uint constant public MIN_NET_DEBT = 0;
 
@@ -45,11 +45,11 @@ contract LiquityBase is BaseMath, ILiquityBase {
 
     // Returns the composite debt (drawn debt + gas compensation) of a trove, for the purpose of ICR calculation
     function _getCompositeDebt(uint _debt) internal pure returns (uint) {
-        return _debt.add(LUSD_GAS_COMPENSATION);
+        return _debt.add(ONEU_GAS_COMPENSATION);
     }
 
     function _getNetDebt(uint _debt) internal pure returns (uint) {
-        return _debt.sub(LUSD_GAS_COMPENSATION);
+        return _debt.sub(ONEU_GAS_COMPENSATION);
     }
 
     // Return the amount of AUT to be drawn from a trove's collateral and sent as gas compensation.
@@ -65,8 +65,8 @@ contract LiquityBase is BaseMath, ILiquityBase {
     }
 
     function getEntireSystemDebt() public view returns (uint entireSystemDebt) {
-        uint activeDebt = activePool.getLUSDDebt();
-        uint closedDebt = defaultPool.getLUSDDebt();
+        uint activeDebt = activePool.getONEUDebt();
+        uint closedDebt = defaultPool.getONEUDebt();
 
         return activeDebt.add(closedDebt);
     }

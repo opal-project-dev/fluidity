@@ -14,7 +14,7 @@ interface IBorrowerOperations {
     event CollSurplusPoolAddressChanged(address _collSurplusPoolAddress);
     event PriceFeedAddressChanged(address _newPriceFeedAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
-    event LUSDTokenAddressChanged(address _lusdTokenAddress);
+    event ONEUTokenAddressChanged(address _lusdTokenAddress);
     event LQTYStakingAddressChanged(address _lqtyStakingAddress);
 
     event TroveCreated(address indexed _borrower, uint arrayIndex);
@@ -25,7 +25,7 @@ interface IBorrowerOperations {
         uint stake,
         uint8 operation
     );
-    event LUSDBorrowingFeePaid(address indexed _borrower, uint _LUSDFee);
+    event ONEUBorrowingFeePaid(address indexed _borrower, uint _ONEUFee);
 
     // --- Functions ---
 
@@ -44,7 +44,7 @@ interface IBorrowerOperations {
 
     function openTrove(
         uint _maxFee,
-        uint _LUSDAmount,
+        uint _ONEUAmount,
         address _upperHint,
         address _lowerHint
     ) external payable;
@@ -59,14 +59,14 @@ interface IBorrowerOperations {
 
     function withdrawColl(uint _amount, address _upperHint, address _lowerHint) external;
 
-    function withdrawLUSD(
+    function withdrawONEU(
         uint _maxFee,
         uint _amount,
         address _upperHint,
         address _lowerHint
     ) external;
 
-    function repayLUSD(uint _amount, address _upperHint, address _lowerHint) external;
+    function repayONEU(uint _amount, address _upperHint, address _lowerHint) external;
 
     function closeTrove() external;
 

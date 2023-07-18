@@ -6,18 +6,18 @@ interface ILQTYStaking {
     // --- Events --
 
     event LQTYTokenAddressSet(address _lqtyTokenAddress);
-    event LUSDTokenAddressSet(address _lusdTokenAddress);
+    event ONEUTokenAddressSet(address _lusdTokenAddress);
     event TroveManagerAddressSet(address _troveManager);
     event BorrowerOperationsAddressSet(address _borrowerOperationsAddress);
     event ActivePoolAddressSet(address _activePoolAddress);
 
     event StakeChanged(address indexed staker, uint newStake);
-    event StakingGainsWithdrawn(address indexed staker, uint LUSDGain, uint AUTGain);
+    event StakingGainsWithdrawn(address indexed staker, uint ONEUGain, uint AUTGain);
     event F_AUTUpdated(uint _F_AUT);
-    event F_LUSDUpdated(uint _F_LUSD);
+    event F_ONEUUpdated(uint _F_ONEU);
     event TotalLQTYStakedUpdated(uint _totalLQTYStaked);
     event EtherSent(address _account, uint _amount);
-    event StakerSnapshotsUpdated(address _staker, uint _F_AUT, uint _F_LUSD);
+    event StakerSnapshotsUpdated(address _staker, uint _F_AUT, uint _F_ONEU);
 
     // --- Functions ---
 
@@ -35,9 +35,9 @@ interface ILQTYStaking {
 
     function increaseF_AUT(uint _AUTFee) external;
 
-    function increaseF_LUSD(uint _LQTYFee) external;
+    function increaseF_ONEU(uint _LQTYFee) external;
 
     function getPendingAUTGain(address _user) external view returns (uint);
 
-    function getPendingLUSDGain(address _user) external view returns (uint);
+    function getPendingONEUGain(address _user) external view returns (uint);
 }
