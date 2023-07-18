@@ -11,19 +11,19 @@ contract ONEUTokenCaller {
         ONEU = _ONEU;
     }
 
-    function lusdMint(address _account, uint _amount) external {
+    function oneuMint(address _account, uint _amount) external {
         ONEU.mint(_account, _amount);
     }
 
-    function lusdBurn(address _account, uint _amount) external {
+    function oneuBurn(address _account, uint _amount) external {
         ONEU.burn(_account, _amount);
     }
 
-    function lusdSendToPool(address _sender, address _poolAddress, uint256 _amount) external {
+    function oneuSendToPool(address _sender, address _poolAddress, uint256 _amount) external {
         ONEU.sendToPool(_sender, _poolAddress, _amount);
     }
 
-    function lusdReturnFromPool(address _poolAddress, address _receiver, uint256 _amount) external {
+    function oneuReturnFromPool(address _poolAddress, address _receiver, uint256 _amount) external {
         ONEU.returnFromPool(_poolAddress, _receiver, _amount);
     }
 }

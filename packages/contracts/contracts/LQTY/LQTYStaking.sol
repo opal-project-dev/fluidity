@@ -33,7 +33,7 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
     }
 
     ILQTYToken public lqtyToken;
-    IONEUToken public lusdToken;
+    IONEUToken public oneuToken;
 
     address public troveManagerAddress;
     address public borrowerOperationsAddress;
@@ -42,7 +42,7 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
     // --- Events ---
 
     event LQTYTokenAddressSet(address _lqtyTokenAddress);
-    event ONEUTokenAddressSet(address _lusdTokenAddress);
+    event ONEUTokenAddressSet(address _oneuTokenAddress);
     event TroveManagerAddressSet(address _troveManager);
     event BorrowerOperationsAddressSet(address _borrowerOperationsAddress);
     event ActivePoolAddressSet(address _activePoolAddress);
@@ -59,25 +59,25 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
 
     function setAddresses(
         address _lqtyTokenAddress,
-        address _lusdTokenAddress,
+        address _oneuTokenAddress,
         address _troveManagerAddress,
         address _borrowerOperationsAddress,
         address _activePoolAddress
     ) external override onlyOwner {
         checkContract(_lqtyTokenAddress);
-        checkContract(_lusdTokenAddress);
+        checkContract(_oneuTokenAddress);
         checkContract(_troveManagerAddress);
         checkContract(_borrowerOperationsAddress);
         checkContract(_activePoolAddress);
 
         lqtyToken = ILQTYToken(_lqtyTokenAddress);
-        lusdToken = IONEUToken(_lusdTokenAddress);
+        oneuToken = IONEUToken(_oneuTokenAddress);
         troveManagerAddress = _troveManagerAddress;
         borrowerOperationsAddress = _borrowerOperationsAddress;
         activePoolAddress = _activePoolAddress;
 
         emit LQTYTokenAddressSet(_lqtyTokenAddress);
-        emit LQTYTokenAddressSet(_lusdTokenAddress);
+        emit LQTYTokenAddressSet(_oneuTokenAddress);
         emit TroveManagerAddressSet(_troveManagerAddress);
         emit BorrowerOperationsAddressSet(_borrowerOperationsAddress);
         emit ActivePoolAddressSet(_activePoolAddress);
@@ -116,7 +116,7 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
 
         // Send accumulated ONEU and AUT gains to the caller
         if (currentStake != 0) {
-            lusdToken.transfer(msg.sender, ONEUGain);
+            oneuToken.transfer(msg.sender, ONEUGain);
             _sendAUTGainToUser(AUTGain);
         }
     }
@@ -152,7 +152,7 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
         emit StakingGainsWithdrawn(msg.sender, ONEUGain, AUTGain);
 
         // Send accumulated ONEU and AUT gains to the caller
-        lusdToken.transfer(msg.sender, ONEUGain);
+        oneuToken.transfer(msg.sender, ONEUGain);
         _sendAUTGainToUser(AUTGain);
     }
 

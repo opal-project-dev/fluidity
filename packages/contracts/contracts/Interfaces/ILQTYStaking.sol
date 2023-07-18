@@ -6,7 +6,7 @@ interface ILQTYStaking {
     // --- Events --
 
     event LQTYTokenAddressSet(address _lqtyTokenAddress);
-    event ONEUTokenAddressSet(address _lusdTokenAddress);
+    event ONEUTokenAddressSet(address _oneuTokenAddress);
     event TroveManagerAddressSet(address _troveManager);
     event BorrowerOperationsAddressSet(address _borrowerOperationsAddress);
     event ActivePoolAddressSet(address _activePoolAddress);
@@ -23,7 +23,7 @@ interface ILQTYStaking {
 
     function setAddresses(
         address _lqtyTokenAddress,
-        address _lusdTokenAddress,
+        address _oneuTokenAddress,
         address _troveManagerAddress,
         address _borrowerOperationsAddress,
         address _activePoolAddress

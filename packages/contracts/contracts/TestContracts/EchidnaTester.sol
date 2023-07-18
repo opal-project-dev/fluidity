@@ -36,7 +36,7 @@ contract EchidnaTester {
     StabilityPool public stabilityPool;
     GasPool public gasPool;
     CollSurplusPool public collSurplusPool;
-    ONEUToken public lusdToken;
+    ONEUToken public oneuToken;
     PriceFeedTestnet priceFeedTestnet;
     SortedTroves sortedTroves;
 
@@ -51,7 +51,7 @@ contract EchidnaTester {
         defaultPool = new DefaultPool();
         stabilityPool = new StabilityPool();
         gasPool = new GasPool();
-        lusdToken = new ONEUToken(
+        oneuToken = new ONEUToken(
             address(troveManager),
             address(stabilityPool),
             address(borrowerOperations)
@@ -70,7 +70,7 @@ contract EchidnaTester {
             address(gasPool),
             address(collSurplusPool),
             address(priceFeedTestnet),
-            address(lusdToken),
+            address(oneuToken),
             address(sortedTroves),
             address(0),
             address(0)
@@ -85,7 +85,7 @@ contract EchidnaTester {
             address(collSurplusPool),
             address(priceFeedTestnet),
             address(sortedTroves),
-            address(lusdToken),
+            address(oneuToken),
             address(0)
         );
 
@@ -102,7 +102,7 @@ contract EchidnaTester {
             address(borrowerOperations),
             address(troveManager),
             address(activePool),
-            address(lusdToken),
+            address(oneuToken),
             address(sortedTroves),
             address(priceFeedTestnet),
             address(0)
@@ -121,7 +121,7 @@ contract EchidnaTester {
                 troveManager,
                 borrowerOperations,
                 stabilityPool,
-                lusdToken
+                oneuToken
             );
             (bool success, ) = address(echidnaProxies[i]).call{value: INITIAL_BALANCE}("");
             require(success);
@@ -485,7 +485,7 @@ contract EchidnaTester {
             return false;
         }
 
-        if (address(lusdToken).balance > 0) {
+        if (address(oneuToken).balance > 0) {
             return false;
         }
 
@@ -515,8 +515,8 @@ contract EchidnaTester {
 
     // Total ONEU matches
     function echidna_ONEU_global_balances() public view returns (bool) {
-        uint totalSupply = lusdToken.totalSupply();
-        uint gasPoolBalance = lusdToken.balanceOf(address(gasPool));
+        uint totalSupply = oneuToken.totalSupply();
+        uint gasPoolBalance = oneuToken.balanceOf(address(gasPool));
 
         uint activePoolBalance = activePool.getONEUDebt();
         uint defaultPoolBalance = defaultPool.getONEUDebt();
@@ -528,7 +528,7 @@ contract EchidnaTester {
         address currentTrove = sortedTroves.getFirst();
         uint trovesBalance;
         while (currentTrove != address(0)) {
-            trovesBalance += lusdToken.balanceOf(address(currentTrove));
+            trovesBalance += oneuToken.balanceOf(address(currentTrove));
             currentTrove = sortedTroves.getNext(currentTrove);
         }
         // we cannot state equality because tranfers are made to external addresses too

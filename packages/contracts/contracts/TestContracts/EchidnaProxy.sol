@@ -11,18 +11,18 @@ contract EchidnaProxy {
     TroveManager troveManager;
     BorrowerOperations borrowerOperations;
     StabilityPool stabilityPool;
-    ONEUToken lusdToken;
+    ONEUToken oneuToken;
 
     constructor(
         TroveManager _troveManager,
         BorrowerOperations _borrowerOperations,
         StabilityPool _stabilityPool,
-        ONEUToken _lusdToken
+        ONEUToken _oneuToken
     ) public {
         troveManager = _troveManager;
         borrowerOperations = _borrowerOperations;
         stabilityPool = _stabilityPool;
-        lusdToken = _lusdToken;
+        oneuToken = _oneuToken;
     }
 
     receive() external payable {
@@ -130,11 +130,11 @@ contract EchidnaProxy {
     // ONEU Token
 
     function transferPrx(address recipient, uint256 amount) external returns (bool) {
-        return lusdToken.transfer(recipient, amount);
+        return oneuToken.transfer(recipient, amount);
     }
 
     function approvePrx(address spender, uint256 amount) external returns (bool) {
-        return lusdToken.approve(spender, amount);
+        return oneuToken.approve(spender, amount);
     }
 
     function transferFromPrx(
@@ -142,14 +142,14 @@ contract EchidnaProxy {
         address recipient,
         uint256 amount
     ) external returns (bool) {
-        return lusdToken.transferFrom(sender, recipient, amount);
+        return oneuToken.transferFrom(sender, recipient, amount);
     }
 
     function increaseAllowancePrx(address spender, uint256 addedValue) external returns (bool) {
-        return lusdToken.increaseAllowance(spender, addedValue);
+        return oneuToken.increaseAllowance(spender, addedValue);
     }
 
     function decreaseAllowancePrx(address spender, uint256 subtractedValue) external returns (bool) {
-        return lusdToken.decreaseAllowance(spender, subtractedValue);
+        return oneuToken.decreaseAllowance(spender, subtractedValue);
     }
 }

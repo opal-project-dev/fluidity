@@ -23,7 +23,7 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
     ITroveManager immutable troveManager;
     IStabilityPool immutable stabilityPool;
     IPriceFeed immutable priceFeed;
-    IERC20 immutable lusdToken;
+    IERC20 immutable oneuToken;
     IERC20 immutable lqtyToken;
     ILQTYStaking immutable lqtyStaking;
 
@@ -48,9 +48,9 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         checkContract(address(priceFeedCached));
         priceFeed = priceFeedCached;
 
-        address lusdTokenCached = address(troveManagerCached.lusdToken());
-        checkContract(lusdTokenCached);
-        lusdToken = IERC20(lusdTokenCached);
+        address oneuTokenCached = address(troveManagerCached.oneuToken());
+        checkContract(oneuTokenCached);
+        oneuToken = IERC20(oneuTokenCached);
 
         address lqtyTokenCached = address(troveManagerCached.lqtyToken());
         checkContract(lqtyTokenCached);
@@ -137,14 +137,14 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         address _lowerHint
     ) external {
         uint collBalanceBefore = address(this).balance;
-        uint lusdBalanceBefore = lusdToken.balanceOf(address(this));
+        uint oneuBalanceBefore = oneuToken.balanceOf(address(this));
         uint lqtyBalanceBefore = lqtyToken.balanceOf(address(this));
 
         // Claim gains
         lqtyStaking.unstake(0);
 
         uint gainedCollateral = address(this).balance.sub(collBalanceBefore); // stack too deep issues :'(
-        uint gainedONEU = lusdToken.balanceOf(address(this)).sub(lusdBalanceBefore);
+        uint gainedONEU = oneuToken.balanceOf(address(this)).sub(oneuBalanceBefore);
 
         uint netONEUAmount;
         // Top up trove and get more ONEU, keeping ICR constant

@@ -27,7 +27,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
 
     ICollSurplusPool collSurplusPool;
 
-    IONEUToken public override lusdToken;
+    IONEUToken public override oneuToken;
 
     ILQTYToken public override lqtyToken;
 
@@ -173,7 +173,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
     struct ContractsCache {
         IActivePool activePool;
         IDefaultPool defaultPool;
-        IONEUToken lusdToken;
+        IONEUToken oneuToken;
         ILQTYStaking lqtyStaking;
         ISortedTroves sortedTroves;
         ICollSurplusPool collSurplusPool;
@@ -257,7 +257,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         address _gasPoolAddress,
         address _collSurplusPoolAddress,
         address _priceFeedAddress,
-        address _lusdTokenAddress,
+        address _oneuTokenAddress,
         address _sortedTrovesAddress,
         address _lqtyTokenAddress,
         address _lqtyStakingAddress
@@ -269,7 +269,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         checkContract(_gasPoolAddress);
         checkContract(_collSurplusPoolAddress);
         checkContract(_priceFeedAddress);
-        checkContract(_lusdTokenAddress);
+        checkContract(_oneuTokenAddress);
         checkContract(_sortedTrovesAddress);
         checkContract(_lqtyTokenAddress);
         checkContract(_lqtyStakingAddress);
@@ -281,7 +281,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         gasPoolAddress = _gasPoolAddress;
         collSurplusPool = ICollSurplusPool(_collSurplusPoolAddress);
         priceFeed = IPriceFeed(_priceFeedAddress);
-        lusdToken = IONEUToken(_lusdTokenAddress);
+        oneuToken = IONEUToken(_oneuTokenAddress);
         sortedTroves = ISortedTroves(_sortedTrovesAddress);
         lqtyToken = ILQTYToken(_lqtyTokenAddress);
         lqtyStaking = ILQTYStaking(_lqtyStakingAddress);
@@ -293,7 +293,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         emit GasPoolAddressChanged(_gasPoolAddress);
         emit CollSurplusPoolAddressChanged(_collSurplusPoolAddress);
         emit PriceFeedAddressChanged(_priceFeedAddress);
-        emit ONEUTokenAddressChanged(_lusdTokenAddress);
+        emit ONEUTokenAddressChanged(_oneuTokenAddress);
         emit SortedTrovesAddressChanged(_sortedTrovesAddress);
         emit LQTYTokenAddressChanged(_lqtyTokenAddress);
         emit LQTYStakingAddressChanged(_lqtyStakingAddress);
@@ -1012,7 +1012,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         uint _AUT
     ) internal {
         if (_ONEU > 0) {
-            lusdToken.returnFromPool(gasPoolAddress, _liquidator, _ONEU);
+            oneuToken.returnFromPool(gasPoolAddress, _liquidator, _ONEU);
         }
 
         if (_AUT > 0) {
@@ -1113,7 +1113,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         uint _ONEU,
         uint _AUT
     ) internal {
-        _contractsCache.lusdToken.burn(gasPoolAddress, _ONEU);
+        _contractsCache.oneuToken.burn(gasPoolAddress, _ONEU);
         // Update Active Pool ONEU, and send AUT to account
         _contractsCache.activePool.decreaseONEUDebt(_ONEU);
 
@@ -1172,7 +1172,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         ContractsCache memory contractsCache = ContractsCache(
             activePool,
             defaultPool,
-            lusdToken,
+            oneuToken,
             lqtyStaking,
             sortedTroves,
             collSurplusPool,
@@ -1185,11 +1185,11 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         totals.price = priceFeed.fetchPrice();
         _requireTCRoverMCR(totals.price);
         _requireAmountGreaterThanZero(_ONEUamount);
-        _requireONEUBalanceCoversRedemption(contractsCache.lusdToken, msg.sender, _ONEUamount);
+        _requireONEUBalanceCoversRedemption(contractsCache.oneuToken, msg.sender, _ONEUamount);
 
         totals.totalONEUSupplyAtStart = getEntireSystemDebt();
         // Confirm redeemer's balance is less than total ONEU supply
-        assert(contractsCache.lusdToken.balanceOf(msg.sender) <= totals.totalONEUSupplyAtStart);
+        assert(contractsCache.oneuToken.balanceOf(msg.sender) <= totals.totalONEUSupplyAtStart);
 
         totals.remainingONEU = _ONEUamount;
         address currentBorrower;
@@ -1269,7 +1269,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         emit Redemption(_ONEUamount, totals.totalONEUToRedeem, totals.totalAUTDrawn, totals.AUTFee);
 
         // Burn the total ONEU that is cancelled with debt, and send the redeemed AUT to msg.sender
-        contractsCache.lusdToken.burn(msg.sender, totals.totalONEUToRedeem);
+        contractsCache.oneuToken.burn(msg.sender, totals.totalONEUToRedeem);
         // Update Active Pool ONEU, and send AUT to account
         contractsCache.activePool.decreaseONEUDebt(totals.totalONEUToRedeem);
         contractsCache.activePool.sendAUT(msg.sender, totals.AUTToSendToRedeemer);
@@ -1765,12 +1765,12 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
     }
 
     function _requireONEUBalanceCoversRedemption(
-        IONEUToken _lusdToken,
+        IONEUToken _oneuToken,
         address _redeemer,
         uint _amount
     ) internal view {
         require(
-            _lusdToken.balanceOf(_redeemer) >= _amount,
+            _oneuToken.balanceOf(_redeemer) >= _amount,
             "TroveManager: Requested redemption amount must be <= user's ONEU token balance"
         );
     }

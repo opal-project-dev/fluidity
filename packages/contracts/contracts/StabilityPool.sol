@@ -154,7 +154,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
 
     ITroveManager public troveManager;
 
-    IONEUToken public lusdToken;
+    IONEUToken public oneuToken;
 
     // Needed to check if there are pending liquidations
     ISortedTroves public sortedTroves;
@@ -277,7 +277,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         address _borrowerOperationsAddress,
         address _troveManagerAddress,
         address _activePoolAddress,
-        address _lusdTokenAddress,
+        address _oneuTokenAddress,
         address _sortedTrovesAddress,
         address _priceFeedAddress,
         address _communityIssuanceAddress
@@ -285,7 +285,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         checkContract(_borrowerOperationsAddress);
         checkContract(_troveManagerAddress);
         checkContract(_activePoolAddress);
-        checkContract(_lusdTokenAddress);
+        checkContract(_oneuTokenAddress);
         checkContract(_sortedTrovesAddress);
         checkContract(_priceFeedAddress);
         checkContract(_communityIssuanceAddress);
@@ -293,7 +293,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         borrowerOperations = IBorrowerOperations(_borrowerOperationsAddress);
         troveManager = ITroveManager(_troveManagerAddress);
         activePool = IActivePool(_activePoolAddress);
-        lusdToken = IONEUToken(_lusdTokenAddress);
+        oneuToken = IONEUToken(_oneuTokenAddress);
         sortedTroves = ISortedTroves(_sortedTrovesAddress);
         priceFeed = IPriceFeed(_priceFeedAddress);
         communityIssuance = ICommunityIssuance(_communityIssuanceAddress);
@@ -301,7 +301,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         emit BorrowerOperationsAddressChanged(_borrowerOperationsAddress);
         emit TroveManagerAddressChanged(_troveManagerAddress);
         emit ActivePoolAddressChanged(_activePoolAddress);
-        emit ONEUTokenAddressChanged(_lusdTokenAddress);
+        emit ONEUTokenAddressChanged(_oneuTokenAddress);
         emit SortedTrovesAddressChanged(_sortedTrovesAddress);
         emit PriceFeedAddressChanged(_priceFeedAddress);
         emit CommunityIssuanceAddressChanged(_communityIssuanceAddress);
@@ -652,7 +652,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
         _decreaseONEU(_debtToOffset);
 
         // Burn the debt that was successfully offset
-        lusdToken.burn(address(this), _debtToOffset);
+        oneuToken.burn(address(this), _debtToOffset);
 
         activePoolCached.sendAUT(address(this), _collToAdd);
     }
@@ -875,7 +875,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
 
     // Transfer the ONEU tokens from the user to the Stability Pool's address, and update its recorded ONEU
     function _sendONEUtoStabilityPool(address _address, uint _amount) internal {
-        lusdToken.sendToPool(_address, address(this), _amount);
+        oneuToken.sendToPool(_address, address(this), _amount);
         uint newTotalONEUDeposits = totalONEUDeposits.add(_amount);
         totalONEUDeposits = newTotalONEUDeposits;
         emit StabilityPoolONEUBalanceUpdated(newTotalONEUDeposits);
@@ -900,7 +900,7 @@ contract StabilityPool is LiquityBase, Ownable, CheckContract, IStabilityPool {
             return;
         }
 
-        lusdToken.returnFromPool(address(this), _depositor, ONEUWithdrawal);
+        oneuToken.returnFromPool(address(this), _depositor, ONEUWithdrawal);
         _decreaseONEU(ONEUWithdrawal);
     }
 
