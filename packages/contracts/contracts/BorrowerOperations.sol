@@ -7,7 +7,7 @@ import "./Interfaces/ITroveManager.sol";
 import "./Interfaces/IONEUToken.sol";
 import "./Interfaces/ICollSurplusPool.sol";
 import "./Interfaces/ISortedTroves.sol";
-import "./Interfaces/ILQTYStaking.sol";
+import "./Interfaces/IOPLStaking.sol";
 import "./Dependencies/LiquityBase.sol";
 import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
@@ -26,7 +26,7 @@ contract BorrowerOperations is LiquityBase, Ownable, CheckContract, IBorrowerOpe
 
     ICollSurplusPool collSurplusPool;
 
-    ILQTYStaking public lqtyStaking;
+    IOPLStaking public lqtyStaking;
     address public lqtyStakingAddress;
 
     IONEUToken public oneuToken;
@@ -87,7 +87,7 @@ contract BorrowerOperations is LiquityBase, Ownable, CheckContract, IBorrowerOpe
     event PriceFeedAddressChanged(address _newPriceFeedAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
     event ONEUTokenAddressChanged(address _oneuTokenAddress);
-    event LQTYStakingAddressChanged(address _lqtyStakingAddress);
+    event OPLStakingAddressChanged(address _lqtyStakingAddress);
 
     event TroveCreated(address indexed _borrower, uint arrayIndex);
     event TroveUpdated(
@@ -137,7 +137,7 @@ contract BorrowerOperations is LiquityBase, Ownable, CheckContract, IBorrowerOpe
         sortedTroves = ISortedTroves(_sortedTrovesAddress);
         oneuToken = IONEUToken(_oneuTokenAddress);
         lqtyStakingAddress = _lqtyStakingAddress;
-        lqtyStaking = ILQTYStaking(_lqtyStakingAddress);
+        lqtyStaking = IOPLStaking(_lqtyStakingAddress);
 
         emit TroveManagerAddressChanged(_troveManagerAddress);
         emit ActivePoolAddressChanged(_activePoolAddress);
@@ -148,7 +148,7 @@ contract BorrowerOperations is LiquityBase, Ownable, CheckContract, IBorrowerOpe
         emit PriceFeedAddressChanged(_priceFeedAddress);
         emit SortedTrovesAddressChanged(_sortedTrovesAddress);
         emit ONEUTokenAddressChanged(_oneuTokenAddress);
-        emit LQTYStakingAddressChanged(_lqtyStakingAddress);
+        emit OPLStakingAddressChanged(_lqtyStakingAddress);
 
         _renounceOwnership();
     }
@@ -479,7 +479,7 @@ contract BorrowerOperations is LiquityBase, Ownable, CheckContract, IBorrowerOpe
 
         _requireUserAcceptsFee(ONEUFee, _ONEUAmount, _maxFeePercentage);
 
-        // Send fee to LQTY staking contract
+        // Send fee to OPL staking contract
         lqtyStaking.increaseF_ONEU(ONEUFee);
         _oneuToken.mint(lqtyStakingAddress, ONEUFee);
 

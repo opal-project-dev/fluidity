@@ -2,7 +2,7 @@
 
 pragma solidity 0.6.11;
 
-import "../Interfaces/ILQTYToken.sol";
+import "../Interfaces/IOPLToken.sol";
 import "../Interfaces/ICommunityIssuance.sol";
 import "../Dependencies/BaseMath.sol";
 import "../Dependencies/LiquityMath.sol";
@@ -10,52 +10,51 @@ import "../Dependencies/Ownable.sol";
 import "../Dependencies/CheckContract.sol";
 import "../Dependencies/SafeMath.sol";
 
-
 contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMath {
     using SafeMath for uint;
 
     // --- Data ---
 
-    string constant public NAME = "CommunityIssuance";
+    string public constant NAME = "CommunityIssuance";
 
-    uint constant public SECONDS_IN_ONE_MINUTE = 60;
+    uint public constant SECONDS_IN_ONE_MINUTE = 60;
 
-   /* The issuance factor F determines the curvature of the issuance curve.
-    *
-    * Minutes in one year: 60*24*365 = 525600
-    *
-    * For 50% of remaining tokens issued each year, with minutes as time units, we have:
-    * 
-    * F ** 525600 = 0.5
-    * 
-    * Re-arranging:
-    * 
-    * 525600 * ln(F) = ln(0.5)
-    * F = 0.5 ** (1/525600)
-    * F = 0.999998681227695000 
-    */
-    uint constant public ISSUANCE_FACTOR = 999998681227695000;
+    /* The issuance factor F determines the curvature of the issuance curve.
+     *
+     * Minutes in one year: 60*24*365 = 525600
+     *
+     * For 50% of remaining tokens issued each year, with minutes as time units, we have:
+     *
+     * F ** 525600 = 0.5
+     *
+     * Re-arranging:
+     *
+     * 525600 * ln(F) = ln(0.5)
+     * F = 0.5 ** (1/525600)
+     * F = 0.999998681227695000
+     */
+    uint public constant ISSUANCE_FACTOR = 999998681227695000;
 
-    /* 
-    * The community LQTY supply cap is the starting balance of the Community Issuance contract.
-    * It should be minted to this contract by LQTYToken, when the token is deployed.
-    * 
-    * Set to 32M (slightly less than 1/3) of total LQTY supply.
-    */
-    uint constant public LQTYSupplyCap = 32e24; // 32 million
+    /*
+     * The community OPL supply cap is the starting balance of the Community Issuance contract.
+     * It should be minted to this contract by OPLToken, when the token is deployed.
+     *
+     * Set to 32M (slightly less than 1/3) of total OPL supply.
+     */
+    uint public constant OPLSupplyCap = 32e24; // 32 million
 
-    ILQTYToken public lqtyToken;
+    IOPLToken public lqtyToken;
 
     address public stabilityPoolAddress;
 
-    uint public totalLQTYIssued;
+    uint public totalOPLIssued;
     uint public immutable deploymentTime;
 
     // --- Events ---
 
-    event LQTYTokenAddressSet(address _lqtyTokenAddress);
+    event OPLTokenAddressSet(address _lqtyTokenAddress);
     event StabilityPoolAddressSet(address _stabilityPoolAddress);
-    event TotalLQTYIssuedUpdated(uint _totalLQTYIssued);
+    event TotalOPLIssuedUpdated(uint _totalOPLIssued);
 
     // --- Functions ---
 
@@ -63,47 +62,44 @@ contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMa
         deploymentTime = block.timestamp;
     }
 
-    function setAddresses
-    (
-        address _lqtyTokenAddress, 
+    function setAddresses(
+        address _lqtyTokenAddress,
         address _stabilityPoolAddress
-    ) 
-        external 
-        onlyOwner 
-        override 
-    {
+    ) external override onlyOwner {
         checkContract(_lqtyTokenAddress);
         checkContract(_stabilityPoolAddress);
 
-        lqtyToken = ILQTYToken(_lqtyTokenAddress);
+        lqtyToken = IOPLToken(_lqtyTokenAddress);
         stabilityPoolAddress = _stabilityPoolAddress;
 
-        // When LQTYToken deployed, it should have transferred CommunityIssuance's LQTY entitlement
-        uint LQTYBalance = lqtyToken.balanceOf(address(this));
-        assert(LQTYBalance >= LQTYSupplyCap);
+        // When OPLToken deployed, it should have transferred CommunityIssuance's OPL entitlement
+        uint OPLBalance = lqtyToken.balanceOf(address(this));
+        assert(OPLBalance >= OPLSupplyCap);
 
-        emit LQTYTokenAddressSet(_lqtyTokenAddress);
+        emit OPLTokenAddressSet(_lqtyTokenAddress);
         emit StabilityPoolAddressSet(_stabilityPoolAddress);
 
         _renounceOwnership();
     }
 
-    function issueLQTY() external override returns (uint) {
+    function issueOPL() external override returns (uint) {
         _requireCallerIsStabilityPool();
 
-        uint latestTotalLQTYIssued = LQTYSupplyCap.mul(_getCumulativeIssuanceFraction()).div(DECIMAL_PRECISION);
-        uint issuance = latestTotalLQTYIssued.sub(totalLQTYIssued);
+        uint latestTotalOPLIssued = OPLSupplyCap.mul(_getCumulativeIssuanceFraction()).div(
+            DECIMAL_PRECISION
+        );
+        uint issuance = latestTotalOPLIssued.sub(totalOPLIssued);
 
-        totalLQTYIssued = latestTotalLQTYIssued;
-        emit TotalLQTYIssuedUpdated(latestTotalLQTYIssued);
-        
+        totalOPLIssued = latestTotalOPLIssued;
+        emit TotalOPLIssuedUpdated(latestTotalOPLIssued);
+
         return issuance;
     }
 
     /* Gets 1-f^t    where: f < 1
 
     f: issuance factor that determines the shape of the curve
-    t:  time passed since last LQTY issuance event  */
+    t:  time passed since last OPL issuance event  */
     function _getCumulativeIssuanceFraction() internal view returns (uint) {
         // Get the time passed since deployment
         uint timePassedInMinutes = block.timestamp.sub(deploymentTime).div(SECONDS_IN_ONE_MINUTE);
@@ -118,10 +114,10 @@ contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMa
         return cumulativeIssuanceFraction;
     }
 
-    function sendLQTY(address _account, uint _LQTYamount) external override {
+    function sendOPL(address _account, uint _OPLamount) external override {
         _requireCallerIsStabilityPool();
 
-        lqtyToken.transfer(_account, _LQTYamount);
+        lqtyToken.transfer(_account, _OPLamount);
     }
 
     // --- 'require' functions ---

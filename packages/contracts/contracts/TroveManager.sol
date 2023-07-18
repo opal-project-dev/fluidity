@@ -7,8 +7,8 @@ import "./Interfaces/IStabilityPool.sol";
 import "./Interfaces/ICollSurplusPool.sol";
 import "./Interfaces/IONEUToken.sol";
 import "./Interfaces/ISortedTroves.sol";
-import "./Interfaces/ILQTYToken.sol";
-import "./Interfaces/ILQTYStaking.sol";
+import "./Interfaces/IOPLToken.sol";
+import "./Interfaces/IOPLStaking.sol";
 import "./Dependencies/LiquityBase.sol";
 import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
@@ -29,9 +29,9 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
 
     IONEUToken public override oneuToken;
 
-    ILQTYToken public override lqtyToken;
+    IOPLToken public override lqtyToken;
 
-    ILQTYStaking public override lqtyStaking;
+    IOPLStaking public override lqtyStaking;
 
     // A doubly linked list of Troves, sorted by their sorted by their collateral ratios
     ISortedTroves public sortedTroves;
@@ -174,7 +174,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         IActivePool activePool;
         IDefaultPool defaultPool;
         IONEUToken oneuToken;
-        ILQTYStaking lqtyStaking;
+        IOPLStaking lqtyStaking;
         ISortedTroves sortedTroves;
         ICollSurplusPool collSurplusPool;
         address gasPoolAddress;
@@ -209,8 +209,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
     event GasPoolAddressChanged(address _gasPoolAddress);
     event CollSurplusPoolAddressChanged(address _collSurplusPoolAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
-    event LQTYTokenAddressChanged(address _lqtyTokenAddress);
-    event LQTYStakingAddressChanged(address _lqtyStakingAddress);
+    event OPLTokenAddressChanged(address _lqtyTokenAddress);
+    event OPLStakingAddressChanged(address _lqtyStakingAddress);
 
     event Liquidation(
         uint _liquidatedDebt,
@@ -283,8 +283,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         priceFeed = IPriceFeed(_priceFeedAddress);
         oneuToken = IONEUToken(_oneuTokenAddress);
         sortedTroves = ISortedTroves(_sortedTrovesAddress);
-        lqtyToken = ILQTYToken(_lqtyTokenAddress);
-        lqtyStaking = ILQTYStaking(_lqtyStakingAddress);
+        lqtyToken = IOPLToken(_lqtyTokenAddress);
+        lqtyStaking = IOPLStaking(_lqtyStakingAddress);
 
         emit BorrowerOperationsAddressChanged(_borrowerOperationsAddress);
         emit ActivePoolAddressChanged(_activePoolAddress);
@@ -295,8 +295,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         emit PriceFeedAddressChanged(_priceFeedAddress);
         emit ONEUTokenAddressChanged(_oneuTokenAddress);
         emit SortedTrovesAddressChanged(_sortedTrovesAddress);
-        emit LQTYTokenAddressChanged(_lqtyTokenAddress);
-        emit LQTYStakingAddressChanged(_lqtyStakingAddress);
+        emit OPLTokenAddressChanged(_lqtyTokenAddress);
+        emit OPLStakingAddressChanged(_lqtyStakingAddress);
 
         _renounceOwnership();
     }
@@ -578,7 +578,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
             activePool,
             defaultPool,
             IONEUToken(address(0)),
-            ILQTYStaking(address(0)),
+            IOPLStaking(address(0)),
             sortedTroves,
             ICollSurplusPool(address(0)),
             address(0)
@@ -1260,7 +1260,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
 
         _requireUserAcceptsFee(totals.AUTFee, totals.totalAUTDrawn, _maxFeePercentage);
 
-        // Send the AUT fee to the LQTY staking contract
+        // Send the AUT fee to the OPL staking contract
         contractsCache.activePool.sendAUT(address(contractsCache.lqtyStaking), totals.AUTFee);
         contractsCache.lqtyStaking.increaseF_AUT(totals.AUTFee);
 

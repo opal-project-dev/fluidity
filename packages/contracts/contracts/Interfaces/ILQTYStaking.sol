@@ -2,10 +2,10 @@
 
 pragma solidity 0.6.11;
 
-interface ILQTYStaking {
+interface IOPLStaking {
     // --- Events --
 
-    event LQTYTokenAddressSet(address _lqtyTokenAddress);
+    event OPLTokenAddressSet(address _lqtyTokenAddress);
     event ONEUTokenAddressSet(address _oneuTokenAddress);
     event TroveManagerAddressSet(address _troveManager);
     event BorrowerOperationsAddressSet(address _borrowerOperationsAddress);
@@ -15,7 +15,7 @@ interface ILQTYStaking {
     event StakingGainsWithdrawn(address indexed staker, uint ONEUGain, uint AUTGain);
     event F_AUTUpdated(uint _F_AUT);
     event F_ONEUUpdated(uint _F_ONEU);
-    event TotalLQTYStakedUpdated(uint _totalLQTYStaked);
+    event TotalOPLStakedUpdated(uint _totalOPLStaked);
     event EtherSent(address _account, uint _amount);
     event StakerSnapshotsUpdated(address _staker, uint _F_AUT, uint _F_ONEU);
 
@@ -29,13 +29,13 @@ interface ILQTYStaking {
         address _activePoolAddress
     ) external;
 
-    function stake(uint _LQTYamount) external;
+    function stake(uint _OPLamount) external;
 
-    function unstake(uint _LQTYamount) external;
+    function unstake(uint _OPLamount) external;
 
     function increaseF_AUT(uint _AUTFee) external;
 
-    function increaseF_ONEU(uint _LQTYFee) external;
+    function increaseF_ONEU(uint _OPLFee) external;
 
     function getPendingAUTGain(address _user) external view returns (uint);
 

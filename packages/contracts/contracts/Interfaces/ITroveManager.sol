@@ -5,8 +5,8 @@ pragma solidity 0.6.11;
 import "./ILiquityBase.sol";
 import "./IStabilityPool.sol";
 import "./IONEUToken.sol";
-import "./ILQTYToken.sol";
-import "./ILQTYStaking.sol";
+import "./IOPLToken.sol";
+import "./IOPLStaking.sol";
 
 // Common interface for the Trove Manager.
 interface ITroveManager is ILiquityBase {
@@ -21,8 +21,8 @@ interface ITroveManager is ILiquityBase {
     event GasPoolAddressChanged(address _gasPoolAddress);
     event CollSurplusPoolAddressChanged(address _collSurplusPoolAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
-    event LQTYTokenAddressChanged(address _lqtyTokenAddress);
-    event LQTYStakingAddressChanged(address _lqtyStakingAddress);
+    event OPLTokenAddressChanged(address _lqtyTokenAddress);
+    event OPLStakingAddressChanged(address _lqtyStakingAddress);
 
     event Liquidation(
         uint _liquidatedDebt,
@@ -67,9 +67,9 @@ interface ITroveManager is ILiquityBase {
 
     function oneuToken() external view returns (IONEUToken);
 
-    function lqtyToken() external view returns (ILQTYToken);
+    function lqtyToken() external view returns (IOPLToken);
 
-    function lqtyStaking() external view returns (ILQTYStaking);
+    function lqtyStaking() external view returns (IOPLStaking);
 
     function getTroveOwnersCount() external view returns (uint);
 

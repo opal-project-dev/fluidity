@@ -9,13 +9,13 @@ import "../Interfaces/IBorrowerOperations.sol";
 import "../Interfaces/ITroveManager.sol";
 import "../Interfaces/IStabilityPool.sol";
 import "../Interfaces/IPriceFeed.sol";
-import "../Interfaces/ILQTYStaking.sol";
+import "../Interfaces/IOPLStaking.sol";
 import "./BorrowerOperationsScript.sol";
 import "./AUTTransferScript.sol";
-import "./LQTYStakingScript.sol";
+import "./OPLStakingScript.sol";
 import "../Dependencies/console.sol";
 
-contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, LQTYStakingScript {
+contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, OPLStakingScript {
     using SafeMath for uint;
 
     string public constant NAME = "BorrowerWrappersScript";
@@ -25,7 +25,7 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
     IPriceFeed immutable priceFeed;
     IERC20 immutable oneuToken;
     IERC20 immutable lqtyToken;
-    ILQTYStaking immutable lqtyStaking;
+    IOPLStaking immutable lqtyStaking;
 
     constructor(
         address _borrowerOperationsAddress,
@@ -34,7 +34,7 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
     )
         public
         BorrowerOperationsScript(IBorrowerOperations(_borrowerOperationsAddress))
-        LQTYStakingScript(_lqtyStakingAddress)
+        OPLStakingScript(_lqtyStakingAddress)
     {
         checkContract(_troveManagerAddress);
         ITroveManager troveManagerCached = ITroveManager(_troveManagerAddress);
@@ -56,10 +56,10 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         checkContract(lqtyTokenCached);
         lqtyToken = IERC20(lqtyTokenCached);
 
-        ILQTYStaking lqtyStakingCached = troveManagerCached.lqtyStaking();
+        IOPLStaking lqtyStakingCached = troveManagerCached.lqtyStaking();
         require(
             _lqtyStakingAddress == address(lqtyStakingCached),
-            "BorrowerWrappersScript: Wrong LQTYStaking address"
+            "BorrowerWrappersScript: Wrong OPLStaking address"
         );
         lqtyStaking = lqtyStakingCached;
     }
@@ -124,10 +124,10 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
             }
         }
 
-        // Stake claimed LQTY
-        uint claimedLQTY = lqtyBalanceAfter.sub(lqtyBalanceBefore);
-        if (claimedLQTY > 0) {
-            lqtyStaking.stake(claimedLQTY);
+        // Stake claimed OPL
+        uint claimedOPL = lqtyBalanceAfter.sub(lqtyBalanceBefore);
+        if (claimedOPL > 0) {
+            lqtyStaking.stake(claimedOPL);
         }
     }
 
@@ -165,11 +165,11 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         if (totalONEU > 0) {
             stabilityPool.provideToSP(totalONEU, address(0));
 
-            // Providing to Stability Pool also triggers LQTY claim, so stake it if any
+            // Providing to Stability Pool also triggers OPL claim, so stake it if any
             uint lqtyBalanceAfter = lqtyToken.balanceOf(address(this));
-            uint claimedLQTY = lqtyBalanceAfter.sub(lqtyBalanceBefore);
-            if (claimedLQTY > 0) {
-                lqtyStaking.stake(claimedLQTY);
+            uint claimedOPL = lqtyBalanceAfter.sub(lqtyBalanceBefore);
+            if (claimedOPL > 0) {
+                lqtyStaking.stake(claimedOPL);
             }
         }
     }

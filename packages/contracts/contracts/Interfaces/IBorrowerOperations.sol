@@ -15,7 +15,7 @@ interface IBorrowerOperations {
     event PriceFeedAddressChanged(address _newPriceFeedAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
     event ONEUTokenAddressChanged(address _oneuTokenAddress);
-    event LQTYStakingAddressChanged(address _lqtyStakingAddress);
+    event OPLStakingAddressChanged(address _lqtyStakingAddress);
 
     event TroveCreated(address indexed _borrower, uint arrayIndex);
     event TroveUpdated(

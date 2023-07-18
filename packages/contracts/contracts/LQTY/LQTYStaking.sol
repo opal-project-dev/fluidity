@@ -7,22 +7,22 @@ import "../Dependencies/SafeMath.sol";
 import "../Dependencies/Ownable.sol";
 import "../Dependencies/CheckContract.sol";
 import "../Dependencies/console.sol";
-import "../Interfaces/ILQTYToken.sol";
-import "../Interfaces/ILQTYStaking.sol";
+import "../Interfaces/IOPLToken.sol";
+import "../Interfaces/IOPLStaking.sol";
 import "../Dependencies/LiquityMath.sol";
 import "../Interfaces/IONEUToken.sol";
 
-contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
+contract OPLStaking is IOPLStaking, Ownable, CheckContract, BaseMath {
     using SafeMath for uint;
 
     // --- Data ---
-    string public constant NAME = "LQTYStaking";
+    string public constant NAME = "OPLStaking";
 
     mapping(address => uint) public stakes;
-    uint public totalLQTYStaked;
+    uint public totalOPLStaked;
 
-    uint public F_AUT; // Running sum of AUT fees per-LQTY-staked
-    uint public F_ONEU; // Running sum of LQTY fees per-LQTY-staked
+    uint public F_AUT; // Running sum of AUT fees per-OPL-staked
+    uint public F_ONEU; // Running sum of OPL fees per-OPL-staked
 
     // User snapshots of F_AUT and F_ONEU, taken at the point at which their latest deposit was made
     mapping(address => Snapshot) public snapshots;
@@ -32,7 +32,7 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
         uint F_ONEU_Snapshot;
     }
 
-    ILQTYToken public lqtyToken;
+    IOPLToken public lqtyToken;
     IONEUToken public oneuToken;
 
     address public troveManagerAddress;
@@ -41,7 +41,7 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
 
     // --- Events ---
 
-    event LQTYTokenAddressSet(address _lqtyTokenAddress);
+    event OPLTokenAddressSet(address _lqtyTokenAddress);
     event ONEUTokenAddressSet(address _oneuTokenAddress);
     event TroveManagerAddressSet(address _troveManager);
     event BorrowerOperationsAddressSet(address _borrowerOperationsAddress);
@@ -51,7 +51,7 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
     event StakingGainsWithdrawn(address indexed staker, uint ONEUGain, uint AUTGain);
     event F_AUTUpdated(uint _F_AUT);
     event F_ONEUUpdated(uint _F_ONEU);
-    event TotalLQTYStakedUpdated(uint _totalLQTYStaked);
+    event TotalOPLStakedUpdated(uint _totalOPLStaked);
     event EtherSent(address _account, uint _amount);
     event StakerSnapshotsUpdated(address _staker, uint _F_AUT, uint _F_ONEU);
 
@@ -70,14 +70,14 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
         checkContract(_borrowerOperationsAddress);
         checkContract(_activePoolAddress);
 
-        lqtyToken = ILQTYToken(_lqtyTokenAddress);
+        lqtyToken = IOPLToken(_lqtyTokenAddress);
         oneuToken = IONEUToken(_oneuTokenAddress);
         troveManagerAddress = _troveManagerAddress;
         borrowerOperationsAddress = _borrowerOperationsAddress;
         activePoolAddress = _activePoolAddress;
 
-        emit LQTYTokenAddressSet(_lqtyTokenAddress);
-        emit LQTYTokenAddressSet(_oneuTokenAddress);
+        emit OPLTokenAddressSet(_lqtyTokenAddress);
+        emit OPLTokenAddressSet(_oneuTokenAddress);
         emit TroveManagerAddressSet(_troveManagerAddress);
         emit BorrowerOperationsAddressSet(_borrowerOperationsAddress);
         emit ActivePoolAddressSet(_activePoolAddress);
@@ -86,8 +86,8 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
     }
 
     // If caller has a pre-existing stake, send any accumulated AUT and ONEU gains to them.
-    function stake(uint _LQTYamount) external override {
-        _requireNonZeroAmount(_LQTYamount);
+    function stake(uint _OPLamount) external override {
+        _requireNonZeroAmount(_OPLamount);
 
         uint currentStake = stakes[msg.sender];
 
@@ -101,15 +101,15 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
 
         _updateUserSnapshots(msg.sender);
 
-        uint newStake = currentStake.add(_LQTYamount);
+        uint newStake = currentStake.add(_OPLamount);
 
-        // Increase user’s stake and total LQTY staked
+        // Increase user’s stake and total OPL staked
         stakes[msg.sender] = newStake;
-        totalLQTYStaked = totalLQTYStaked.add(_LQTYamount);
-        emit TotalLQTYStakedUpdated(totalLQTYStaked);
+        totalOPLStaked = totalOPLStaked.add(_OPLamount);
+        emit TotalOPLStakedUpdated(totalOPLStaked);
 
-        // Transfer LQTY from caller to this contract
-        lqtyToken.sendToLQTYStaking(msg.sender, _LQTYamount);
+        // Transfer OPL from caller to this contract
+        lqtyToken.sendToOPLStaking(msg.sender, _OPLamount);
 
         emit StakeChanged(msg.sender, newStake);
         emit StakingGainsWithdrawn(msg.sender, ONEUGain, AUTGain);
@@ -121,9 +121,9 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
         }
     }
 
-    // Unstake the LQTY and send the it back to the caller, along with their accumulated ONEU & AUT gains.
+    // Unstake the OPL and send the it back to the caller, along with their accumulated ONEU & AUT gains.
     // If requested amount > stake, send their entire stake.
-    function unstake(uint _LQTYamount) external override {
+    function unstake(uint _OPLamount) external override {
         uint currentStake = stakes[msg.sender];
         _requireUserHasStake(currentStake);
 
@@ -133,18 +133,18 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
 
         _updateUserSnapshots(msg.sender);
 
-        if (_LQTYamount > 0) {
-            uint LQTYToWithdraw = LiquityMath._min(_LQTYamount, currentStake);
+        if (_OPLamount > 0) {
+            uint OPLToWithdraw = LiquityMath._min(_OPLamount, currentStake);
 
-            uint newStake = currentStake.sub(LQTYToWithdraw);
+            uint newStake = currentStake.sub(OPLToWithdraw);
 
-            // Decrease user's stake and total LQTY staked
+            // Decrease user's stake and total OPL staked
             stakes[msg.sender] = newStake;
-            totalLQTYStaked = totalLQTYStaked.sub(LQTYToWithdraw);
-            emit TotalLQTYStakedUpdated(totalLQTYStaked);
+            totalOPLStaked = totalOPLStaked.sub(OPLToWithdraw);
+            emit TotalOPLStakedUpdated(totalOPLStaked);
 
-            // Transfer unstaked LQTY to user
-            lqtyToken.transfer(msg.sender, LQTYToWithdraw);
+            // Transfer unstaked OPL to user
+            lqtyToken.transfer(msg.sender, OPLToWithdraw);
 
             emit StakeChanged(msg.sender, newStake);
         }
@@ -160,25 +160,25 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
 
     function increaseF_AUT(uint _AUTFee) external override {
         _requireCallerIsTroveManager();
-        uint AUTFeePerLQTYStaked;
+        uint AUTFeePerOPLStaked;
 
-        if (totalLQTYStaked > 0) {
-            AUTFeePerLQTYStaked = _AUTFee.mul(DECIMAL_PRECISION).div(totalLQTYStaked);
+        if (totalOPLStaked > 0) {
+            AUTFeePerOPLStaked = _AUTFee.mul(DECIMAL_PRECISION).div(totalOPLStaked);
         }
 
-        F_AUT = F_AUT.add(AUTFeePerLQTYStaked);
+        F_AUT = F_AUT.add(AUTFeePerOPLStaked);
         emit F_AUTUpdated(F_AUT);
     }
 
     function increaseF_ONEU(uint _ONEUFee) external override {
         _requireCallerIsBorrowerOperations();
-        uint ONEUFeePerLQTYStaked;
+        uint ONEUFeePerOPLStaked;
 
-        if (totalLQTYStaked > 0) {
-            ONEUFeePerLQTYStaked = _ONEUFee.mul(DECIMAL_PRECISION).div(totalLQTYStaked);
+        if (totalOPLStaked > 0) {
+            ONEUFeePerOPLStaked = _ONEUFee.mul(DECIMAL_PRECISION).div(totalOPLStaked);
         }
 
-        F_ONEU = F_ONEU.add(ONEUFeePerLQTYStaked);
+        F_ONEU = F_ONEU.add(ONEUFeePerOPLStaked);
         emit F_ONEUUpdated(F_ONEU);
     }
 
@@ -215,29 +215,29 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
     function _sendAUTGainToUser(uint AUTGain) internal {
         emit EtherSent(msg.sender, AUTGain);
         (bool success, ) = msg.sender.call{value: AUTGain}("");
-        require(success, "LQTYStaking: Failed to send accumulated AUTGain");
+        require(success, "OPLStaking: Failed to send accumulated AUTGain");
     }
 
     // --- 'require' functions ---
 
     function _requireCallerIsTroveManager() internal view {
-        require(msg.sender == troveManagerAddress, "LQTYStaking: caller is not TroveM");
+        require(msg.sender == troveManagerAddress, "OPLStaking: caller is not TroveM");
     }
 
     function _requireCallerIsBorrowerOperations() internal view {
-        require(msg.sender == borrowerOperationsAddress, "LQTYStaking: caller is not BorrowerOps");
+        require(msg.sender == borrowerOperationsAddress, "OPLStaking: caller is not BorrowerOps");
     }
 
     function _requireCallerIsActivePool() internal view {
-        require(msg.sender == activePoolAddress, "LQTYStaking: caller is not ActivePool");
+        require(msg.sender == activePoolAddress, "OPLStaking: caller is not ActivePool");
     }
 
     function _requireUserHasStake(uint currentStake) internal pure {
-        require(currentStake > 0, "LQTYStaking: User must have a non-zero stake");
+        require(currentStake > 0, "OPLStaking: User must have a non-zero stake");
     }
 
     function _requireNonZeroAmount(uint _amount) internal pure {
-        require(_amount > 0, "LQTYStaking: Amount must be non-zero");
+        require(_amount > 0, "OPLStaking: Amount must be non-zero");
     }
 
     receive() external payable {
