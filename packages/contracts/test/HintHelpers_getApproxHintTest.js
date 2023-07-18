@@ -88,7 +88,7 @@ contract("HintHelpers", async accounts => {
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
     );
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(
+    const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
       lpRewardsAddress,
       multisig
@@ -100,9 +100,9 @@ contract("HintHelpers", async accounts => {
     hintHelpers = contracts.hintHelpers;
     priceFeed = contracts.priceFeedTestnet;
 
-    await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-    await deploymentHelper.connectLQTYContracts(LQTYContracts);
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+    await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+    await deploymentHelper.connectOPLContracts(OPLContracts);
+    await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
 
     numAccounts = 10;
 

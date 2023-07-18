@@ -168,16 +168,16 @@ class MainnetDeploymentHelper {
     return coreContracts;
   }
 
-  async deployLQTYContractsMainnet(
+  async deployOPLContractsMainnet(
     bountyAddress,
     lpRewardsAddress,
     multisigAddress,
     deploymentState
   ) {
-    const lqtyStakingFactory = await this.getFactory("LQTYStaking");
+    const lqtyStakingFactory = await this.getFactory("OPLStaking");
     const lockupContractFactory_Factory = await this.getFactory("LockupContractFactory");
     const communityIssuanceFactory = await this.getFactory("CommunityIssuance");
-    const lqtyTokenFactory = await this.getFactory("LQTYToken");
+    const lqtyTokenFactory = await this.getFactory("OPLToken");
 
     const lqtyStaking = await this.loadOrDeploy(lqtyStakingFactory, "lqtyStaking", deploymentState);
     const lockupContractFactory = await this.loadOrDeploy(
@@ -191,7 +191,7 @@ class MainnetDeploymentHelper {
       deploymentState
     );
 
-    // Deploy LQTY Token, passing Community Issuance and Factory addresses to the constructor
+    // Deploy OPL Token, passing Community Issuance and Factory addresses to the constructor
     const lqtyTokenParams = [
       communityIssuance.address,
       lqtyStaking.address,
@@ -216,13 +216,13 @@ class MainnetDeploymentHelper {
       await this.verifyContract("lqtyToken", deploymentState, lqtyTokenParams);
     }
 
-    const LQTYContracts = {
+    const OPLContracts = {
       lqtyStaking,
       lockupContractFactory,
       communityIssuance,
       lqtyToken
     };
-    return LQTYContracts;
+    return OPLContracts;
   }
 
   async deployUnipoolMainnet(deploymentState) {
@@ -266,7 +266,7 @@ class MainnetDeploymentHelper {
     return owner == ZERO_ADDRESS;
   }
   // Connect contracts to their dependencies
-  async connectCoreContractsMainnet(contracts, LQTYContracts, chainlinkProxyAddress) {
+  async connectCoreContractsMainnet(contracts, OPLContracts, chainlinkProxyAddress) {
     const gasPrice = this.configParams.GAS_PRICE;
     // Set ChainlinkAggregatorProxy and TellorCaller in the PriceFeed
     (await this.isOwnershipRenounced(contracts.priceFeed)) ||
@@ -300,8 +300,8 @@ class MainnetDeploymentHelper {
           contracts.priceFeed.address,
           contracts.oneuToken.address,
           contracts.sortedTroves.address,
-          LQTYContracts.lqtyToken.address,
-          LQTYContracts.lqtyStaking.address,
+          OPLContracts.lqtyToken.address,
+          OPLContracts.lqtyStaking.address,
           { gasPrice }
         )
       ));
@@ -319,7 +319,7 @@ class MainnetDeploymentHelper {
           contracts.priceFeed.address,
           contracts.sortedTroves.address,
           contracts.oneuToken.address,
-          LQTYContracts.lqtyStaking.address,
+          OPLContracts.lqtyStaking.address,
           { gasPrice }
         )
       ));
@@ -334,7 +334,7 @@ class MainnetDeploymentHelper {
           contracts.oneuToken.address,
           contracts.sortedTroves.address,
           contracts.priceFeed.address,
-          LQTYContracts.communityIssuance.address,
+          OPLContracts.communityIssuance.address,
           { gasPrice }
         )
       ));
@@ -380,23 +380,23 @@ class MainnetDeploymentHelper {
       ));
   }
 
-  async connectLQTYContractsMainnet(LQTYContracts) {
+  async connectOPLContractsMainnet(OPLContracts) {
     const gasPrice = this.configParams.GAS_PRICE;
-    // Set LQTYToken address in LCF
-    (await this.isOwnershipRenounced(LQTYContracts.lqtyStaking)) ||
+    // Set OPLToken address in LCF
+    (await this.isOwnershipRenounced(OPLContracts.lqtyStaking)) ||
       (await this.sendAndWaitForTransaction(
-        LQTYContracts.lockupContractFactory.setLQTYTokenAddress(LQTYContracts.lqtyToken.address, {
+        OPLContracts.lockupContractFactory.setOPLTokenAddress(OPLContracts.lqtyToken.address, {
           gasPrice
         })
       ));
   }
 
-  async connectLQTYContractsToCoreMainnet(LQTYContracts, coreContracts) {
+  async connectOPLContractsToCoreMainnet(OPLContracts, coreContracts) {
     const gasPrice = this.configParams.GAS_PRICE;
-    (await this.isOwnershipRenounced(LQTYContracts.lqtyStaking)) ||
+    (await this.isOwnershipRenounced(OPLContracts.lqtyStaking)) ||
       (await this.sendAndWaitForTransaction(
-        LQTYContracts.lqtyStaking.setAddresses(
-          LQTYContracts.lqtyToken.address,
+        OPLContracts.lqtyStaking.setAddresses(
+          OPLContracts.lqtyToken.address,
           coreContracts.oneuToken.address,
           coreContracts.troveManager.address,
           coreContracts.borrowerOperations.address,
@@ -405,21 +405,21 @@ class MainnetDeploymentHelper {
         )
       ));
 
-    (await this.isOwnershipRenounced(LQTYContracts.communityIssuance)) ||
+    (await this.isOwnershipRenounced(OPLContracts.communityIssuance)) ||
       (await this.sendAndWaitForTransaction(
-        LQTYContracts.communityIssuance.setAddresses(
-          LQTYContracts.lqtyToken.address,
+        OPLContracts.communityIssuance.setAddresses(
+          OPLContracts.lqtyToken.address,
           coreContracts.stabilityPool.address,
           { gasPrice }
         )
       ));
   }
 
-  async connectUnipoolMainnet(uniPool, LQTYContracts, ONEUWETHPairAddr, duration) {
+  async connectUnipoolMainnet(uniPool, OPLContracts, ONEUWETHPairAddr, duration) {
     const gasPrice = this.configParams.GAS_PRICE;
     (await this.isOwnershipRenounced(uniPool)) ||
       (await this.sendAndWaitForTransaction(
-        uniPool.setParams(LQTYContracts.lqtyToken.address, ONEUWETHPairAddr, duration, { gasPrice })
+        uniPool.setParams(OPLContracts.lqtyToken.address, ONEUWETHPairAddr, duration, { gasPrice })
       ));
   }
 

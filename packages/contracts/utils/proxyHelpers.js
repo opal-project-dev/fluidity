@@ -387,7 +387,7 @@ class TokenProxy extends Proxy {
   }
 }
 
-class LQTYStakingProxy extends Proxy {
+class OPLStakingProxy extends Proxy {
   constructor(owner, proxies, tokenScriptAddress, token) {
     super(owner, proxies, tokenScriptAddress, token);
   }
@@ -413,5 +413,5 @@ module.exports = {
   StabilityPoolProxy,
   SortedTrovesProxy,
   TokenProxy,
-  LQTYStakingProxy
+  OPLStakingProxy
 };

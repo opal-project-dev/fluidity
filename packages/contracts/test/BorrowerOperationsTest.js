@@ -86,19 +86,19 @@ contract("BorrowerOperations", async accounts => {
       contracts.borrowerOperations = await BorrowerOperationsTester.new();
       contracts.troveManager = await TroveManagerTester.new();
       contracts = await deploymentHelper.deployONEUTokenTester(contracts);
-      const LQTYContracts = await deploymentHelper.deployLQTYTesterContractsHardhat(
+      const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
         bountyAddress,
         lpRewardsAddress,
         multisig
       );
 
-      await deploymentHelper.connectLQTYContracts(LQTYContracts);
-      await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-      await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+      await deploymentHelper.connectOPLContracts(OPLContracts);
+      await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+      await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
 
       if (withProxy) {
         const users = [alice, bob, carol, dennis, whale, A, B, C, D, E];
-        await deploymentHelper.deployProxyScripts(contracts, LQTYContracts, owner, users);
+        await deploymentHelper.deployProxyScripts(contracts, OPLContracts, owner, users);
       }
 
       priceFeed = contracts.priceFeedTestnet;
@@ -111,10 +111,10 @@ contract("BorrowerOperations", async accounts => {
       borrowerOperations = contracts.borrowerOperations;
       hintHelpers = contracts.hintHelpers;
 
-      lqtyStaking = LQTYContracts.lqtyStaking;
-      lqtyToken = LQTYContracts.lqtyToken;
-      communityIssuance = LQTYContracts.communityIssuance;
-      lockupContractFactory = LQTYContracts.lockupContractFactory;
+      lqtyStaking = OPLContracts.lqtyStaking;
+      lqtyToken = OPLContracts.lqtyToken;
+      communityIssuance = OPLContracts.communityIssuance;
+      lockupContractFactory = OPLContracts.lockupContractFactory;
 
       ONEU_GAS_COMPENSATION = await borrowerOperations.ONEU_GAS_COMPENSATION();
       MIN_NET_DEBT = await borrowerOperations.MIN_NET_DEBT();
@@ -1217,13 +1217,13 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(baseRate_2.lt(baseRate_1));
     });
 
-    it("withdrawONEU(): borrowing at non-zero base rate sends ONEU fee to LQTY staking contract", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+    it("withdrawONEU(): borrowing at non-zero base rate sends ONEU fee to OPL staking contract", async () => {
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY ONEU balance before == 0
+      // Check OPL ONEU balance before == 0
       const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
@@ -1263,7 +1263,7 @@ contract("BorrowerOperations", async accounts => {
       // D withdraws ONEU
       await borrowerOperations.withdrawONEU(th._100pct, dec(37, 18), C, C, { from: D });
 
-      // Check LQTY ONEU balance after has increased
+      // Check OPL ONEU balance after has increased
       const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
     });
@@ -1271,7 +1271,7 @@ contract("BorrowerOperations", async accounts => {
     if (!withProxy) {
       // TODO: use rawLogs instead of logs
       it("withdrawONEU(): borrowing at non-zero base records the (drawn debt + fee) on the Trove struct", async () => {
-        // time fast-forwards 1 year, and multisig stakes 1 LQTY
+        // time fast-forwards 1 year, and multisig stakes 1 OPL
         await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
         await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
         await lqtyStaking.stake(dec(1, 18), { from: multisig });
@@ -1334,13 +1334,13 @@ contract("BorrowerOperations", async accounts => {
       });
     }
 
-    it("withdrawONEU(): Borrowing at non-zero base rate increases the LQTY staking contract ONEU fees-per-unit-staked", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+    it("withdrawONEU(): Borrowing at non-zero base rate increases the OPL staking contract ONEU fees-per-unit-staked", async () => {
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY contract ONEU fees-per-unit-staked is zero
+      // Check OPL contract ONEU fees-per-unit-staked is zero
       const F_ONEU_Before = await lqtyStaking.F_ONEU();
       assert.equal(F_ONEU_Before, "0");
 
@@ -1380,18 +1380,18 @@ contract("BorrowerOperations", async accounts => {
       // D withdraws ONEU
       await borrowerOperations.withdrawONEU(th._100pct, toBN(dec(37, 18)), D, D, { from: D });
 
-      // Check LQTY contract ONEU fees-per-unit-staked has increased
+      // Check OPL contract ONEU fees-per-unit-staked has increased
       const F_ONEU_After = await lqtyStaking.F_ONEU();
       assert.isTrue(F_ONEU_After.gt(F_ONEU_Before));
     });
 
     it("withdrawONEU(): Borrowing at non-zero base rate sends requested amount to the user", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY Staking contract balance before == 0
+      // Check OPL Staking contract balance before == 0
       const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
@@ -1434,7 +1434,7 @@ contract("BorrowerOperations", async accounts => {
       const D_ONEURequest = toBN(dec(37, 18));
       await borrowerOperations.withdrawONEU(th._100pct, D_ONEURequest, D, D, { from: D });
 
-      // Check LQTY staking ONEU balance has increased
+      // Check OPL staking ONEU balance has increased
       const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
 
@@ -1470,21 +1470,21 @@ contract("BorrowerOperations", async accounts => {
       const baseRate_1 = await troveManager.baseRate();
       assert.equal(baseRate_1, "0");
 
-      // A artificially receives LQTY, then stakes it
+      // A artificially receives OPL, then stakes it
       await lqtyToken.unprotectedMint(A, dec(100, 18));
       await lqtyStaking.stake(dec(100, 18), { from: A });
 
       // 2 hours pass
       th.fastForwardTime(7200, web3.currentProvider);
 
-      // Check LQTY ONEU balance before == 0
+      // Check OPL ONEU balance before == 0
       const F_ONEU_Before = await lqtyStaking.F_ONEU();
       assert.equal(F_ONEU_Before, "0");
 
       // D withdraws ONEU
       await borrowerOperations.withdrawONEU(th._100pct, dec(37, 18), D, D, { from: D });
 
-      // Check LQTY ONEU balance after > 0
+      // Check OPL ONEU balance after > 0
       const F_ONEU_After = await lqtyStaking.F_ONEU();
       assert.isTrue(F_ONEU_After.gt("0"));
     });
@@ -2329,13 +2329,13 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(baseRate_2.lt(baseRate_1));
     });
 
-    it("adjustTrove(): borrowing at non-zero base rate sends ONEU fee to LQTY staking contract", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+    it("adjustTrove(): borrowing at non-zero base rate sends ONEU fee to OPL staking contract", async () => {
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY ONEU balance before == 0
+      // Check OPL ONEU balance before == 0
       const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
@@ -2374,7 +2374,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: D }
       });
 
-      // Check LQTY ONEU balance after has increased
+      // Check OPL ONEU balance after has increased
       const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
     });
@@ -2382,7 +2382,7 @@ contract("BorrowerOperations", async accounts => {
     if (!withProxy) {
       // TODO: use rawLogs instead of logs
       it("adjustTrove(): borrowing at non-zero base records the (drawn debt + fee) on the Trove struct", async () => {
-        // time fast-forwards 1 year, and multisig stakes 1 LQTY
+        // time fast-forwards 1 year, and multisig stakes 1 OPL
         await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
         await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
         await lqtyStaking.stake(dec(1, 18), { from: multisig });
@@ -2444,13 +2444,13 @@ contract("BorrowerOperations", async accounts => {
       });
     }
 
-    it("adjustTrove(): Borrowing at non-zero base rate increases the LQTY staking contract ONEU fees-per-unit-staked", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+    it("adjustTrove(): Borrowing at non-zero base rate increases the OPL staking contract ONEU fees-per-unit-staked", async () => {
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY contract ONEU fees-per-unit-staked is zero
+      // Check OPL contract ONEU fees-per-unit-staked is zero
       const F_ONEU_Before = await lqtyStaking.F_ONEU();
       assert.equal(F_ONEU_Before, "0");
 
@@ -2490,18 +2490,18 @@ contract("BorrowerOperations", async accounts => {
       // D adjusts trove
       await borrowerOperations.adjustTrove(th._100pct, 0, dec(37, 18), true, D, D, { from: D });
 
-      // Check LQTY contract ONEU fees-per-unit-staked has increased
+      // Check OPL contract ONEU fees-per-unit-staked has increased
       const F_ONEU_After = await lqtyStaking.F_ONEU();
       assert.isTrue(F_ONEU_After.gt(F_ONEU_Before));
     });
 
     it("adjustTrove(): Borrowing at non-zero base rate sends requested amount to the user", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY Staking contract balance before == 0
+      // Check OPL Staking contract balance before == 0
       const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
@@ -2544,7 +2544,7 @@ contract("BorrowerOperations", async accounts => {
       const ONEURequest_D = toBN(dec(40, 18));
       await borrowerOperations.adjustTrove(th._100pct, 0, ONEURequest_D, true, D, D, { from: D });
 
-      // Check LQTY staking ONEU balance has increased
+      // Check OPL staking ONEU balance has increased
       const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
 
@@ -2553,7 +2553,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(D_ONEUBalanceAfter.eq(D_ONEUBalanceBefore.add(ONEURequest_D)));
     });
 
-    it("adjustTrove(): Borrowing at zero base rate changes ONEU balance of LQTY staking contract", async () => {
+    it("adjustTrove(): Borrowing at zero base rate changes ONEU balance of OPL staking contract", async () => {
       await openTrove({ ICR: toBN(dec(10, 18)), extraParams: { from: whale } });
       await openTrove({
         extraONEUAmount: toBN(dec(30, 18)),
@@ -2595,7 +2595,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
     });
 
-    it("adjustTrove(): Borrowing at zero base rate changes LQTY staking contract ONEU fees-per-unit-staked", async () => {
+    it("adjustTrove(): Borrowing at zero base rate changes OPL staking contract ONEU fees-per-unit-staked", async () => {
       await openTrove({
         extraONEUAmount: toBN(dec(20000, 18)),
         ICR: toBN(dec(2, 18)),
@@ -2629,7 +2629,7 @@ contract("BorrowerOperations", async accounts => {
       // 2 hours pass
       th.fastForwardTime(7200, web3.currentProvider);
 
-      // A artificially receives LQTY, then stakes it
+      // A artificially receives OPL, then stakes it
       await lqtyToken.unprotectedMint(A, dec(100, 18));
       await lqtyStaking.stake(dec(100, 18), { from: A });
 
@@ -3078,7 +3078,7 @@ contract("BorrowerOperations", async accounts => {
 
       assert.isTrue(await th.checkRecoveryMode(contracts));
 
-      // B stakes LQTY
+      // B stakes OPL
       await lqtyToken.unprotectedMint(bob, dec(100, 18));
       await lqtyStaking.stake(dec(100, 18), { from: bob });
 
@@ -5074,13 +5074,13 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(baseRate_2.lt(baseRate_1));
     });
 
-    it("openTrove(): borrowing at non-zero base rate sends ONEU fee to LQTY staking contract", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+    it("openTrove(): borrowing at non-zero base rate sends ONEU fee to OPL staking contract", async () => {
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY ONEU balance before == 0
+      // Check OPL ONEU balance before == 0
       const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
@@ -5123,7 +5123,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: D }
       });
 
-      // Check LQTY ONEU balance after has increased
+      // Check OPL ONEU balance after has increased
       const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
     });
@@ -5131,7 +5131,7 @@ contract("BorrowerOperations", async accounts => {
     if (!withProxy) {
       // TODO: use rawLogs instead of logs
       it("openTrove(): borrowing at non-zero base records the (drawn debt + fee  + liq. reserve) on the Trove struct", async () => {
-        // time fast-forwards 1 year, and multisig stakes 1 LQTY
+        // time fast-forwards 1 year, and multisig stakes 1 OPL
         await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
         await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
         await lqtyStaking.stake(dec(1, 18), { from: multisig });
@@ -5193,13 +5193,13 @@ contract("BorrowerOperations", async accounts => {
       });
     }
 
-    it("openTrove(): Borrowing at non-zero base rate increases the LQTY staking contract ONEU fees-per-unit-staked", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+    it("openTrove(): Borrowing at non-zero base rate increases the OPL staking contract ONEU fees-per-unit-staked", async () => {
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY contract ONEU fees-per-unit-staked is zero
+      // Check OPL contract ONEU fees-per-unit-staked is zero
       const F_ONEU_Before = await lqtyStaking.F_ONEU();
       assert.equal(F_ONEU_Before, "0");
 
@@ -5242,18 +5242,18 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: D }
       });
 
-      // Check LQTY contract ONEU fees-per-unit-staked has increased
+      // Check OPL contract ONEU fees-per-unit-staked has increased
       const F_ONEU_After = await lqtyStaking.F_ONEU();
       assert.isTrue(F_ONEU_After.gt(F_ONEU_Before));
     });
 
     it("openTrove(): Borrowing at non-zero base rate sends requested amount to the user", async () => {
-      // time fast-forwards 1 year, and multisig stakes 1 LQTY
+      // time fast-forwards 1 year, and multisig stakes 1 OPL
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
       await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
-      // Check LQTY Staking contract balance before == 0
+      // Check OPL Staking contract balance before == 0
       const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
@@ -5296,7 +5296,7 @@ contract("BorrowerOperations", async accounts => {
         value: dec(500, "ether")
       });
 
-      // Check LQTY staking ONEU balance has increased
+      // Check OPL staking ONEU balance has increased
       const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
 
@@ -5305,7 +5305,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(ONEURequest_D.eq(ONEUBalance_D));
     });
 
-    it("openTrove(): Borrowing at zero base rate changes the LQTY staking contract ONEU fees-per-unit-staked", async () => {
+    it("openTrove(): Borrowing at zero base rate changes the OPL staking contract ONEU fees-per-unit-staked", async () => {
       await openTrove({
         extraONEUAmount: toBN(dec(5000, 18)),
         ICR: toBN(dec(2, 18)),
@@ -5329,11 +5329,11 @@ contract("BorrowerOperations", async accounts => {
       // 2 hours pass
       th.fastForwardTime(7200, web3.currentProvider);
 
-      // Check ONEU reward per LQTY staked == 0
+      // Check ONEU reward per OPL staked == 0
       const F_ONEU_Before = await lqtyStaking.F_ONEU();
       assert.equal(F_ONEU_Before, "0");
 
-      // A stakes LQTY
+      // A stakes OPL
       await lqtyToken.unprotectedMint(A, dec(100, 18));
       await lqtyStaking.stake(dec(100, 18), { from: A });
 
@@ -5344,7 +5344,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: D }
       });
 
-      // Check ONEU reward per LQTY staked > 0
+      // Check ONEU reward per OPL staked > 0
       const F_ONEU_After = await lqtyStaking.F_ONEU();
       assert.isTrue(F_ONEU_After.gt(toBN("0")));
     });

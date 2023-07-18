@@ -11,14 +11,14 @@ const FunctionCaller = artifacts.require("./TestContracts/FunctionCaller.sol");
 const BorrowerOperations = artifacts.require("./BorrowerOperations.sol");
 const HintHelpers = artifacts.require("./HintHelpers.sol");
 
-const LQTYStaking = artifacts.require("./LQTYStaking.sol");
-const LQTYToken = artifacts.require("./LQTYToken.sol");
+const OPLStaking = artifacts.require("./OPLStaking.sol");
+const OPLToken = artifacts.require("./OPLToken.sol");
 const LockupContractFactory = artifacts.require("./LockupContractFactory.sol");
 const CommunityIssuance = artifacts.require("./CommunityIssuance.sol");
 
 const Unipool = artifacts.require("./Unipool.sol");
 
-const LQTYTokenTester = artifacts.require("./LQTYTokenTester.sol");
+const OPLTokenTester = artifacts.require("./OPLTokenTester.sol");
 const CommunityIssuanceTester = artifacts.require("./CommunityIssuanceTester.sol");
 const StabilityPoolTester = artifacts.require("./StabilityPoolTester.sol");
 const ActivePoolTester = artifacts.require("./ActivePoolTester.sol");
@@ -34,7 +34,7 @@ const BorrowerWrappersScript = artifacts.require("BorrowerWrappersScript");
 const TroveManagerScript = artifacts.require("TroveManagerScript");
 const StabilityPoolScript = artifacts.require("StabilityPoolScript");
 const TokenScript = artifacts.require("TokenScript");
-const LQTYStakingScript = artifacts.require("LQTYStakingScript");
+const OPLStakingScript = artifacts.require("OPLStakingScript");
 const {
   buildUserProxies,
   BorrowerOperationsProxy,
@@ -43,16 +43,16 @@ const {
   StabilityPoolProxy,
   SortedTrovesProxy,
   TokenProxy,
-  LQTYStakingProxy
+  OPLStakingProxy
 } = require("../utils/proxyHelpers.js");
 
 /* "Liquity core" consists of all contracts in the core Liquity system.
 
-LQTY contracts consist of only those contracts related to the LQTY Token:
+OPL contracts consist of only those contracts related to the OPL Token:
 
--the LQTY token
+-the OPL token
 -the Lockup factory and lockup contracts
--the LQTYStaking contract
+-the OPLStaking contract
 -the CommunityIssuance contract 
 */
 
@@ -72,15 +72,15 @@ class DeploymentHelper {
     }
   }
 
-  static async deployLQTYContracts(bountyAddress, lpRewardsAddress, multisigAddress) {
+  static async deployOPLContracts(bountyAddress, lpRewardsAddress, multisigAddress) {
     const cmdLineArgs = process.argv;
     const frameworkPath = cmdLineArgs[1];
     // console.log(`Framework used:  ${frameworkPath}`)
 
     if (frameworkPath.includes("hardhat")) {
-      return this.deployLQTYContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress);
+      return this.deployOPLContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress);
     } else if (frameworkPath.includes("truffle")) {
-      return this.deployLQTYContractsTruffle(bountyAddress, lpRewardsAddress, multisigAddress);
+      return this.deployOPLContractsTruffle(bountyAddress, lpRewardsAddress, multisigAddress);
     }
   }
 
@@ -157,17 +157,17 @@ class DeploymentHelper {
     return testerContracts;
   }
 
-  static async deployLQTYContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress) {
-    const lqtyStaking = await LQTYStaking.new();
+  static async deployOPLContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress) {
+    const lqtyStaking = await OPLStaking.new();
     const lockupContractFactory = await LockupContractFactory.new();
     const communityIssuance = await CommunityIssuance.new();
 
-    LQTYStaking.setAsDeployed(lqtyStaking);
+    OPLStaking.setAsDeployed(lqtyStaking);
     LockupContractFactory.setAsDeployed(lockupContractFactory);
     CommunityIssuance.setAsDeployed(communityIssuance);
 
-    // Deploy LQTY Token, passing Community Issuance and Factory addresses to the constructor
-    const lqtyToken = await LQTYToken.new(
+    // Deploy OPL Token, passing Community Issuance and Factory addresses to the constructor
+    const lqtyToken = await OPLToken.new(
       communityIssuance.address,
       lqtyStaking.address,
       lockupContractFactory.address,
@@ -175,28 +175,28 @@ class DeploymentHelper {
       lpRewardsAddress,
       multisigAddress
     );
-    LQTYToken.setAsDeployed(lqtyToken);
+    OPLToken.setAsDeployed(lqtyToken);
 
-    const LQTYContracts = {
+    const OPLContracts = {
       lqtyStaking,
       lockupContractFactory,
       communityIssuance,
       lqtyToken
     };
-    return LQTYContracts;
+    return OPLContracts;
   }
 
-  static async deployLQTYTesterContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress) {
-    const lqtyStaking = await LQTYStaking.new();
+  static async deployOPLTesterContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress) {
+    const lqtyStaking = await OPLStaking.new();
     const lockupContractFactory = await LockupContractFactory.new();
     const communityIssuance = await CommunityIssuanceTester.new();
 
-    LQTYStaking.setAsDeployed(lqtyStaking);
+    OPLStaking.setAsDeployed(lqtyStaking);
     LockupContractFactory.setAsDeployed(lockupContractFactory);
     CommunityIssuanceTester.setAsDeployed(communityIssuance);
 
-    // Deploy LQTY Token, passing Community Issuance and Factory addresses to the constructor
-    const lqtyToken = await LQTYTokenTester.new(
+    // Deploy OPL Token, passing Community Issuance and Factory addresses to the constructor
+    const lqtyToken = await OPLTokenTester.new(
       communityIssuance.address,
       lqtyStaking.address,
       lockupContractFactory.address,
@@ -204,15 +204,15 @@ class DeploymentHelper {
       lpRewardsAddress,
       multisigAddress
     );
-    LQTYTokenTester.setAsDeployed(lqtyToken);
+    OPLTokenTester.setAsDeployed(lqtyToken);
 
-    const LQTYContracts = {
+    const OPLContracts = {
       lqtyStaking,
       lockupContractFactory,
       communityIssuance,
       lqtyToken
     };
-    return LQTYContracts;
+    return OPLContracts;
   }
 
   static async deployLiquityCoreTruffle() {
@@ -249,14 +249,14 @@ class DeploymentHelper {
     return coreContracts;
   }
 
-  static async deployLQTYContractsTruffle(bountyAddress, lpRewardsAddress, multisigAddress) {
+  static async deployOPLContractsTruffle(bountyAddress, lpRewardsAddress, multisigAddress) {
     const lqtyStaking = await lqtyStaking.new();
     const lockupContractFactory = await LockupContractFactory.new();
     const communityIssuance = await CommunityIssuance.new();
 
-    /* Deploy LQTY Token, passing Community Issuance,  LQTYStaking, and Factory addresses 
+    /* Deploy OPL Token, passing Community Issuance,  OPLStaking, and Factory addresses 
     to the constructor  */
-    const lqtyToken = await LQTYToken.new(
+    const lqtyToken = await OPLToken.new(
       communityIssuance.address,
       lqtyStaking.address,
       lockupContractFactory.address,
@@ -265,13 +265,13 @@ class DeploymentHelper {
       multisigAddress
     );
 
-    const LQTYContracts = {
+    const OPLContracts = {
       lqtyStaking,
       lockupContractFactory,
       communityIssuance,
       lqtyToken
     };
-    return LQTYContracts;
+    return OPLContracts;
   }
 
   static async deployONEUToken(contracts) {
@@ -292,13 +292,13 @@ class DeploymentHelper {
     return contracts;
   }
 
-  static async deployProxyScripts(contracts, LQTYContracts, owner, users) {
+  static async deployProxyScripts(contracts, OPLContracts, owner, users) {
     const proxies = await buildUserProxies(users);
 
     const borrowerWrappersScript = await BorrowerWrappersScript.new(
       contracts.borrowerOperations.address,
       contracts.troveManager.address,
-      LQTYContracts.lqtyStaking.address
+      OPLContracts.lqtyStaking.address
     );
     contracts.borrowerWrappers = new BorrowerWrappersProxy(
       owner,
@@ -342,25 +342,25 @@ class DeploymentHelper {
       contracts.oneuToken
     );
 
-    const lqtyTokenScript = await TokenScript.new(LQTYContracts.lqtyToken.address);
-    LQTYContracts.lqtyToken = new TokenProxy(
+    const lqtyTokenScript = await TokenScript.new(OPLContracts.lqtyToken.address);
+    OPLContracts.lqtyToken = new TokenProxy(
       owner,
       proxies,
       lqtyTokenScript.address,
-      LQTYContracts.lqtyToken
+      OPLContracts.lqtyToken
     );
 
-    const lqtyStakingScript = await LQTYStakingScript.new(LQTYContracts.lqtyStaking.address);
-    LQTYContracts.lqtyStaking = new LQTYStakingProxy(
+    const lqtyStakingScript = await OPLStakingScript.new(OPLContracts.lqtyStaking.address);
+    OPLContracts.lqtyStaking = new OPLStakingProxy(
       owner,
       proxies,
       lqtyStakingScript.address,
-      LQTYContracts.lqtyStaking
+      OPLContracts.lqtyStaking
     );
   }
 
   // Connect contracts to their dependencies
-  static async connectCoreContracts(contracts, LQTYContracts) {
+  static async connectCoreContracts(contracts, OPLContracts) {
     // set TroveManager addr in SortedTroves
     await contracts.sortedTroves.setParams(
       maxBytes32,
@@ -383,8 +383,8 @@ class DeploymentHelper {
       contracts.priceFeedTestnet.address,
       contracts.oneuToken.address,
       contracts.sortedTroves.address,
-      LQTYContracts.lqtyToken.address,
-      LQTYContracts.lqtyStaking.address
+      OPLContracts.lqtyToken.address,
+      OPLContracts.lqtyStaking.address
     );
 
     // set contracts in BorrowerOperations
@@ -398,7 +398,7 @@ class DeploymentHelper {
       contracts.priceFeedTestnet.address,
       contracts.sortedTroves.address,
       contracts.oneuToken.address,
-      LQTYContracts.lqtyStaking.address
+      OPLContracts.lqtyStaking.address
     );
 
     // set contracts in the Pools
@@ -409,7 +409,7 @@ class DeploymentHelper {
       contracts.oneuToken.address,
       contracts.sortedTroves.address,
       contracts.priceFeedTestnet.address,
-      LQTYContracts.communityIssuance.address
+      OPLContracts.communityIssuance.address
     );
 
     await contracts.activePool.setAddresses(
@@ -437,28 +437,28 @@ class DeploymentHelper {
     );
   }
 
-  static async connectLQTYContracts(LQTYContracts) {
-    // Set LQTYToken address in LCF
-    await LQTYContracts.lockupContractFactory.setLQTYTokenAddress(LQTYContracts.lqtyToken.address);
+  static async connectOPLContracts(OPLContracts) {
+    // Set OPLToken address in LCF
+    await OPLContracts.lockupContractFactory.setOPLTokenAddress(OPLContracts.lqtyToken.address);
   }
 
-  static async connectLQTYContractsToCore(LQTYContracts, coreContracts) {
-    await LQTYContracts.lqtyStaking.setAddresses(
-      LQTYContracts.lqtyToken.address,
+  static async connectOPLContractsToCore(OPLContracts, coreContracts) {
+    await OPLContracts.lqtyStaking.setAddresses(
+      OPLContracts.lqtyToken.address,
       coreContracts.oneuToken.address,
       coreContracts.troveManager.address,
       coreContracts.borrowerOperations.address,
       coreContracts.activePool.address
     );
 
-    await LQTYContracts.communityIssuance.setAddresses(
-      LQTYContracts.lqtyToken.address,
+    await OPLContracts.communityIssuance.setAddresses(
+      OPLContracts.lqtyToken.address,
       coreContracts.stabilityPool.address
     );
   }
 
-  static async connectUnipool(uniPool, LQTYContracts, uniswapPairAddr, duration) {
-    await uniPool.setParams(LQTYContracts.lqtyToken.address, uniswapPairAddr, duration);
+  static async connectUnipool(uniPool, OPLContracts, uniswapPairAddr, duration) {
+    await uniPool.setParams(OPLContracts.lqtyToken.address, uniswapPairAddr, duration);
   }
 }
 module.exports = DeploymentHelper;

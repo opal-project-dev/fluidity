@@ -42,7 +42,7 @@ contract(
       coreContracts = await deploymentHelper.deployLiquityCore();
       coreContracts.troveManager = await TroveManagerTester.new();
       coreContracts = await deploymentHelper.deployONEUTokenTester(coreContracts);
-      const LQTYContracts = await deploymentHelper.deployLQTYTesterContractsHardhat(
+      const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
         bountyAddress,
         lpRewardsAddress,
         multisig
@@ -59,14 +59,14 @@ contract(
       functionCaller = coreContracts.functionCaller;
       borrowerOperations = coreContracts.borrowerOperations;
 
-      lqtyStaking = LQTYContracts.lqtyStaking;
-      lqtyToken = LQTYContracts.lqtyToken;
-      communityIssuance = LQTYContracts.communityIssuance;
-      lockupContractFactory = LQTYContracts.lockupContractFactory;
+      lqtyStaking = OPLContracts.lqtyStaking;
+      lqtyToken = OPLContracts.lqtyToken;
+      communityIssuance = OPLContracts.communityIssuance;
+      lockupContractFactory = OPLContracts.lockupContractFactory;
 
-      await deploymentHelper.connectLQTYContracts(LQTYContracts);
-      await deploymentHelper.connectCoreContracts(coreContracts, LQTYContracts);
-      await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, coreContracts);
+      await deploymentHelper.connectOPLContracts(OPLContracts);
+      await deploymentHelper.connectCoreContracts(coreContracts, OPLContracts);
+      await deploymentHelper.connectOPLContractsToCore(OPLContracts, coreContracts);
 
       for (account of accounts.slice(0, 10)) {
         await th.openTrove(coreContracts, {
@@ -444,7 +444,7 @@ contract(
     });
 
     describe("LockupContract", async accounts => {
-      it("withdrawLQTY(): reverts when caller is not beneficiary", async () => {
+      it("withdrawOPL(): reverts when caller is not beneficiary", async () => {
         // deploy new LC with Carol as beneficiary
         const unlockTime = (await lqtyToken.getDeploymentStartTime()).add(
           toBN(timeValues.SECONDS_IN_ONE_YEAR)
@@ -455,26 +455,26 @@ contract(
 
         const LC = await th.getLCFromDeploymentTx(deployedLCtx);
 
-        // LQTY Multisig funds the LC
+        // OPL Multisig funds the LC
         await lqtyToken.transfer(LC.address, dec(100, 18), { from: multisig });
 
         // Fast-forward one year, so that beneficiary can withdraw
         await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-        // Bob attempts to withdraw LQTY
+        // Bob attempts to withdraw OPL
         try {
-          const txBob = await LC.withdrawLQTY({ from: bob });
+          const txBob = await LC.withdrawOPL({ from: bob });
         } catch (err) {
           assert.include(err.message, "revert");
         }
 
         // Confirm beneficiary, Carol, can withdraw
-        const txCarol = await LC.withdrawLQTY({ from: carol });
+        const txCarol = await LC.withdrawOPL({ from: carol });
         assert.isTrue(txCarol.receipt.status);
       });
     });
 
-    describe("LQTYStaking", async accounts => {
+    describe("OPLStaking", async accounts => {
       it("increaseF_ONEU(): reverts when caller is not TroveManager", async () => {
         try {
           const txAlice = await lqtyStaking.increaseF_ONEU(dec(1, 18), { from: alice });
@@ -484,14 +484,14 @@ contract(
       });
     });
 
-    describe("LQTYToken", async accounts => {
-      it("sendToLQTYStaking(): reverts when caller is not the LQTYSstaking", async () => {
-        // Check multisig has some LQTY
+    describe("OPLToken", async accounts => {
+      it("sendToOPLStaking(): reverts when caller is not the OPLSstaking", async () => {
+        // Check multisig has some OPL
         assert.isTrue((await lqtyToken.balanceOf(multisig)).gt(toBN("0")));
 
         // multisig tries to call it
         try {
-          const tx = await lqtyToken.sendToLQTYStaking(multisig, 1, { from: multisig });
+          const tx = await lqtyToken.sendToOPLStaking(multisig, 1, { from: multisig });
         } catch (err) {
           assert.include(err.message, "revert");
         }
@@ -499,13 +499,13 @@ contract(
         // FF >> time one year
         await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
-        // Owner transfers 1 LQTY to bob
+        // Owner transfers 1 OPL to bob
         await lqtyToken.transfer(bob, dec(1, 18), { from: multisig });
         assert.equal(await lqtyToken.balanceOf(bob), dec(1, 18));
 
         // Bob tries to call it
         try {
-          const tx = await lqtyToken.sendToLQTYStaking(bob, dec(1, 18), { from: bob });
+          const tx = await lqtyToken.sendToOPLStaking(bob, dec(1, 18), { from: bob });
         } catch (err) {
           assert.include(err.message, "revert");
         }
@@ -513,18 +513,18 @@ contract(
     });
 
     describe("CommunityIssuance", async accounts => {
-      it("sendLQTY(): reverts when caller is not the StabilityPool", async () => {
-        const tx1 = communityIssuance.sendLQTY(alice, dec(100, 18), { from: alice });
-        const tx2 = communityIssuance.sendLQTY(bob, dec(100, 18), { from: alice });
-        const tx3 = communityIssuance.sendLQTY(stabilityPool.address, dec(100, 18), { from: alice });
+      it("sendOPL(): reverts when caller is not the StabilityPool", async () => {
+        const tx1 = communityIssuance.sendOPL(alice, dec(100, 18), { from: alice });
+        const tx2 = communityIssuance.sendOPL(bob, dec(100, 18), { from: alice });
+        const tx3 = communityIssuance.sendOPL(stabilityPool.address, dec(100, 18), { from: alice });
 
         assertRevert(tx1);
         assertRevert(tx2);
         assertRevert(tx3);
       });
 
-      it("issueLQTY(): reverts when caller is not the StabilityPool", async () => {
-        const tx1 = communityIssuance.issueLQTY({ from: alice });
+      it("issueOPL(): reverts when caller is not the StabilityPool", async () => {
+        const tx1 = communityIssuance.issueOPL({ from: alice });
 
         assertRevert(tx1);
       });

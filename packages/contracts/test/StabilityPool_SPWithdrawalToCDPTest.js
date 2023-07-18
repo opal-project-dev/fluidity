@@ -58,7 +58,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
     beforeEach(async () => {
       contracts = await deploymentHelper.deployLiquityCore();
-      const LQTYContracts = await deploymentHelper.deployLQTYContracts(
+      const OPLContracts = await deploymentHelper.deployOPLContracts(
         bountyAddress,
         lpRewardsAddress,
         multisig
@@ -75,9 +75,9 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       defaultPool = contracts.defaultPool;
       borrowerOperations = contracts.borrowerOperations;
 
-      await deploymentHelper.connectLQTYContracts(LQTYContracts);
-      await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-      await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+      await deploymentHelper.connectOPLContracts(OPLContracts);
+      await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+      await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
     });
 
     // --- Compounding tests ---

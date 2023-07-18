@@ -2,7 +2,7 @@ const deploymentHelper = require("../utils/deploymentHelpers.js");
 const testHelpers = require("../utils/testHelpers.js");
 
 const TroveManagerTester = artifacts.require("TroveManagerTester");
-const LQTYTokenTester = artifacts.require("LQTYTokenTester");
+const OPLTokenTester = artifacts.require("OPLTokenTester");
 
 const th = testHelpers.TestHelper;
 
@@ -24,7 +24,7 @@ const {
   StabilityPoolProxy,
   SortedTrovesProxy,
   TokenProxy,
-  LQTYStakingProxy
+  OPLStakingProxy
 } = require("../utils/proxyHelpers.js");
 
 contract("BorrowerWrappers", async accounts => {
@@ -77,21 +77,21 @@ contract("BorrowerWrappers", async accounts => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
     contracts = await deploymentHelper.deployONEUToken(contracts);
-    const LQTYContracts = await deploymentHelper.deployLQTYTesterContractsHardhat(
+    const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
       bountyAddress,
       lpRewardsAddress,
       multisig
     );
 
-    await deploymentHelper.connectLQTYContracts(LQTYContracts);
-    await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, contracts);
+    await deploymentHelper.connectOPLContracts(OPLContracts);
+    await deploymentHelper.connectCoreContracts(contracts, OPLContracts);
+    await deploymentHelper.connectOPLContractsToCore(OPLContracts, contracts);
 
     troveManagerOriginal = contracts.troveManager;
-    lqtyTokenOriginal = LQTYContracts.lqtyToken;
+    lqtyTokenOriginal = OPLContracts.lqtyToken;
 
     const users = [alice, bob, carol, dennis, whale, A, B, C, D, E, defaulter_1, defaulter_2];
-    await deploymentHelper.deployProxyScripts(contracts, LQTYContracts, owner, users);
+    await deploymentHelper.deployProxyScripts(contracts, OPLContracts, owner, users);
 
     priceFeed = contracts.priceFeedTestnet;
     oneuToken = contracts.oneuToken;
@@ -103,8 +103,8 @@ contract("BorrowerWrappers", async accounts => {
     collSurplusPool = contracts.collSurplusPool;
     borrowerOperations = contracts.borrowerOperations;
     borrowerWrappers = contracts.borrowerWrappers;
-    lqtyStaking = LQTYContracts.lqtyStaking;
-    lqtyToken = LQTYContracts.lqtyToken;
+    lqtyStaking = OPLContracts.lqtyStaking;
+    lqtyToken = OPLContracts.lqtyToken;
 
     ONEU_GAS_COMPENSATION = await borrowerOperations.ONEU_GAS_COMPENSATION();
   });
@@ -393,10 +393,10 @@ contract("BorrowerWrappers", async accounts => {
     const borrowingRate = await troveManagerOriginal.getBorrowingRateWithDecay();
     const netDebtChange = proportionalONEU.mul(mv._1e18BN).div(mv._1e18BN.add(borrowingRate));
 
-    // to force LQTY issuance
+    // to force OPL issuance
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider);
 
-    const expectedLQTYGain_A = toBN("50373424199406504708132");
+    const expectedOPLGain_A = toBN("50373424199406504708132");
 
     await priceFeed.setPrice(price.mul(toBN(2)));
 
@@ -433,8 +433,8 @@ contract("BorrowerWrappers", async accounts => {
     // check lqty balance remains the same
     th.assertIsApproximatelyEqual(lqtyBalanceAfter, lqtyBalanceBefore);
 
-    // LQTY staking
-    th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedLQTYGain_A));
+    // OPL staking
+    th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedOPLGain_A));
 
     // Expect Alice has withdrawn all AUT gain
     const alice_pendingAUTGain = await stabilityPool.getDepositorAUTGain(alice);
@@ -454,7 +454,7 @@ contract("BorrowerWrappers", async accounts => {
     // alice opens trove
     await openTrove({ extraONEUAmount: toBN(dec(150, 18)), extraParams: { from: alice } });
 
-    // mint some LQTY
+    // mint some OPL
     await lqtyTokenOriginal.unprotectedMint(
       borrowerOperations.getProxyAddressFromUser(whale),
       dec(1850, 18)
@@ -464,7 +464,7 @@ contract("BorrowerWrappers", async accounts => {
       dec(150, 18)
     );
 
-    // stake LQTY
+    // stake OPL
     await lqtyStaking.stake(dec(1850, 18), { from: whale });
     await lqtyStaking.stake(dec(150, 18), { from: alice });
 
@@ -509,7 +509,7 @@ contract("BorrowerWrappers", async accounts => {
     //await openTrove({ extraONEUAmount: toBN(dec(150, 18)), extraParams: { from: alice } })
     //await stabilityPool.provideToSP(dec(150, 18), ZERO_ADDRESS, { from: alice })
 
-    // mint some LQTY
+    // mint some OPL
     await lqtyTokenOriginal.unprotectedMint(
       borrowerOperations.getProxyAddressFromUser(whale),
       dec(1850, 18)
@@ -519,7 +519,7 @@ contract("BorrowerWrappers", async accounts => {
       dec(150, 18)
     );
 
-    // stake LQTY
+    // stake OPL
     await lqtyStaking.stake(dec(1850, 18), { from: whale });
     await lqtyStaking.stake(dec(150, 18), { from: alice });
 
@@ -577,7 +577,7 @@ contract("BorrowerWrappers", async accounts => {
     th.assertIsApproximatelyEqual(ICRAfter, ICRBefore);
     th.assertIsApproximatelyEqual(depositAfter, depositBefore, 10000);
     th.assertIsApproximatelyEqual(lqtyBalanceBefore, lqtyBalanceAfter);
-    // LQTY staking
+    // OPL staking
     th.assertIsApproximatelyEqual(stakeAfter, stakeBefore);
 
     // Expect Alice has withdrawn all AUT gain
@@ -606,7 +606,7 @@ contract("BorrowerWrappers", async accounts => {
     await openTrove({ extraONEUAmount: toBN(dec(150, 18)), extraParams: { from: alice } });
     await stabilityPool.provideToSP(dec(150, 18), ZERO_ADDRESS, { from: alice });
 
-    // mint some LQTY
+    // mint some OPL
     await lqtyTokenOriginal.unprotectedMint(
       borrowerOperations.getProxyAddressFromUser(whale),
       dec(1850, 18)
@@ -616,7 +616,7 @@ contract("BorrowerWrappers", async accounts => {
       dec(150, 18)
     );
 
-    // stake LQTY
+    // stake OPL
     await lqtyStaking.stake(dec(1850, 18), { from: whale });
     await lqtyStaking.stake(dec(150, 18), { from: alice });
 
@@ -652,7 +652,7 @@ contract("BorrowerWrappers", async accounts => {
       .mul(toBN(dec(1, 18)))
       .div(toBN(dec(1, 18)).add(borrowingRate));
 
-    const expectedLQTYGain_A = toBN("839557069990108416000000");
+    const expectedOPLGain_A = toBN("839557069990108416000000");
 
     const proxyAddress = borrowerWrappers.getProxyAddressFromUser(alice);
     // Alice claims staking rewards and puts them back in the system through the proxy
@@ -689,8 +689,8 @@ contract("BorrowerWrappers", async accounts => {
     // check lqty balance remains the same
     th.assertIsApproximatelyEqual(lqtyBalanceBefore, lqtyBalanceAfter);
 
-    // LQTY staking
-    th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedLQTYGain_A));
+    // OPL staking
+    th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedOPLGain_A));
 
     // Expect Alice has withdrawn all AUT gain
     const alice_pendingAUTGain = await stabilityPool.getDepositorAUTGain(alice);
@@ -711,7 +711,7 @@ contract("BorrowerWrappers", async accounts => {
     await openTrove({ extraONEUAmount: toBN(dec(150, 18)), extraParams: { from: alice } });
     await stabilityPool.provideToSP(dec(150, 18), ZERO_ADDRESS, { from: alice });
 
-    // mint some LQTY
+    // mint some OPL
     await lqtyTokenOriginal.unprotectedMint(
       borrowerOperations.getProxyAddressFromUser(whale),
       dec(1850, 18)
@@ -721,7 +721,7 @@ contract("BorrowerWrappers", async accounts => {
       dec(150, 18)
     );
 
-    // stake LQTY
+    // stake OPL
     await lqtyStaking.stake(dec(1850, 18), { from: whale });
     await lqtyStaking.stake(dec(150, 18), { from: alice });
 
@@ -797,7 +797,7 @@ contract("BorrowerWrappers", async accounts => {
     await openTrove({ extraONEUAmount: toBN(dec(150, 18)), extraParams: { from: alice } });
     await stabilityPool.provideToSP(dec(150, 18), ZERO_ADDRESS, { from: alice });
 
-    // mint some LQTY
+    // mint some OPL
     await lqtyTokenOriginal.unprotectedMint(
       borrowerOperations.getProxyAddressFromUser(whale),
       dec(1850, 18)
@@ -807,7 +807,7 @@ contract("BorrowerWrappers", async accounts => {
       dec(150, 18)
     );
 
-    // stake LQTY
+    // stake OPL
     await lqtyStaking.stake(dec(1850, 18), { from: whale });
     await lqtyStaking.stake(dec(150, 18), { from: alice });
 
@@ -854,7 +854,7 @@ contract("BorrowerWrappers", async accounts => {
       .div(toBN(dec(1, 18)).add(borrowingRate));
     const expectedTotalONEU = expectedONEUGain_A.add(netDebtChange);
 
-    const expectedLQTYGain_A = toBN("839557069990108416000000");
+    const expectedOPLGain_A = toBN("839557069990108416000000");
 
     // Alice claims staking rewards and puts them back in the system through the proxy
     await borrowerWrappers.claimStakingGainsAndRecycle(th._100pct, alice, alice, { from: alice });
@@ -890,8 +890,8 @@ contract("BorrowerWrappers", async accounts => {
     // check lqty balance remains the same
     th.assertIsApproximatelyEqual(lqtyBalanceBefore, lqtyBalanceAfter);
 
-    // LQTY staking
-    th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedLQTYGain_A));
+    // OPL staking
+    th.assertIsApproximatelyEqual(stakeAfter, stakeBefore.add(expectedOPLGain_A));
 
     // Expect Alice has withdrawn all AUT gain
     const alice_pendingAUTGain = await stabilityPool.getDepositorAUTGain(alice);
