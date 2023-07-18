@@ -28,11 +28,11 @@ period = 24*365
 month=24*30
 day=24
 
-#ether price
-price_ether_initial = 1000
-price_ether = [price_ether_initial]
-sd_ether=0.02
-drift_ether = 0
+#aut price
+price_aut_initial = 1000
+price_aut = [price_aut_initial]
+sd_aut=0.02
+drift_aut = 0
 
 #LQTY price & airdrop
 price_LQTY_initial = 1
@@ -73,8 +73,8 @@ sd_closetroves=0.5
 beta = 0.2
 
 #open troves
-distribution_parameter1_ether_quantity=10
-distribution_parameter2_ether_quantity=500
+distribution_parameter1_aut_quantity=10
+distribution_parameter2_aut_quantity=500
 distribution_parameter1_CR = 1.1
 distribution_parameter2_CR = 0.1
 distribution_parameter3_CR = 16
@@ -95,11 +95,11 @@ n_sim= 8640
 Ether Price
 """
 
-#ether price
+#aut price
 for i in range(1, period):
   random.seed(2019375+10000*i)
-  shock_ether = random.normalvariate(0,sd_ether)
-  price_ether.append(price_ether[i-1]*(1+shock_ether)*(1+drift_ether))
+  shock_aut = random.normalvariate(0,sd_aut)
+  price_aut.append(price_aut[i-1]*(1+shock_aut)*(1+drift_aut))
 
 """Natural Rate"""
 
@@ -131,11 +131,11 @@ def liquidate_troves(troves, index, data):
   troves_liquidated = troves[troves.CR_current < 1.1]
   troves = troves[troves.CR_current >= 1.1]
   debt_liquidated = troves_liquidated['Supply'].sum()
-  ether_liquidated = troves_liquidated['Ether_Quantity'].sum()
+  aut_liquidated = troves_liquidated['Ether_Quantity'].sum()
   n_liquidate = troves_liquidated.shape[0]
   troves = troves.reset_index(drop = True)
 
-  liquidation_gain = ether_liquidated*price_ether_current - debt_liquidated*price_LUSD_previous
+  liquidation_gain = aut_liquidated*price_aut_current - debt_liquidated*price_LUSD_previous
   airdrop_gain = price_LQTY_previous * quantity_LQTY_airdrop
   
   np.random.seed(2+index)
@@ -148,7 +148,7 @@ def liquidate_troves(troves, index, data):
   else:
     return_stability = (365/30)*(data.loc[index-month:index, 'liquidation_gain'].sum()+data.loc[index-month:index, 'airdrop_gain'].sum())/(price_LUSD_previous*stability_pool_previous)
   
-  return[troves, return_stability, debt_liquidated, ether_liquidated, liquidation_gain, airdrop_gain, n_liquidate]
+  return[troves, return_stability, debt_liquidated, aut_liquidated, liquidation_gain, airdrop_gain, n_liquidate]
 
 """Close Troves"""
 
@@ -220,21 +220,21 @@ def open_troves(troves, index1, price_LUSD_previous):
   number_opentroves = int(round(float(number_opentroves)))
 
   for i in range(0, number_opentroves):
-    price_ether_current = price_ether[index1]
+    price_aut_current = price_aut[index1]
     
     np.random.seed(2033 + index1 + i*i)
     CR_ratio = distribution_parameter1_CR + distribution_parameter2_CR * np.random.chisquare(df=distribution_parameter3_CR)
     
     np.random.seed(20 + 10 * i + index1)
-    quantity_ether = np.random.gamma(distribution_parameter1_ether_quantity, scale=distribution_parameter2_ether_quantity)
+    quantity_aut = np.random.gamma(distribution_parameter1_aut_quantity, scale=distribution_parameter2_aut_quantity)
     
     np.random.seed(209870- index1 + i*i)
     rational_inattention = np.random.gamma(distribution_parameter1_inattention, scale=distribution_parameter2_inattention)
     
-    supply_trove = price_ether_current * quantity_ether / CR_ratio
+    supply_trove = price_aut_current * quantity_aut / CR_ratio
     issuance_LUSD_open = issuance_LUSD_open + rate_issuance * supply_trove
 
-    new_row = {"Ether_Price": price_ether_current, "Ether_Quantity": quantity_ether, 
+    new_row = {"Ether_Price": price_aut_current, "Ether_Quantity": quantity_aut, 
                "CR_initial": CR_ratio, "Supply": supply_trove, 
                "Rational_inattention": rational_inattention, "CR_current": CR_ratio}
     troves = troves.append(new_row, ignore_index=True)
@@ -285,10 +285,10 @@ def price_stabilizer(troves, index, data, stability_pool, n_open):
 
     CR_ratio = 1.1
     rational_inattention = 0.1
-    quantity_ether = supply_trove * CR_ratio / price_ether_current
+    quantity_aut = supply_trove * CR_ratio / price_aut_current
     issuance_LUSD_stabilizer = rate_issuance * supply_trove
 
-    new_row = {"Ether_Price": price_ether_current, "Ether_Quantity": quantity_ether, "CR_initial": CR_ratio,
+    new_row = {"Ether_Price": price_aut_current, "Ether_Quantity": quantity_aut, "CR_initial": CR_ratio,
                "Supply": supply_trove, "Rational_inattention": rational_inattention, "CR_current": CR_ratio}
     troves = troves.append(new_row, ignore_index=True)
     price_LUSD_current = 1.1 + rate_issuance
@@ -330,8 +330,8 @@ def price_stabilizer(troves, index, data, stability_pool, n_open):
     residual = redemption_pool - redempted
     wk = troves.index[0]
     troves['Supply'][wk] = troves['Supply'][wk] - residual
-    troves['Ether_Quantity'][wk] = troves['Ether_Quantity'][wk] - residual/price_ether_current
-    troves['CR_current'][wk] = price_ether_current * troves['Ether_Quantity'][wk] / troves['Supply'][wk]
+    troves['Ether_Quantity'][wk] = troves['Ether_Quantity'][wk] - residual/price_aut_current
+    troves['CR_current'][wk] = price_aut_current * troves['Ether_Quantity'][wk] / troves['Supply'][wk]
 
     #Redemption Fee
     redemption_fee = rate_redemption * redemption_pool
@@ -364,7 +364,7 @@ def LQTY_market(index, data):
 """# Simulation Program"""
 
 #Defining Initials
-initials = {"Price_LUSD":[1.00], "Price_Ether":[price_ether_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
+initials = {"Price_LUSD":[1.00], "Price_Ether":[price_aut_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
             "n_troves":[initial_open], "stability":[0], "liquidity":[0], "redemption_pool":[0],
             "supply_LUSD":[0],  "return_stability":[initial_return], "airdrop_gain":[0], "liquidation_gain":[0],  "issuance_fee":[0], "redemption_fee":[0],
             "price_LQTY":[price_LQTY_initial], "MC_LQTY":[0], "annualized_earning":[0]}
@@ -381,9 +381,9 @@ data.loc[0,'stability'] = 0.5*troves["Supply"].sum()
 
 #Simulation Process
 for index in range(1, n_sim):
-#exogenous ether price input
-  price_ether_current = price_ether[index]
-  troves['Ether_Price'] = price_ether_current
+#exogenous aut price input
+  price_aut_current = price_aut[index]
+  troves['Ether_Price'] = price_aut_current
   price_LUSD_previous = data.loc[index-1,'Price_LUSD']
   price_LQTY_previous = data.loc[index-1,'price_LQTY']
 
@@ -392,7 +392,7 @@ for index in range(1, n_sim):
   troves = result_liquidation[0]
   return_stability = result_liquidation[1]
   debt_liquidated = result_liquidation[2]
-  ether_liquidated = result_liquidation[3]
+  aut_liquidated = result_liquidation[3]
   liquidation_gain = result_liquidation[4]
   airdrop_gain = result_liquidation[5]
   n_liquidate = result_liquidation[6]
@@ -444,7 +444,7 @@ for index in range(1, n_sim):
   if index >= month:
     price_LQTY.append(price_LQTY_current)
 
-  new_row = {"Price_LUSD":float(price_LUSD_current), "Price_Ether":float(price_ether_current), "n_open":float(n_open), "n_close":float(n_close), 
+  new_row = {"Price_LUSD":float(price_LUSD_current), "Price_Ether":float(price_aut_current), "n_open":float(n_open), "n_close":float(n_close), 
              "n_liquidate":float(n_liquidate), "n_redempt": float(n_redempt), "n_troves":float(n_troves),
               "stability":float(stability_pool), "liquidity":float(liquidity_pool), "redemption_pool":float(redemption_pool), "supply_LUSD":float(supply_LUSD),
              "issuance_fee":float(issuance_fee), "redemption_fee":float(redemption_fee),
@@ -644,7 +644,7 @@ issuance fee = redemption fee = base rate
 """
 
 #Defining Initials
-initials = {"Price_LUSD":[1.00], "Price_Ether":[price_ether_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
+initials = {"Price_LUSD":[1.00], "Price_Ether":[price_aut_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
             "n_troves":[initial_open], "stability":[0], "liquidity":[0], "redemption_pool":[0],
             "supply_LUSD":[0],  "return_stability":[initial_return], "airdrop_gain":[0], "liquidation_gain":[0],  "issuance_fee":[0], "redemption_fee":[0],
             "price_LQTY":[price_LQTY_initial], "MC_LQTY":[0], "annualized_earning":[0], "base_rate":[base_rate_initial]}
@@ -661,9 +661,9 @@ data2.loc[0,'stability'] = 0.5*troves2["Supply"].sum()
 
 #Simulation Process
 for index in range(1, n_sim):
-#exogenous ether price input
-  price_ether_current = price_ether[index]
-  troves2['Ether_Price'] = price_ether_current
+#exogenous aut price input
+  price_aut_current = price_aut[index]
+  troves2['Ether_Price'] = price_aut_current
   price_LUSD_previous = data2.loc[index-1,'Price_LUSD']
   price_LQTY_previous = data2.loc[index-1,'price_LQTY']
 
@@ -677,7 +677,7 @@ for index in range(1, n_sim):
   troves2 = result_liquidation[0]
   return_stability = result_liquidation[1]
   debt_liquidated = result_liquidation[2]
-  ether_liquidated = result_liquidation[3]
+  aut_liquidated = result_liquidation[3]
   liquidation_gain = result_liquidation[4]
   airdrop_gain = result_liquidation[5]
   n_liquidate = result_liquidation[6]
@@ -729,7 +729,7 @@ for index in range(1, n_sim):
   if index >= month:
     price_LQTY.append(price_LQTY_current)
 
-  new_row = {"Price_LUSD":float(price_LUSD_current), "Price_Ether":float(price_ether_current), "n_open":float(n_open), "n_close":float(n_close), 
+  new_row = {"Price_LUSD":float(price_LUSD_current), "Price_Ether":float(price_aut_current), "n_open":float(n_open), "n_close":float(n_close), 
              "n_liquidate":float(n_liquidate), "n_redempt": float(n_redempt), "n_troves":float(n_troves),
               "stability":float(stability_pool), "liquidity":float(liquidity_pool), "redemption_pool":float(redemption_pool), "supply_LUSD":float(supply_LUSD),
              "issuance_fee":float(issuance_fee), "redemption_fee":float(redemption_fee),
