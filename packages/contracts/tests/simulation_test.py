@@ -26,7 +26,7 @@ def setAddresses(contracts):
         contracts.gasPool.address,
         contracts.collSurplusPool.address,
         contracts.priceFeedTestnet.address,
-        contracts.lusdToken.address,
+        contracts.oneuToken.address,
         contracts.sortedTroves.address,
         contracts.lqtyToken.address,
         contracts.lqtyStaking.address,
@@ -42,7 +42,7 @@ def setAddresses(contracts):
         contracts.collSurplusPool.address,
         contracts.priceFeedTestnet.address,
         contracts.sortedTroves.address,
-        contracts.lusdToken.address,
+        contracts.oneuToken.address,
         contracts.lqtyStaking.address,
         { 'from': accounts[0] }
     )
@@ -51,7 +51,7 @@ def setAddresses(contracts):
         contracts.borrowerOperations.address,
         contracts.troveManager.address,
         contracts.activePool.address,
-        contracts.lusdToken.address,
+        contracts.oneuToken.address,
         contracts.sortedTroves.address,
         contracts.priceFeedTestnet.address,
         contracts.communityIssuance.address,
@@ -88,7 +88,7 @@ def setAddresses(contracts):
     # LQTY
     contracts.lqtyStaking.setAddresses(
         contracts.lqtyToken.address,
-        contracts.lusdToken.address,
+        contracts.oneuToken.address,
         contracts.troveManager.address,
         contracts.borrowerOperations.address,
         contracts.activePool.address,
@@ -121,7 +121,7 @@ def contracts():
     contracts.collSurplusPool = CollSurplusPool.deploy({ 'from': accounts[0] })
     contracts.borrowerOperations = BorrowerOperationsTester.deploy({ 'from': accounts[0] })
     contracts.hintHelpers = HintHelpers.deploy({ 'from': accounts[0] })
-    contracts.lusdToken = ONEUToken.deploy(
+    contracts.oneuToken = ONEUToken.deploy(
         contracts.troveManager.address,
         contracts.stabilityPool.address,
         contracts.borrowerOperations.address,
@@ -206,7 +206,7 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
     price_LQTY_current = price_LQTY_initial
 
     data = {"airdrop_gain": [0] * n_sim, "liquidation_gain": [0] * n_sim, "issuance_fee": [0] * n_sim, "redemption_fee": [0] * n_sim}
-    total_lusd_redempted = 0
+    total_oneu_redempted = 0
     total_coll_added = whale_coll
     total_coll_liquidated = 0
 
@@ -217,7 +217,7 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
 
     with open('tests/simulation.csv', 'w', newline='') as csvfile:
         datawriter = csv.writer(csvfile, delimiter=',')
-        datawriter.writerow(['iteration', 'AUT_price', 'price_ONEU', 'price_LQTY', 'num_troves', 'total_coll', 'total_debt', 'TCR', 'recovery_mode', 'last_ICR', 'SP_ONEU', 'SP_AUT', 'total_coll_added', 'total_coll_liquidated', 'total_lusd_redempted'])
+        datawriter.writerow(['iteration', 'AUT_price', 'price_ONEU', 'price_LQTY', 'num_troves', 'total_coll', 'total_debt', 'TCR', 'recovery_mode', 'last_ICR', 'SP_ONEU', 'SP_AUT', 'total_coll_added', 'total_coll_liquidated', 'total_oneu_redempted'])
 
         #Simulation Process
         for index in range(1, n_sim):
@@ -248,7 +248,7 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
 
             #Calculating Price, Liquidity Pool, and Redemption
             [price_ONEU, redemption_pool, redemption_fee, issuance_ONEU_stabilizer] = price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, index)
-            total_lusd_redempted = total_lusd_redempted + redemption_pool
+            total_oneu_redempted = total_oneu_redempted + redemption_pool
             print('ONEU price', price_ONEU)
             print('LQTY price', price_LQTY_current)
 
@@ -263,12 +263,12 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
             #MC_LQTY_current = result_LQTY[2]
 
             [AUT_price, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_ONEU, SP_AUT] = logGlobalState(contracts)
-            print('Total redempted ', total_lusd_redempted)
+            print('Total redempted ', total_oneu_redempted)
             print('Total AUT added ', total_coll_added)
             print('Total AUT liquid', total_coll_liquidated)
             print(f'Ratio AUT liquid {100 * total_coll_liquidated / total_coll_added}%')
             print(' ----------------------\n')
 
-            datawriter.writerow([index, AUT_price, price_ONEU, price_LQTY_current, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_ONEU, SP_AUT, total_coll_added, total_coll_liquidated, total_lusd_redempted])
+            datawriter.writerow([index, AUT_price, price_ONEU, price_LQTY_current, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_ONEU, SP_AUT, total_coll_added, total_coll_liquidated, total_oneu_redempted])
 
             assert price_ONEU > 0

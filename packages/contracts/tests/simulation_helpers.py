@@ -497,7 +497,7 @@ def close_troves(accounts, contracts, active_accounts, inactive_accounts, price_
         amounts = contracts.troveManager.getEntireDebtAndColl(account)
         coll = amounts['coll']
         debt = amounts['debt']
-        pending = get_lusd_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, debt)
+        pending = get_oneu_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, debt)
         if pending == 0:
             if isNewTCRAboveCCR(contracts, coll, False, debt, False, floatToWei(price_aut_current)):
                 contracts.borrowerOperations.closeTrove({ 'from': account })
@@ -511,28 +511,28 @@ def close_troves(accounts, contracts, active_accounts, inactive_accounts, price_
 """Adjust Troves"""
 
 def transfer_from_to(contracts, from_account, to_account, amount):
-    balance = contracts.lusdToken.balanceOf(from_account)
+    balance = contracts.oneuToken.balanceOf(from_account)
     transfer_amount = min(balance, amount)
     if transfer_amount == 0:
         return amount
     if from_account == to_account:
         return amount
-    contracts.lusdToken.transfer(to_account, transfer_amount, { 'from': from_account })
+    contracts.oneuToken.transfer(to_account, transfer_amount, { 'from': from_account })
     pending = amount - transfer_amount
 
     return pending
 
-def get_lusd_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, debt):
-    lusdBalance = contracts.lusdToken.balanceOf(account)
-    if debt > lusdBalance:
-        pending = debt - lusdBalance
+def get_oneu_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, debt):
+    oneuBalance = contracts.oneuToken.balanceOf(account)
+    if debt > oneuBalance:
+        pending = debt - oneuBalance
         # first try to withdraw from SP
         initial_deposit = contracts.stabilityPool.deposits(account)[0]
         if initial_deposit > 0:
             contracts.stabilityPool.withdrawFromSP(pending, { 'from': account, 'gas_limit': 8000000, 'allow_revert': True })
             # it can only withdraw up to the deposit, so we check the balance again
-            lusdBalance = contracts.lusdToken.balanceOf(account)
-            pending = debt - lusdBalance
+            oneuBalance = contracts.oneuToken.balanceOf(account)
+            pending = debt - oneuBalance
         # try with whale
         pending = transfer_from_to(contracts, accounts[0], account, pending)
         # try with active accounts, which are more likely to hold ONEU
@@ -614,7 +614,7 @@ def adjust_troves(accounts, contracts, active_accounts, inactive_accounts, price
             if check < -1:
                 # pay back
                 repay_amount = floatToWei(debt - debt_new)
-                pending = get_lusd_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, repay_amount)
+                pending = get_oneu_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, repay_amount)
                 if pending == 0:
                     contracts.borrowerOperations.repayONEU(repay_amount, hints[0], hints[1], { 'from': account })
             elif check > 2 and not is_recovery_mode(contracts, price_aut_current):
@@ -654,9 +654,9 @@ def open_trove(accounts, contracts, active_accounts, inactive_accounts, supply_t
     hints = get_hints_from_amounts(accounts, contracts, active_accounts, quantity_aut, supply_trove, price_aut_current)
     coll = floatToWei(quantity_aut)
     debtChange = floatToWei(supply_trove) + ONEU_GAS_COMPENSATION
-    lusd = get_lusd_amount_from_net_debt(contracts, floatToWei(supply_trove))
+    oneu = get_oneu_amount_from_net_debt(contracts, floatToWei(supply_trove))
     if isNewTCRAboveCCR(contracts, coll, True, debtChange, True, floatToWei(price_aut_current)):
-        contracts.borrowerOperations.openTrove(MAX_FEE, lusd, hints[0], hints[1],
+        contracts.borrowerOperations.openTrove(MAX_FEE, oneu, hints[0], hints[1],
                                                { 'from': accounts[inactive_accounts[0]], 'value': coll })
         new_account = {"index": inactive_accounts[0], "CR_initial": CR_ratio, "Rational_inattention": rational_inattention}
         active_accounts.insert(hints[2], new_account)
@@ -710,7 +710,7 @@ Stability Pool
 """
 
 def stability_update(accounts, contracts, active_accounts, return_stability, index):
-    supply = contracts.lusdToken.totalSupply() / 1e18
+    supply = contracts.oneuToken.totalSupply() / 1e18
     stability_pool_previous = contracts.stabilityPool.getTotalONEUDeposits() / 1e18
 
     np.random.seed(27+3*index)
@@ -732,7 +732,7 @@ def stability_update(accounts, contracts, active_accounts, return_stability, ind
         i = 0
         while remaining > 0 and i < len(active_accounts):
           account = index2address(accounts, active_accounts, i)
-          balance = contracts.lusdToken.balanceOf(account) / 1e18
+          balance = contracts.oneuToken.balanceOf(account) / 1e18
           deposit = min(balance, remaining)
           if deposit > 0:
               contracts.stabilityPool.provideToSP(floatToWei(deposit), ZERO_ADDRESS, { 'from': account, 'gas_limit': 8000000, 'allow_revert': True })
@@ -835,8 +835,8 @@ sd_redemption = 0.001
 redemption_start = 0.8
 
 def redeem_trove(accounts, contracts, i, price_aut_current):
-    lusd_balance = contracts.lusdToken.balanceOf(accounts[i])
-    [firstRedemptionHint, partialRedemptionHintNICR, truncatedONEUamount] = contracts.hintHelpers.getRedemptionHints(lusd_balance, price_aut_current, 70)
+    oneu_balance = contracts.oneuToken.balanceOf(accounts[i])
+    [firstRedemptionHint, partialRedemptionHintNICR, truncatedONEUamount] = contracts.hintHelpers.getRedemptionHints(oneu_balance, price_aut_current, 70)
     if truncatedONEUamount == Wei(0):
         return None
     approxHint = contracts.hintHelpers.getApproxHint(partialRedemptionHintNICR, 2000, 0)
@@ -856,10 +856,10 @@ def redeem_trove(accounts, contracts, i, price_aut_current):
     except:
         print(f"\n   Redemption failed! ")
         print(f"Trove Manager: {contracts.troveManager.address}")
-        print(f"ONEU Token:    {contracts.lusdToken.address}")
+        print(f"ONEU Token:    {contracts.oneuToken.address}")
         print(f"i: {i}")
         print(f"account: {accounts[i]}")
-        print(f"ONEU bal: {lusd_balance / 1e18}")
+        print(f"ONEU bal: {oneu_balance / 1e18}")
         print(f"truncated: {truncatedONEUamount / 1e18}")
         print(f"Redemption rate: {contracts.troveManager.getRedemptionRateWithDecay() * 100 / 1e18} %")
         print(f"approx: {approxHint[0]}")
@@ -884,7 +884,7 @@ def price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, pr
     redemption_fee = 0
     issuance_ONEU_stabilizer = 0
 
-    supply = contracts.lusdToken.totalSupply() / 1e18
+    supply = contracts.oneuToken.totalSupply() / 1e18
     #Liquidity Pool
     liquidity_pool = supply - stability_pool
 
@@ -939,7 +939,7 @@ def price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, pr
         i = 0
         while remaining > 0 and i < len(active_accounts):
           account = index2address(accounts, active_accounts, i)
-          balance = contracts.lusdToken.balanceOf(account) / 1e18
+          balance = contracts.oneuToken.balanceOf(account) / 1e18
           redemption = min(balance, remaining)
           if redemption > 0:
               tx = redeem_trove(accounts, contracts, 0, price_aut_current)
