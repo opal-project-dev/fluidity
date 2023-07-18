@@ -85,7 +85,7 @@ def setAddresses(contracts):
         { 'from': accounts[0] }
     )
 
-    # LQTY
+    # OPL
     contracts.lqtyStaking.setAddresses(
         contracts.lqtyToken.address,
         contracts.oneuToken.address,
@@ -127,11 +127,11 @@ def contracts():
         contracts.borrowerOperations.address,
         { 'from': accounts[0] }
     )
-    # LQTY
-    contracts.lqtyStaking = LQTYStaking.deploy({ 'from': accounts[0] })
+    # OPL
+    contracts.lqtyStaking = OPLStaking.deploy({ 'from': accounts[0] })
     contracts.communityIssuance = CommunityIssuance.deploy({ 'from': accounts[0] })
     contracts.lockupContractFactory = LockupContractFactory.deploy({ 'from': accounts[0] })
-    contracts.lqtyToken = LQTYToken.deploy(
+    contracts.lqtyToken = OPLToken.deploy(
         contracts.communityIssuance.address,
         contracts.lqtyStaking.address,
         contracts.lockupContractFactory.address,
@@ -149,7 +149,7 @@ def contracts():
 def print_expectations():
     # aut_price_one_year = price_aut_initial * (1 + drift_ether)**8760
     # print("Expected aut price at the end of the year: $", aut_price_one_year)
-    print("Expected LQTY price at the end of first month: $", price_LQTY_initial * (1 + drift_LQTY)**720)
+    print("Expected OPL price at the end of first month: $", price_OPL_initial * (1 + drift_OPL)**720)
 
     print("\n Open troves")
     print("E(Q_t^e)    = ", collateral_gamma_k * collateral_gamma_theta)
@@ -175,7 +175,7 @@ def _test_test(contracts):
 
 * exogenous aut price input
 * trove liquidation
-* return of the previous period's stability pool determined (liquidation gain & airdropped LQTY gain)
+* return of the previous period's stability pool determined (liquidation gain & airdropped OPL gain)
 * trove closure
 * trove adjustment
 * open troves
@@ -186,7 +186,7 @@ def _test_test(contracts):
 * ONEU liquidity pool demand determined
 * ONEU price determined
 * redemption & redemption fee
-* LQTY pool return determined
+* OPL pool return determined
 """
 def test_run_simulation(add_accounts, contracts, print_expectations):
     ONEU_GAS_COMPENSATION = contracts.troveManager.ONEU_GAS_COMPENSATION() / 1e18
@@ -203,7 +203,7 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
     inactive_accounts = [*range(1, len(accounts))]
 
     price_ONEU = 1
-    price_LQTY_current = price_LQTY_initial
+    price_OPL_current = price_OPL_initial
 
     data = {"airdrop_gain": [0] * n_sim, "liquidation_gain": [0] * n_sim, "issuance_fee": [0] * n_sim, "redemption_fee": [0] * n_sim}
     total_oneu_redempted = 0
@@ -217,7 +217,7 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
 
     with open('tests/simulation.csv', 'w', newline='') as csvfile:
         datawriter = csv.writer(csvfile, delimiter=',')
-        datawriter.writerow(['iteration', 'AUT_price', 'price_ONEU', 'price_LQTY', 'num_troves', 'total_coll', 'total_debt', 'TCR', 'recovery_mode', 'last_ICR', 'SP_ONEU', 'SP_AUT', 'total_coll_added', 'total_coll_liquidated', 'total_oneu_redempted'])
+        datawriter.writerow(['iteration', 'AUT_price', 'price_ONEU', 'price_OPL', 'num_troves', 'total_coll', 'total_debt', 'TCR', 'recovery_mode', 'last_ICR', 'SP_ONEU', 'SP_AUT', 'total_coll_added', 'total_coll_liquidated', 'total_oneu_redempted'])
 
         #Simulation Process
         for index in range(1, n_sim):
@@ -228,7 +228,7 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
             contracts.priceFeedTestnet.setPrice(floatToWei(price_aut_current), { 'from': accounts[0] })
 
             #trove liquidation & return of stability pool
-            result_liquidation = liquidate_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, price_LQTY_current, data, index)
+            result_liquidation = liquidate_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, price_OPL_current, data, index)
             total_coll_liquidated = total_coll_liquidated + result_liquidation[0]
             return_stability = result_liquidation[1]
 
@@ -250,17 +250,17 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
             [price_ONEU, redemption_pool, redemption_fee, issuance_ONEU_stabilizer] = price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, index)
             total_oneu_redempted = total_oneu_redempted + redemption_pool
             print('ONEU price', price_ONEU)
-            print('LQTY price', price_LQTY_current)
+            print('OPL price', price_OPL_current)
 
             issuance_fee = price_ONEU * (issuance_ONEU_adjust + issuance_ONEU_open + issuance_ONEU_stabilizer)
             data['issuance_fee'][index] = issuance_fee
             data['redemption_fee'][index] = redemption_fee
 
-            #LQTY Market
-            result_LQTY = LQTY_market(index, data)
-            price_LQTY_current = result_LQTY[0]
-            #annualized_earning = result_LQTY[1]
-            #MC_LQTY_current = result_LQTY[2]
+            #OPL Market
+            result_OPL = OPL_market(index, data)
+            price_OPL_current = result_OPL[0]
+            #annualized_earning = result_OPL[1]
+            #MC_OPL_current = result_OPL[2]
 
             [AUT_price, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_ONEU, SP_AUT] = logGlobalState(contracts)
             print('Total redempted ', total_oneu_redempted)
@@ -269,6 +269,6 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
             print(f'Ratio AUT liquid {100 * total_coll_liquidated / total_coll_added}%')
             print(' ----------------------\n')
 
-            datawriter.writerow([index, AUT_price, price_ONEU, price_LQTY_current, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_ONEU, SP_AUT, total_coll_added, total_coll_liquidated, total_oneu_redempted])
+            datawriter.writerow([index, AUT_price, price_ONEU, price_OPL_current, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_ONEU, SP_AUT, total_coll_added, total_coll_liquidated, total_oneu_redempted])
 
             assert price_ONEU > 0
