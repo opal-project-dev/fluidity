@@ -35,7 +35,7 @@ contract("Gas compensation tests", async accounts => {
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -67,7 +67,7 @@ contract("Gas compensation tests", async accounts => {
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts.lusdToken = await ONEUToken.new(
+    contracts.oneuToken = await ONEUToken.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
@@ -79,7 +79,7 @@ contract("Gas compensation tests", async accounts => {
     );
 
     priceFeed = contracts.priceFeedTestnet;
-    lusdToken = contracts.lusdToken;
+    oneuToken = contracts.oneuToken;
     sortedTroves = contracts.sortedTroves;
     troveManager = contracts.troveManager;
     activePool = contracts.activePool;

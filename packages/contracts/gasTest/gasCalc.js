@@ -31,7 +31,7 @@ contract("Gas cost tests", async accounts => {
   let contracts;
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -51,7 +51,7 @@ contract("Gas cost tests", async accounts => {
     );
 
     priceFeed = contracts.priceFeedTestnet;
-    lusdToken = contracts.lusdToken;
+    oneuToken = contracts.oneuToken;
     sortedTroves = contracts.sortedTroves;
     troveManager = contracts.troveManager;
     activePool = contracts.activePool;
@@ -350,7 +350,7 @@ contract("Gas cost tests", async accounts => {
     );
 
     for (account of _10_Accounts) {
-      await lusdToken.unprotectedMint(account, dec(1000, 18));
+      await oneuToken.unprotectedMint(account, dec(1000, 18));
     }
 
     const tx = await borrowerOperations.closeTrove({ from: accounts[1] });
@@ -372,7 +372,7 @@ contract("Gas cost tests", async accounts => {
     );
 
     for (account of _20_Accounts) {
-      await lusdToken.unprotectedMint(account, dec(1000, 18));
+      await oneuToken.unprotectedMint(account, dec(1000, 18));
     }
 
     const gasResults = await th.closeTrove_allAccounts(_20_Accounts.slice(1), contracts);

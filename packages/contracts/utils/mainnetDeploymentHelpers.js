@@ -81,7 +81,7 @@ class MainnetDeploymentHelper {
     const collSurplusPoolFactory = await this.getFactory("CollSurplusPool");
     const borrowerOperationsFactory = await this.getFactory("BorrowerOperations");
     const hintHelpersFactory = await this.getFactory("HintHelpers");
-    const lusdTokenFactory = await this.getFactory("ONEUToken");
+    const oneuTokenFactory = await this.getFactory("ONEUToken");
     const tellorCallerFactory = await this.getFactory("TellorCaller");
 
     // Deploy txs
@@ -122,16 +122,16 @@ class MainnetDeploymentHelper {
       [tellorMasterAddr]
     );
 
-    const lusdTokenParams = [
+    const oneuTokenParams = [
       troveManager.address,
       stabilityPool.address,
       borrowerOperations.address
     ];
-    const lusdToken = await this.loadOrDeploy(
-      lusdTokenFactory,
-      "lusdToken",
+    const oneuToken = await this.loadOrDeploy(
+      oneuTokenFactory,
+      "oneuToken",
       deploymentState,
-      lusdTokenParams
+      oneuTokenParams
     );
 
     if (!this.configParams.ETHERSCAN_BASE_URL) {
@@ -148,12 +148,12 @@ class MainnetDeploymentHelper {
       await this.verifyContract("borrowerOperations", deploymentState);
       await this.verifyContract("hintHelpers", deploymentState);
       await this.verifyContract("tellorCaller", deploymentState, [tellorMasterAddr]);
-      await this.verifyContract("lusdToken", deploymentState, lusdTokenParams);
+      await this.verifyContract("oneuToken", deploymentState, oneuTokenParams);
     }
 
     const coreContracts = {
       priceFeed,
-      lusdToken,
+      oneuToken,
       sortedTroves,
       troveManager,
       activePool,
@@ -298,7 +298,7 @@ class MainnetDeploymentHelper {
           contracts.gasPool.address,
           contracts.collSurplusPool.address,
           contracts.priceFeed.address,
-          contracts.lusdToken.address,
+          contracts.oneuToken.address,
           contracts.sortedTroves.address,
           LQTYContracts.lqtyToken.address,
           LQTYContracts.lqtyStaking.address,
@@ -318,7 +318,7 @@ class MainnetDeploymentHelper {
           contracts.collSurplusPool.address,
           contracts.priceFeed.address,
           contracts.sortedTroves.address,
-          contracts.lusdToken.address,
+          contracts.oneuToken.address,
           LQTYContracts.lqtyStaking.address,
           { gasPrice }
         )
@@ -331,7 +331,7 @@ class MainnetDeploymentHelper {
           contracts.borrowerOperations.address,
           contracts.troveManager.address,
           contracts.activePool.address,
-          contracts.lusdToken.address,
+          contracts.oneuToken.address,
           contracts.sortedTroves.address,
           contracts.priceFeed.address,
           LQTYContracts.communityIssuance.address,
@@ -397,7 +397,7 @@ class MainnetDeploymentHelper {
       (await this.sendAndWaitForTransaction(
         LQTYContracts.lqtyStaking.setAddresses(
           LQTYContracts.lqtyToken.address,
-          coreContracts.lusdToken.address,
+          coreContracts.oneuToken.address,
           coreContracts.troveManager.address,
           coreContracts.borrowerOperations.address,
           coreContracts.activePool.address,

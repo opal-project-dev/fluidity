@@ -15,7 +15,7 @@ const StabilityPool = artifacts.require("StabilityPool");
 contract("Echidna debugger", async accounts => {
   let echidnaTester;
   let troveManager;
-  let lusdToken;
+  let oneuToken;
   let activePool;
   let defaultPool;
   let stabilityPool;
@@ -24,7 +24,7 @@ contract("Echidna debugger", async accounts => {
   before(async () => {
     echidnaTester = await EchidnaTester.new({ value: dec(11, 25) });
     troveManager = await TroveManager.at(await echidnaTester.troveManager());
-    lusdToken = await ONEUToken.at(await echidnaTester.lusdToken());
+    oneuToken = await ONEUToken.at(await echidnaTester.oneuToken());
     activePool = await ActivePool.at(await echidnaTester.activePool());
     defaultPool = await DefaultPool.at(await echidnaTester.defaultPool());
     stabilityPool = await StabilityPool.at(await echidnaTester.stabilityPool());
@@ -78,13 +78,13 @@ contract("Echidna debugger", async accounts => {
   it.only("ONEU balance", async () => {
     await echidnaTester.openTroveExt("0", "0", "4210965169908805439447313562489173090");
 
-    const totalSupply = await lusdToken.totalSupply();
-    const gasPoolBalance = await lusdToken.balanceOf(GAS_POOL_ADDRESS);
+    const totalSupply = await oneuToken.totalSupply();
+    const gasPoolBalance = await oneuToken.balanceOf(GAS_POOL_ADDRESS);
     const activePoolBalance = await activePool.getONEUDebt();
     const defaultPoolBalance = await defaultPool.getONEUDebt();
     const stabilityPoolBalance = await stabilityPool.getTotalONEUDeposits();
     const currentTrove = await echidnaTester.echidnaProxies(0);
-    const troveBalance = lusdToken.balanceOf(currentTrove);
+    const troveBalance = oneuToken.balanceOf(currentTrove);
 
     console.log("totalSupply", totalSupply.toString());
     console.log("gasPoolBalance", gasPoolBalance.toString());

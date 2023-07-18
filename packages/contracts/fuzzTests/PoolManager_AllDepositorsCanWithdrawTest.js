@@ -24,7 +24,7 @@ contract(
     const lpRewardsAddress = accounts[999];
 
     let priceFeed;
-    let lusdToken;
+    let oneuToken;
     let troveManager;
     let stabilityPool;
     let sortedTroves;
@@ -83,7 +83,7 @@ contract(
       const randomIndex = Math.floor(Math.random() * depositorAccounts.length);
       const randomDepositor = depositorAccounts[randomIndex];
 
-      const userBalance = await lusdToken.balanceOf(randomDepositor);
+      const userBalance = await oneuToken.balanceOf(randomDepositor);
       const maxONEUDeposit = userBalance.div(toBN(dec(1, 18)));
 
       const randomONEUAmount = th.randAmountInWei(1, maxONEUDeposit);
@@ -177,7 +177,7 @@ contract(
         const lowestTrove = await sortedTroves.getLast();
         const lastTroveDebt = (await troveManager.getEntireDebtAndColl(trove))[0];
         await borrowerOperations.adjustTrove(0, 0, lastTroveDebt, true, whale, { from: whale });
-        await lusdToken.transfer(lowestTrove, lowestTroveDebt, { from: whale });
+        await oneuToken.transfer(lowestTrove, lowestTroveDebt, { from: whale });
         await borrowerOperations.closeTrove({ from: lowestTrove });
       }
 
@@ -214,7 +214,7 @@ contract(
 
         const AUTinSPAfter = (await stabilityPool.getAUT()).toString();
         const ONEUinSPAfter = (await stabilityPool.getTotalONEUDeposits()).toString();
-        const ONEUBalanceSPAfter = await lusdToken.balanceOf(stabilityPool.address);
+        const ONEUBalanceSPAfter = await oneuToken.balanceOf(stabilityPool.address);
         const depositAfter = await stabilityPool.getCompoundedONEUDeposit(depositor);
 
         console.log(`--Before withdrawal--
@@ -252,7 +252,7 @@ contract(
 
         stabilityPool = contracts.stabilityPool;
         priceFeed = contracts.priceFeedTestnet;
-        lusdToken = contracts.lusdToken;
+        oneuToken = contracts.oneuToken;
         stabilityPool = contracts.stabilityPool;
         troveManager = contracts.troveManager;
         borrowerOperations = contracts.borrowerOperations;

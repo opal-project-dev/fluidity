@@ -17,14 +17,14 @@ const deployLiquity = async () => {
   const defaultPool = await DefaultPool.new();
   const functionCaller = await FunctionCaller.new();
   const borrowerOperations = await BorrowerOperations.new();
-  const lusdToken = await ONEUToken.new(
+  const oneuToken = await ONEUToken.new(
     troveManager.address,
     stabilityPool.address,
     borrowerOperations.address
   );
   DefaultPool.setAsDeployed(defaultPool);
   PriceFeedTestnet.setAsDeployed(priceFeedTestnet);
-  ONEUToken.setAsDeployed(lusdToken);
+  ONEUToken.setAsDeployed(oneuToken);
   SortedTroves.setAsDeployed(sortedTroves);
   TroveManager.setAsDeployed(troveManager);
   ActivePool.setAsDeployed(activePool);
@@ -34,7 +34,7 @@ const deployLiquity = async () => {
 
   const contracts = {
     priceFeedTestnet,
-    lusdToken,
+    oneuToken,
     sortedTroves,
     troveManager,
     activePool,
@@ -50,7 +50,7 @@ const getAddresses = contracts => {
   return {
     BorrowerOperations: contracts.borrowerOperations.address,
     PriceFeedTestnet: contracts.priceFeedTestnet.address,
-    ONEUToken: contracts.lusdToken.address,
+    ONEUToken: contracts.oneuToken.address,
     SortedTroves: contracts.sortedTroves.address,
     TroveManager: contracts.troveManager.address,
     StabilityPool: contracts.stabilityPool.address,

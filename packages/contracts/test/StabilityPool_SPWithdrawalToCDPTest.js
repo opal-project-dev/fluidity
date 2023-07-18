@@ -37,7 +37,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
   let contracts;
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -67,7 +67,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       contracts = await deploymentHelper.deployONEUToken(contracts);
 
       priceFeed = contracts.priceFeedTestnet;
-      lusdToken = contracts.lusdToken;
+      oneuToken = contracts.oneuToken;
       sortedTroves = contracts.sortedTroves;
       troveManager = contracts.troveManager;
       activePool = contracts.activePool;
@@ -121,7 +121,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -219,7 +219,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -324,7 +324,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -430,7 +430,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -537,7 +537,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -651,11 +651,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       );
 
       // Whale transfers 10k, 20k, 30k ONEU to A, B and C respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: carol });
 
       // 2 Defaulters open trove with 200% ICR
@@ -758,11 +758,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       );
 
       // Whale transfers 10k, 20k, 30k ONEU to A, B and C respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: carol });
 
       // Defaulters open trove with 200% ICR
@@ -878,11 +878,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       Bob:  456000 ONEU
       Carol: 13100 ONEU */
       // Whale transfers ONEU to  A, B and C respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(2000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(2000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(2000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(456000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(456000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(456000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(13100, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(13100, 18), { from: whale });
       await stabilityPool.provideToSP(dec(13100, 18), ZERO_ADDRESS, { from: carol });
 
       /* Defaulters open troves
@@ -1011,7 +1011,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1046,7 +1046,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_2, { from: owner });
 
       // Whale transfers 10k to Dennis who then provides to SP
-      await lusdToken.transfer(dennis, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: dennis });
 
       // Third defaulter liquidated
@@ -1152,7 +1152,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1194,7 +1194,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_2, { from: owner });
 
       // Dennis opens a trove and provides to SP
-      await lusdToken.transfer(dennis, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: dennis });
 
       // Third and fourth defaulters liquidated
@@ -1289,11 +1289,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       Carol: 15000 ONEU
       */
       // Whale transfers ONEU to  A, B and C respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(60000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(60000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(60000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(15000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(15000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(15000, 18), ZERO_ADDRESS, { from: carol });
 
       /* Defaulters open troves:
@@ -1339,7 +1339,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_2, { from: owner });
 
       // Dennis provides 25000 ONEU
-      await lusdToken.transfer(dennis, dec(25000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(25000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(25000, 18), ZERO_ADDRESS, { from: dennis });
 
       // Last two defaulters liquidated
@@ -1447,7 +1447,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol, dennis];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1583,13 +1583,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       Dennis: 40000 ONEU
       */
       // Whale transfers ONEU to  A, B,C and D respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(25000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(25000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(25000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(12500, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(12500, 18), { from: whale });
       await stabilityPool.provideToSP(dec(12500, 18), ZERO_ADDRESS, { from: carol });
-      await lusdToken.transfer(dennis, dec(40000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(40000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(40000, 18), ZERO_ADDRESS, { from: dennis });
 
       /* Defaulters open troves:
@@ -1642,7 +1642,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       const dennis_AUTWithdrawn = th.getEventArgByName(txD, "AUTGainWithdrawn", "_AUT").toString();
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "27692307692307700000000"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "27692307692307700000000"),
         100000000000
       );
       // 300*0.995 * 40000/97500
@@ -1732,7 +1732,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and D who then deposit it to the SP
       const depositors = [alice, bob, dennis];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1774,7 +1774,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_2, { from: owner });
 
       // Carol makes deposit
-      await lusdToken.transfer(carol, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: carol });
 
       await troveManager.liquidate(defaulter_3, { from: owner });
@@ -1787,7 +1787,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       const dennis_AUTWithdrawn = th.getEventArgByName(txD, "AUTGainWithdrawn", "_AUT").toString();
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "1666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "1666666666666666666666"),
         100000
       );
       assert.isAtMost(th.getDifference(dennis_AUTWithdrawn, "82916666666666666667"), 100000);
@@ -1888,7 +1888,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B who then deposit it to the SP
       const depositors = [alice, bob];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1917,7 +1917,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Carol, Dennis each deposit 10000 ONEU
       const depositors_2 = [carol, dennis];
       for (account of depositors_2) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -2029,7 +2029,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B who then deposit it to the SP
       const depositors = [alice, bob];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -2101,7 +2101,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Carol, Dennis each deposit 10000 ONEU
       const depositors_2 = [carol, dennis];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -2187,7 +2187,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B who then deposit it to the SP
       const depositors = [alice, bob];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -2214,13 +2214,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_1, { from: owner });
 
       // Carol, Dennis, Erin each deposit 10000, 20000, 30000 ONEU respectively
-      await lusdToken.transfer(carol, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: carol });
 
-      await lusdToken.transfer(dennis, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: dennis });
 
-      await lusdToken.transfer(erin, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(erin, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: erin });
 
       // Defaulter 2 liquidated. 10000 ONEU offset
@@ -2333,7 +2333,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: dennis, value: dec(10000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1,2,3 withdraw 10000 ONEU
@@ -2498,7 +2498,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Alice, Bob each deposit 10k ONEU
       const depositors_1 = [alice, bob];
       for (account of depositors_1) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -2508,7 +2508,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Carol, Dennis each deposit 10000 ONEU
       const depositors_2 = [carol, dennis];
       for (account of depositors_2) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -2518,7 +2518,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Erin, Flyn each deposit 10000 ONEU
       const depositors_3 = [erin, flyn];
       for (account of depositors_3) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -2528,7 +2528,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Graham, Harriet each deposit 10000 ONEU
       const depositors_4 = [graham, harriet];
       for (account of depositors_4) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -2653,7 +2653,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: bob, value: dec(10000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 withdraws 'almost' 10000 ONEU:  9999.99991 ONEU
@@ -2693,7 +2693,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         .getEventArgByName(txA, "AUTGainWithdrawn", "_AUT")
         .toString();
 
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob });
 
       // Defaulter 2 liquidated.  9900 ONEU liquidated. P altered by a factor of 1-(9900/10000) = 0.01.  Scale changed.
@@ -2766,7 +2766,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: dennis, value: dec(10000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 withdraws 'almost' 10k ONEU.
@@ -2802,13 +2802,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await priceFeed.setPrice(dec(100, 18));
 
       //B, C, D deposit to Stability Pool
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob });
 
-      await lusdToken.transfer(carol, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: carol });
 
-      await lusdToken.transfer(dennis, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: dennis });
 
       // 54000 ONEU liquidated.  P altered by a factor of 1-(59400/60000) = 0.01. Scale changed.
@@ -2915,7 +2915,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: carol, value: dec(10000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 and default 2 each withdraw 9999.999999999 ONEU
@@ -2950,7 +2950,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await priceFeed.setPrice(dec(100, 18));
 
       // Bob deposits 10k ONEU
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob });
 
       // Defaulter 2 liquidated
@@ -3021,7 +3021,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: dennis, value: dec(10000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 and default 2 withdraw up to debt of 9999.9 ONEU and 59999.4 ONEU
@@ -3055,13 +3055,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await priceFeed.setPrice(dec(100, 18));
 
       // B, C, D deposit 10000, 20000, 30000 ONEU
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob });
 
-      await lusdToken.transfer(carol, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: carol });
 
-      await lusdToken.transfer(dennis, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: dennis });
 
       // Defaulter 2 liquidated
@@ -3170,7 +3170,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Price drops by 50%
       await priceFeed.setPrice(dec(100, 18));
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 liquidated. P -> (~1e-10)*P
@@ -3266,7 +3266,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // price drops by 50%
       await priceFeed.setPrice(dec(100, 18));
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 liquidated.
@@ -3276,7 +3276,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "0");
 
       // B deposits 9999.9 ONEU
-      await lusdToken.transfer(bob, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(bob, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: bob });
 
       // Defaulter 2 liquidated
@@ -3286,7 +3286,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "1");
 
       // C deposits 9999.9 ONEU
-      await lusdToken.transfer(carol, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(carol, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: carol });
 
       // Defaulter 3 liquidated
@@ -3296,7 +3296,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "1");
 
       // D deposits 9999.9 ONEU
-      await lusdToken.transfer(dennis, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(dennis, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: dennis });
 
       // Defaulter 4 liquidated
@@ -3452,8 +3452,8 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await priceFeed.setPrice(dec(100, 18));
 
       // A, B provide 10k ONEU
-      await lusdToken.transfer(A, dec(10000, 18), { from: whale });
-      await lusdToken.transfer(B, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(A, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(B, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: A });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: B });
 
@@ -3475,7 +3475,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(ONEUinSP_1, "0");
 
       // Check SP ONEU balance is zero
-      const SPONEUBalance_1 = await lusdToken.balanceOf(stabilityPool.address);
+      const SPONEUBalance_1 = await oneuToken.balanceOf(stabilityPool.address);
       // console.log(`SPONEUBalance_1: ${SPONEUBalance_1}`)
       assert.equal(SPONEUBalance_1, "0");
 
@@ -3496,8 +3496,8 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // ==========
 
       // C, D provide 10k ONEU
-      await lusdToken.transfer(C, dec(10000, 18), { from: whale });
-      await lusdToken.transfer(D, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(C, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(D, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: C });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: D });
 
@@ -3519,7 +3519,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(ONEUinSP_2, "0");
 
       // Check SP ONEU balance is zero
-      const SPONEUBalance_2 = await lusdToken.balanceOf(stabilityPool.address);
+      const SPONEUBalance_2 = await oneuToken.balanceOf(stabilityPool.address);
       // console.log(`SPONEUBalance_2: ${SPONEUBalance_2}`)
       assert.equal(SPONEUBalance_2, "0");
 
@@ -3540,8 +3540,8 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // ============
 
       // E, F provide 10k ONEU
-      await lusdToken.transfer(E, dec(10000, 18), { from: whale });
-      await lusdToken.transfer(F, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(E, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(F, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: E });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: F });
 
@@ -3562,7 +3562,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(ONEUinSP_3, "0");
 
       // Check SP ONEU balance is zero
-      const SPONEUBalance_3 = await lusdToken.balanceOf(stabilityPool.address);
+      const SPONEUBalance_3 = await oneuToken.balanceOf(stabilityPool.address);
       // console.log(`SPONEUBalance_3: ${SPONEUBalance_3}`)
       assert.equal(SPONEUBalance_3, "0");
 
@@ -3702,7 +3702,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await th.assertRevert(txBPromise, "StabilityPool: caller must have non-zero AUT Gain");
 
       const aliceONEUBalance = await stabilityPool.getCompoundedONEUDeposit(alice);
-      // const aliceONEUBalance = await lusdToken.balanceOf(alice)
+      // const aliceONEUBalance = await oneuToken.balanceOf(alice)
       const aliceExpectedONEUBalance = toBN("99999999999999997500000000000000000000");
       const aliceONEUBalDiff = aliceONEUBalance.sub(aliceExpectedONEUBalance).abs();
 

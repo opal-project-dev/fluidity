@@ -14,7 +14,7 @@ contract("Pool Manager: Sum-Product rounding errors", async accounts => {
   let contracts;
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let stabilityPool;
   let troveManager;
   let borrowerOperations;
@@ -23,7 +23,7 @@ contract("Pool Manager: Sum-Product rounding errors", async accounts => {
     contracts = await deployLiquity();
 
     priceFeed = contracts.priceFeedTestnet;
-    lusdToken = contracts.lusdToken;
+    oneuToken = contracts.oneuToken;
     stabilityPool = contracts.stabilityPool;
     troveManager = contracts.troveManager;
     borrowerOperations = contracts.borrowerOperations;

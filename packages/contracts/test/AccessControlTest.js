@@ -23,7 +23,7 @@ contract(
     let coreContracts;
 
     let priceFeed;
-    let lusdToken;
+    let oneuToken;
     let sortedTroves;
     let troveManager;
     let nameRegistry;
@@ -49,7 +49,7 @@ contract(
       );
 
       priceFeed = coreContracts.priceFeed;
-      lusdToken = coreContracts.lusdToken;
+      oneuToken = coreContracts.oneuToken;
       sortedTroves = coreContracts.sortedTroves;
       troveManager = coreContracts.troveManager;
       nameRegistry = coreContracts.nameRegistry;
@@ -361,7 +361,7 @@ contract(
       //    mint
       it("mint(): reverts when called by an account that is not BorrowerOperations", async () => {
         // Attempt call from alice
-        const txAlice = lusdToken.mint(bob, 100, { from: alice });
+        const txAlice = oneuToken.mint(bob, 100, { from: alice });
         await th.assertRevert(txAlice, "Caller is not BorrowerOperations");
       });
 
@@ -369,7 +369,7 @@ contract(
       it("burn(): reverts when called by an account that is not BO nor TroveM nor SP", async () => {
         // Attempt call from alice
         try {
-          const txAlice = await lusdToken.burn(bob, 100, { from: alice });
+          const txAlice = await oneuToken.burn(bob, 100, { from: alice });
         } catch (err) {
           assert.include(err.message, "revert");
           // assert.include(err.message, "Caller is neither BorrowerOperations nor TroveManager nor StabilityPool")
@@ -380,7 +380,7 @@ contract(
       it("sendToPool(): reverts when called by an account that is not StabilityPool", async () => {
         // Attempt call from alice
         try {
-          const txAlice = await lusdToken.sendToPool(bob, activePool.address, 100, { from: alice });
+          const txAlice = await oneuToken.sendToPool(bob, activePool.address, 100, { from: alice });
         } catch (err) {
           assert.include(err.message, "revert");
           assert.include(err.message, "Caller is not the StabilityPool");
@@ -391,7 +391,7 @@ contract(
       it("returnFromPool(): reverts when called by an account that is not TroveManager nor StabilityPool", async () => {
         // Attempt call from alice
         try {
-          const txAlice = await lusdToken.returnFromPool(activePool.address, bob, 100, {
+          const txAlice = await oneuToken.returnFromPool(activePool.address, bob, 100, {
             from: alice
           });
         } catch (err) {

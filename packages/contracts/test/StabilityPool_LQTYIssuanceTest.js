@@ -40,7 +40,7 @@ contract("StabilityPool - LQTY Rewards", async accounts => {
   let contracts;
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let stabilityPool;
   let sortedTroves;
   let troveManager;
@@ -65,7 +65,7 @@ contract("StabilityPool - LQTY Rewards", async accounts => {
     beforeEach(async () => {
       contracts = await deploymentHelper.deployLiquityCore();
       contracts.troveManager = await TroveManagerTester.new();
-      contracts.lusdToken = await ONEUToken.new(
+      contracts.oneuToken = await ONEUToken.new(
         contracts.troveManager.address,
         contracts.stabilityPool.address,
         contracts.borrowerOperations.address
@@ -77,7 +77,7 @@ contract("StabilityPool - LQTY Rewards", async accounts => {
       );
 
       priceFeed = contracts.priceFeedTestnet;
-      lusdToken = contracts.lusdToken;
+      oneuToken = contracts.oneuToken;
       stabilityPool = contracts.stabilityPool;
       sortedTroves = contracts.sortedTroves;
       troveManager = contracts.troveManager;

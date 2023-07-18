@@ -37,7 +37,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
   let contracts;
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -67,7 +67,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       contracts = await deploymentHelper.deployONEUToken(contracts);
 
       priceFeed = contracts.priceFeedTestnet;
-      lusdToken = contracts.lusdToken;
+      oneuToken = contracts.oneuToken;
       sortedTroves = contracts.sortedTroves;
       troveManager = contracts.troveManager;
       activePool = contracts.activePool;
@@ -98,7 +98,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -128,15 +128,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "6666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "6666666666666666666666"),
         10000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "6666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "6666666666666666666666"),
         10000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "6666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "6666666666666666666666"),
         10000
       );
 
@@ -158,7 +158,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -195,15 +195,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "3333333333333333333333"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "3333333333333333333333"),
         10000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "3333333333333333333333"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "3333333333333333333333"),
         10000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "3333333333333333333333"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "3333333333333333333333"),
         10000
       );
 
@@ -225,7 +225,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -270,9 +270,9 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const bob_AUTWithdrawn = th.getEventArgByName(txB, "AUTGainWithdrawn", "_AUT").toString();
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(alice)).toString(), "0"), 10000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(bob)).toString(), "0"), 10000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(carol)).toString(), "0"), 10000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(alice)).toString(), "0"), 10000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(bob)).toString(), "0"), 10000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(carol)).toString(), "0"), 10000);
 
       assert.isAtMost(th.getDifference(alice_AUTWithdrawn, dec(99500, 15)), 10000);
       assert.isAtMost(th.getDifference(bob_AUTWithdrawn, dec(99500, 15)), 10000);
@@ -293,7 +293,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -331,15 +331,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "6000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "6000000000000000000000"),
         10000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "6000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "6000000000000000000000"),
         10000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "6000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "6000000000000000000000"),
         10000
       );
 
@@ -362,7 +362,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -408,15 +408,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "4000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "4000000000000000000000"),
         10000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "4000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "4000000000000000000000"),
         10000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "4000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "4000000000000000000000"),
         10000
       );
 
@@ -438,11 +438,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       );
 
       // Whale transfers 10k, 20k, 30k ONEU to A, B and C respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: carol });
 
       // 2 Defaulters open trove with 200% ICR
@@ -479,15 +479,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "6666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "6666666666666666666666"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "13333333333333333333333"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "13333333333333333333333"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "20000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "20000000000000000000000"),
         100000
       );
 
@@ -507,11 +507,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       );
 
       // Whale transfers 10k, 20k, 30k ONEU to A, B and C respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: carol });
 
       // Defaulters open trove with 200% ICR
@@ -556,15 +556,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "5000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "5000000000000000000000"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "10000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "10000000000000000000000"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "15000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "15000000000000000000000"),
         100000
       );
 
@@ -589,11 +589,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       Bob:  456000 ONEU
       Carol: 13100 ONEU */
       // Whale transfers ONEU to  A, B and C respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(2000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(2000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(2000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(456000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(456000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(456000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(13100, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(13100, 18), { from: whale });
       await stabilityPool.provideToSP(dec(13100, 18), ZERO_ADDRESS, { from: carol });
 
       /* Defaulters open troves
@@ -644,15 +644,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       // ()
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "901719380174061000000"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "901719380174061000000"),
         100000000000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "205592018679686000000000"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "205592018679686000000000"),
         10000000000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "5906261940140100000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "5906261940140100000000"),
         10000000000
       );
 
@@ -677,7 +677,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -712,7 +712,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_2, { from: owner });
 
       // Whale transfers 10k to Dennis who then provides to SP
-      await lusdToken.transfer(dennis, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: dennis });
 
       // Third defaulter liquidated
@@ -731,20 +731,20 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       console.log();
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "1666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "1666666666666666666666"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "1666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "1666666666666666666666"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "1666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "1666666666666666666666"),
         100000
       );
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "5000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "5000000000000000000000"),
         100000
       );
 
@@ -768,7 +768,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -810,7 +810,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_2, { from: owner });
 
       // Dennis opens a trove and provides to SP
-      await lusdToken.transfer(dennis, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: dennis });
 
       // Third and fourth defaulters liquidated
@@ -828,10 +828,10 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
       const dennis_AUTWithdrawn = th.getEventArgByName(txD, "AUTGainWithdrawn", "_AUT").toString();
 
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(alice)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(bob)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(carol)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(alice)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(bob)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(carol)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "0"), 100000);
 
       assert.isAtMost(th.getDifference(alice_AUTWithdrawn, dec(995, 17)), 100000);
       assert.isAtMost(th.getDifference(bob_AUTWithdrawn, dec(995, 17)), 100000);
@@ -855,11 +855,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       Carol: 15000 ONEU
       */
       // Whale transfers ONEU to  A, B and C respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(60000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(60000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(60000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(15000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(15000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(15000, 18), ZERO_ADDRESS, { from: carol });
 
       /* Defaulters open troves:
@@ -905,7 +905,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_2, { from: owner });
 
       // Dennis provides 25000 ONEU
-      await lusdToken.transfer(dennis, dec(25000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(25000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(25000, 18), ZERO_ADDRESS, { from: dennis });
 
       // Last two defaulters liquidated
@@ -925,19 +925,19 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const dennis_AUTWithdrawn = th.getEventArgByName(txD, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "17832817337461300000000"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "17832817337461300000000"),
         100000000000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "5944272445820430000000"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "5944272445820430000000"),
         100000000000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "4458204334365320000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "4458204334365320000000"),
         100000000000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "11764705882352900000000"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "11764705882352900000000"),
         100000000000
       );
 
@@ -963,7 +963,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and C who then deposit it to the SP
       const depositors = [alice, bob, carol, dennis];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1012,7 +1012,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       const dennis_AUTWithdrawn = th.getEventArgByName(txD, "AUTGainWithdrawn", "_AUT").toString();
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "5000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "5000000000000000000000"),
         100000
       );
       assert.isAtMost(th.getDifference(dennis_AUTWithdrawn, "49750000000000000000"), 100000);
@@ -1030,9 +1030,9 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const bob_AUTWithdrawn = th.getEventArgByName(txB, "AUTGainWithdrawn", "_AUT").toString();
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(alice)).toString(), "0"), 1000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(bob)).toString(), "0"), 1000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(carol)).toString(), "0"), 1000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(alice)).toString(), "0"), 1000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(bob)).toString(), "0"), 1000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(carol)).toString(), "0"), 1000);
 
       assert.isAtMost(th.getDifference(alice_AUTWithdrawn, dec(995, 17)), 100000);
       assert.isAtMost(th.getDifference(bob_AUTWithdrawn, dec(995, 17)), 100000);
@@ -1056,13 +1056,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       Dennis: 40000 ONEU
       */
       // Whale transfers ONEU to  A, B,C and D respectively who then deposit it to the SP
-      await lusdToken.transfer(alice, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: alice });
-      await lusdToken.transfer(bob, dec(25000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(25000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(25000, 18), ZERO_ADDRESS, { from: bob });
-      await lusdToken.transfer(carol, dec(12500, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(12500, 18), { from: whale });
       await stabilityPool.provideToSP(dec(12500, 18), ZERO_ADDRESS, { from: carol });
-      await lusdToken.transfer(dennis, dec(40000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(40000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(40000, 18), ZERO_ADDRESS, { from: dennis });
 
       /* Defaulters open troves:
@@ -1115,7 +1115,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       const dennis_AUTWithdrawn = th.getEventArgByName(txD, "AUTGainWithdrawn", "_AUT").toString();
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "27692307692307700000000"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "27692307692307700000000"),
         100000000000
       );
       // 300*0.995 * 40000/97500
@@ -1135,15 +1135,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "1672240802675590000000"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "1672240802675590000000"),
         10000000000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "2090301003344480000000"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "2090301003344480000000"),
         100000000000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "1045150501672240000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "1045150501672240000000"),
         100000000000
       );
 
@@ -1167,7 +1167,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B and D who then deposit it to the SP
       const depositors = [alice, bob, dennis];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1209,7 +1209,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_2, { from: owner });
 
       // Carol makes deposit
-      await lusdToken.transfer(carol, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: carol });
 
       await troveManager.liquidate(defaulter_3, { from: owner });
@@ -1222,7 +1222,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       const dennis_AUTWithdrawn = th.getEventArgByName(txD, "AUTGainWithdrawn", "_AUT").toString();
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "1666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "1666666666666666666666"),
         100000
       );
       assert.isAtMost(th.getDifference(dennis_AUTWithdrawn, "82916666666666666667"), 100000);
@@ -1239,15 +1239,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const carol_AUTWithdrawn = th.getEventArgByName(txC, "AUTGainWithdrawn", "_AUT").toString();
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(alice)).toString(), "666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(alice)).toString(), "666666666666666666666"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "666666666666666666666"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "2000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "2000000000000000000000"),
         100000
       );
 
@@ -1278,7 +1278,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B who then deposit it to the SP
       const depositors = [alice, bob];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1307,7 +1307,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Carol, Dennis each deposit 10000 ONEU
       const depositors_2 = [carol, dennis];
       for (account of depositors_2) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1328,8 +1328,8 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const dennis_AUTWithdrawn = th.getEventArgByName(txD, "AUTGainWithdrawn", "_AUT").toString();
 
       // Expect Alice And Bob's compounded deposit to be 0 ONEU
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(alice)).toString(), "0"), 10000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(bob)).toString(), "0"), 10000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(alice)).toString(), "0"), 10000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(bob)).toString(), "0"), 10000);
 
       // Expect Alice and Bob's AUT Gain to be 100 AUT
       assert.isAtMost(th.getDifference(alice_AUTWithdrawn, dec(995, 17)), 100000);
@@ -1337,11 +1337,11 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       // Expect Carol And Dennis' compounded deposit to be 50 ONEU
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "5000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "5000000000000000000000"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "5000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "5000000000000000000000"),
         100000
       );
 
@@ -1369,7 +1369,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B who then deposit it to the SP
       const depositors = [alice, bob];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1441,7 +1441,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Carol, Dennis each deposit 10000 ONEU
       const depositors_2 = [carol, dennis];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1490,7 +1490,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Whale transfers 10k ONEU to A, B who then deposit it to the SP
       const depositors = [alice, bob];
       for (account of depositors) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1517,13 +1517,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await troveManager.liquidate(defaulter_1, { from: owner });
 
       // Carol, Dennis, Erin each deposit 10000, 20000, 30000 ONEU respectively
-      await lusdToken.transfer(carol, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: carol });
 
-      await lusdToken.transfer(dennis, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: dennis });
 
-      await lusdToken.transfer(erin, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(erin, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: erin });
 
       // Defaulter 2 liquidated. 10000 ONEU offset
@@ -1542,19 +1542,19 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const erin_AUTWithdrawn = th.getEventArgByName(txE, "AUTGainWithdrawn", "_AUT").toString();
 
       // Expect Alice And Bob's compounded deposit to be 0 ONEU
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(alice)).toString(), "0"), 10000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(bob)).toString(), "0"), 10000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(alice)).toString(), "0"), 10000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(bob)).toString(), "0"), 10000);
 
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), "8333333333333333333333"),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), "8333333333333333333333"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "16666666666666666666666"),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "16666666666666666666666"),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(erin)).toString(), "25000000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(erin)).toString(), "25000000000000000000000"),
         100000
       );
 
@@ -1581,7 +1581,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: whale, value: dec(100000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1,2,3 withdraw 10000 ONEU
@@ -1620,7 +1620,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Grab the AUT gain from the emitted event in the tx log
       const alice_AUTWithdrawn = th.getEventArgByName(txA, "AUTGainWithdrawn", "_AUT").toString();
 
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(alice)).toString(), 0), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(alice)).toString(), 0), 100000);
       assert.isAtMost(th.getDifference(alice_AUTWithdrawn, dec(995, 17)), 100000);
     });
 
@@ -1683,7 +1683,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Alice, Bob each deposit 10k ONEU
       const depositors_1 = [alice, bob];
       for (account of depositors_1) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1693,7 +1693,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Carol, Dennis each deposit 10000 ONEU
       const depositors_2 = [carol, dennis];
       for (account of depositors_2) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1703,7 +1703,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Erin, Flyn each deposit 10000 ONEU
       const depositors_3 = [erin, flyn];
       for (account of depositors_3) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1713,7 +1713,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Graham, Harriet each deposit 10000 ONEU
       const depositors_4 = [graham, harriet];
       for (account of depositors_4) {
-        await lusdToken.transfer(account, dec(10000, 18), { from: whale });
+        await oneuToken.transfer(account, dec(10000, 18), { from: whale });
         await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: account });
       }
 
@@ -1739,15 +1739,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const harriet_AUTWithdrawn = th.getEventArgByName(txH, "AUTGainWithdrawn", "_AUT").toString();
 
       // Expect all deposits to be 0 ONEU
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(alice)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(bob)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(carol)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(dennis)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(erin)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(flyn)).toString(), "0"), 100000);
-      assert.isAtMost(th.getDifference((await lusdToken.balanceOf(graham)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(alice)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(bob)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(carol)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(dennis)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(erin)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(flyn)).toString(), "0"), 100000);
+      assert.isAtMost(th.getDifference((await oneuToken.balanceOf(graham)).toString(), "0"), 100000);
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(harriet)).toString(), "0"),
+        th.getDifference((await oneuToken.balanceOf(harriet)).toString(), "0"),
         100000
       );
 
@@ -1786,7 +1786,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: whale, value: dec(100000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 withdraws 'almost' 10000 ONEU:  9999.99991 ONEU
@@ -1826,7 +1826,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         .getEventArgByName(txA, "AUTGainWithdrawn", "_AUT")
         .toString();
 
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob });
 
       // Defaulter 2 liquidated.  9900 ONEU liquidated. P altered by a factor of 1-(9900/10000) = 0.01.  Scale changed.
@@ -1841,7 +1841,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       // Expect Bob to withdraw 1% of initial deposit (100 ONEU) and all the liquidated AUT (60 ether)
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), "100000000000000000000"),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), "100000000000000000000"),
         100000
       );
       assert.isAtMost(th.getDifference(bob_AUTWithdrawn, "59700000000000000000"), 100000);
@@ -1865,7 +1865,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: whale, value: dec(100000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 withdraws 'almost' 10k ONEU.
@@ -1901,13 +1901,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await priceFeed.setPrice(dec(100, 18));
 
       //B, C, D deposit to Stability Pool
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob });
 
-      await lusdToken.transfer(carol, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: carol });
 
-      await lusdToken.transfer(dennis, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: dennis });
 
       // 54000 ONEU liquidated.  P altered by a factor of 1-(59400/60000) = 0.01. Scale changed.
@@ -1930,15 +1930,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       Total: 6000 ONEU, 300 Ether
       */
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), dec(100, 18)),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), dec(100, 18)),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), dec(200, 18)),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), dec(200, 18)),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), dec(300, 18)),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), dec(300, 18)),
         100000
       );
 
@@ -1977,7 +1977,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: whale, value: dec(100000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 and default 2 each withdraw 9999.999999999 ONEU
@@ -2012,7 +2012,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await priceFeed.setPrice(dec(100, 18));
 
       // Bob deposits 10k ONEU
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob });
 
       // Defaulter 2 liquidated
@@ -2028,7 +2028,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       // Bob should withdraw 1e-5 of initial deposit: 0.1 ONEU and the full AUT gain of 100 ether
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), dec(1, 17)),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), dec(1, 17)),
         100000
       );
       assert.isAtMost(th.getDifference(bob_AUTWithdrawn, dec(995, 17)), 100000000000);
@@ -2052,7 +2052,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         { from: whale, value: dec(100000, "ether") }
       );
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 and default 2 withdraw up to debt of 9999.9 ONEU and 59999.4 ONEU
@@ -2086,13 +2086,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await priceFeed.setPrice(dec(100, 18));
 
       // B, C, D deposit 10000, 20000, 30000 ONEU
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: bob });
 
-      await lusdToken.transfer(carol, dec(20000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(20000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(20000, 18), ZERO_ADDRESS, { from: carol });
 
-      await lusdToken.transfer(dennis, dec(30000, 18), { from: whale });
+      await oneuToken.transfer(dennis, dec(30000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(30000, 18), ZERO_ADDRESS, { from: dennis });
 
       // Defaulter 2 liquidated
@@ -2118,15 +2118,15 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
 
       // {B, C, D} should have a compounded deposit of {0.1, 0.2, 0.3} ONEU
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(bob)).toString(), dec(1, 17)),
+        th.getDifference((await oneuToken.balanceOf(bob)).toString(), dec(1, 17)),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(carol)).toString(), dec(2, 17)),
+        th.getDifference((await oneuToken.balanceOf(carol)).toString(), dec(2, 17)),
         100000
       );
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), dec(3, 17)),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), dec(3, 17)),
         100000
       );
 
@@ -2160,7 +2160,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // Price drops by 50%
       await priceFeed.setPrice(dec(100, 18));
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 liquidated. P -> (~1e-10)*P
@@ -2227,7 +2227,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // price drops by 50%
       await priceFeed.setPrice(dec(100, 18));
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 liquidated.
@@ -2237,7 +2237,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "0");
 
       // B deposits 9999.9 ONEU
-      await lusdToken.transfer(bob, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(bob, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: bob });
 
       // Defaulter 2 liquidated
@@ -2247,7 +2247,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "1");
 
       // C deposits 9999.9 ONEU
-      await lusdToken.transfer(carol, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(carol, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: carol });
 
       // Defaulter 3 liquidated
@@ -2257,7 +2257,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "1");
 
       // D deposits 9999.9 ONEU
-      await lusdToken.transfer(dennis, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(dennis, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: dennis });
 
       // Defaulter 4 liquidated
@@ -2285,12 +2285,12 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
         .toString();
 
       // A, B, C should withdraw 0 - their deposits have been completely used up
-      assert.equal(await lusdToken.balanceOf(alice), "0");
-      assert.equal(await lusdToken.balanceOf(alice), "0");
-      assert.equal(await lusdToken.balanceOf(alice), "0");
+      assert.equal(await oneuToken.balanceOf(alice), "0");
+      assert.equal(await oneuToken.balanceOf(alice), "0");
+      assert.equal(await oneuToken.balanceOf(alice), "0");
       // D should withdraw around 0.9999 ONEU, since his deposit of 9999.9 was reduced by a factor of 1e-5
       assert.isAtMost(
-        th.getDifference((await lusdToken.balanceOf(dennis)).toString(), dec(99999, 12)),
+        th.getDifference((await oneuToken.balanceOf(dennis)).toString(), dec(99999, 12)),
         100000
       );
 
@@ -2359,8 +2359,8 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       await priceFeed.setPrice(dec(100, 18));
 
       // A, B provide 10k ONEU
-      await lusdToken.transfer(A, dec(10000, 18), { from: whale });
-      await lusdToken.transfer(B, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(A, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(B, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: A });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: B });
 
@@ -2382,7 +2382,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(ONEUinSP_1, "0");
 
       // Check SP ONEU balance is zero
-      const SPONEUBalance_1 = await lusdToken.balanceOf(stabilityPool.address);
+      const SPONEUBalance_1 = await oneuToken.balanceOf(stabilityPool.address);
       // console.log(`SPONEUBalance_1: ${SPONEUBalance_1}`)
       assert.equal(SPONEUBalance_1, "0");
 
@@ -2399,8 +2399,8 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // ==========
 
       // C, D provide 10k ONEU
-      await lusdToken.transfer(C, dec(10000, 18), { from: whale });
-      await lusdToken.transfer(D, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(C, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(D, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: C });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: D });
 
@@ -2422,7 +2422,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(ONEUinSP_2, "0");
 
       // Check SP ONEU balance is zero
-      const SPONEUBalance_2 = await lusdToken.balanceOf(stabilityPool.address);
+      const SPONEUBalance_2 = await oneuToken.balanceOf(stabilityPool.address);
       // console.log(`SPONEUBalance_2: ${SPONEUBalance_2}`)
       assert.equal(SPONEUBalance_2, "0");
 
@@ -2439,8 +2439,8 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // ============
 
       // E, F provide 10k ONEU
-      await lusdToken.transfer(E, dec(10000, 18), { from: whale });
-      await lusdToken.transfer(F, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(E, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(F, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: E });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: F });
 
@@ -2461,7 +2461,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(ONEUinSP_3, "0");
 
       // Check SP ONEU balance is zero
-      const SPONEUBalance_3 = await lusdToken.balanceOf(stabilityPool.address);
+      const SPONEUBalance_3 = await oneuToken.balanceOf(stabilityPool.address);
       // console.log(`SPONEUBalance_3: ${SPONEUBalance_3}`)
       assert.equal(SPONEUBalance_3, "0");
 
@@ -2522,7 +2522,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       // price drops by 50%
       await priceFeed.setPrice(dec(100, 18));
 
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
       await stabilityPool.provideToSP(dec(10000, 18), ZERO_ADDRESS, { from: alice });
 
       // Defaulter 1 liquidated.
@@ -2532,7 +2532,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "0");
 
       // B deposits 9999.9 ONEU
-      await lusdToken.transfer(bob, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(bob, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: bob });
 
       // Defaulter 2 liquidated
@@ -2542,7 +2542,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "1");
 
       // C deposits 9999.9 ONEU
-      await lusdToken.transfer(carol, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(carol, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: carol });
 
       // Defaulter 3 liquidated
@@ -2552,7 +2552,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       assert.equal(await stabilityPool.currentScale(), "1");
 
       // D deposits 9999.9 ONEU
-      await lusdToken.transfer(dennis, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(dennis, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: dennis });
 
       // Defaulter 4 liquidated
@@ -2566,7 +2566,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       ).toString();
 
       // E deposits 9999.9 ONEU
-      await lusdToken.transfer(erin, dec(99999, 17), { from: whale });
+      await oneuToken.transfer(erin, dec(99999, 17), { from: whale });
       await stabilityPool.provideToSP(dec(99999, 17), ZERO_ADDRESS, { from: erin });
 
       // Defaulter 5 liquidated
@@ -2632,13 +2632,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const bob_AUTWithdrawn = th.getEventArgByName(txB, "AUTGainWithdrawn", "_AUT");
 
       // Check ONEU balances
-      const aliceONEUBalance = await lusdToken.balanceOf(alice);
+      const aliceONEUBalance = await oneuToken.balanceOf(alice);
       const aliceExpectedONEUBalance = web3.utils.toBN(dec(5, 35));
       const aliceONEUBalDiff = aliceONEUBalance.sub(aliceExpectedONEUBalance).abs();
 
       assert.isTrue(aliceONEUBalDiff.lte(toBN(dec(1, 18)))); // error tolerance of 1e18
 
-      const bobONEUBalance = await lusdToken.balanceOf(bob);
+      const bobONEUBalance = await oneuToken.balanceOf(bob);
       const bobExpectedONEUBalance = toBN(dec(5, 35));
       const bobONEUBalDiff = bobONEUBalance.sub(bobExpectedONEUBalance).abs();
 
@@ -2700,13 +2700,13 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       const alice_AUTWithdrawn = th.getEventArgByName(txA, "AUTGainWithdrawn", "_AUT");
       const bob_AUTWithdrawn = th.getEventArgByName(txB, "AUTGainWithdrawn", "_AUT");
 
-      const aliceONEUBalance = await lusdToken.balanceOf(alice);
+      const aliceONEUBalance = await oneuToken.balanceOf(alice);
       const aliceExpectedONEUBalance = toBN("99999999999999997500000000000000000000");
       const aliceONEUBalDiff = aliceONEUBalance.sub(aliceExpectedONEUBalance).abs();
 
       assert.isTrue(aliceONEUBalDiff.lte(toBN(dec(1, 18))));
 
-      const bobONEUBalance = await lusdToken.balanceOf(bob);
+      const bobONEUBalance = await oneuToken.balanceOf(bob);
       const bobExpectedONEUBalance = toBN("99999999999999997500000000000000000000");
       const bobONEUBalDiff = bobONEUBalance.sub(bobExpectedONEUBalance).abs();
 

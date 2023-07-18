@@ -8,7 +8,7 @@ contract(
     const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
 
     let priceFeed;
-    let lusdToken;
+    let oneuToken;
     let sortedTroves;
     let troveManager;
     let activePool;
@@ -30,7 +30,7 @@ contract(
       );
 
       priceFeed = coreContracts.priceFeedTestnet;
-      lusdToken = coreContracts.lusdToken;
+      oneuToken = coreContracts.oneuToken;
       sortedTroves = coreContracts.sortedTroves;
       troveManager = coreContracts.troveManager;
       activePool = coreContracts.activePool;
@@ -58,11 +58,11 @@ contract(
     });
 
     it("Sets the correct ONEUToken address in TroveManager", async () => {
-      const lusdTokenAddress = lusdToken.address;
+      const oneuTokenAddress = oneuToken.address;
 
-      const recordedClvTokenAddress = await troveManager.lusdToken();
+      const recordedClvTokenAddress = await troveManager.oneuToken();
 
-      assert.equal(lusdTokenAddress, recordedClvTokenAddress);
+      assert.equal(oneuTokenAddress, recordedClvTokenAddress);
     });
 
     it("Sets the correct SortedTroves address in TroveManager", async () => {
@@ -167,11 +167,11 @@ contract(
     });
 
     it("Sets the correct ONEUToken address in StabilityPool", async () => {
-      const lusdTokenAddress = lusdToken.address;
+      const oneuTokenAddress = oneuToken.address;
 
-      const recordedClvTokenAddress = await stabilityPool.lusdToken();
+      const recordedClvTokenAddress = await stabilityPool.oneuToken();
 
-      assert.equal(lusdTokenAddress, recordedClvTokenAddress);
+      assert.equal(oneuTokenAddress, recordedClvTokenAddress);
     });
 
     it("Sets the correct TroveManager address in StabilityPool", async () => {
@@ -281,10 +281,10 @@ contract(
 
     // Sets ONEUToken in LQTYStaking
     it("Sets the correct ActivePool address in LQTYStaking", async () => {
-      const lusdTokenAddress = lusdToken.address;
+      const oneuTokenAddress = oneuToken.address;
 
-      const recordedONEUTokenAddress = await lqtyStaking.lusdToken();
-      assert.equal(lusdTokenAddress, recordedONEUTokenAddress);
+      const recordedONEUTokenAddress = await lqtyStaking.oneuToken();
+      assert.equal(oneuTokenAddress, recordedONEUTokenAddress);
     });
 
     // Sets TroveManager in LQTYStaking

@@ -10,7 +10,7 @@ contract("All Liquity functions with onlyOwner modifier", async accounts => {
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
 
   let contracts;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -33,7 +33,7 @@ contract("All Liquity functions with onlyOwner modifier", async accounts => {
       multisig
     );
 
-    lusdToken = contracts.lusdToken;
+    oneuToken = contracts.oneuToken;
     sortedTroves = contracts.sortedTroves;
     troveManager = contracts.troveManager;
     activePool = contracts.activePool;

@@ -27,7 +27,7 @@ contract("TroveManager", async accounts => {
       lpRewardsAddress
     );
 
-    lusdToken = contracts.lusdToken;
+    oneuToken = contracts.oneuToken;
     priceFeed = contracts.priceFeedTestnet;
     sortedTroves = contracts.sortedTroves;
     troveManager = contracts.troveManager;

@@ -45,7 +45,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts.lusdToken = await ONEUToken.new(
+    contracts.oneuToken = await ONEUToken.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address

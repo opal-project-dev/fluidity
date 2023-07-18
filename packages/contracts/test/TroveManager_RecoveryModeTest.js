@@ -58,7 +58,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -78,7 +78,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts.lusdToken = await ONEUToken.new(
+    contracts.oneuToken = await ONEUToken.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
@@ -90,7 +90,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     );
 
     priceFeed = contracts.priceFeedTestnet;
-    lusdToken = contracts.lusdToken;
+    oneuToken = contracts.oneuToken;
     sortedTroves = contracts.sortedTroves;
     troveManager = contracts.troveManager;
     activePool = contracts.activePool;
@@ -1534,7 +1534,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     assert.equal(bob_ICR_After, bob_ICR_Before);
 
     // to compensate borrowing fees
-    await lusdToken.transfer(bob, dec(100, 18), { from: alice });
+    await oneuToken.transfer(bob, dec(100, 18), { from: alice });
 
     // Remove Bob from system to test Carol's trove: price rises, Bob closes trove, price drops to 100 again
     await priceFeed.setPrice(dec(200, 18));
@@ -1920,7 +1920,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     });
 
     // Bob sends tokens to Dennis, who has no trove
-    await lusdToken.transfer(dennis, spDeposit, { from: bob });
+    await oneuToken.transfer(dennis, spDeposit, { from: bob });
 
     //Dennis provides 200 ONEU to SP
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: dennis });
@@ -1961,17 +1961,17 @@ contract("TroveManager - in Recovery Mode", async accounts => {
       extraParams: { from: whale }
     });
 
-    const { lusdAmount: A_lusdAmount } = await openTrove({
+    const { oneuAmount: A_oneuAmount } = await openTrove({
       ICR: toBN(dec(200, 16)),
       extraONEUAmount: dec(300, 18),
       extraParams: { from: alice }
     });
-    const { lusdAmount: B_lusdAmount } = await openTrove({
+    const { oneuAmount: B_oneuAmount } = await openTrove({
       ICR: toBN(dec(200, 16)),
       extraONEUAmount: dec(200, 18),
       extraParams: { from: bob }
     });
-    const { lusdAmount: C_lusdAmount } = await openTrove({
+    const { oneuAmount: C_oneuAmount } = await openTrove({
       ICR: toBN(dec(206, 16)),
       extraONEUAmount: dec(100, 18),
       extraParams: { from: carol }
@@ -1983,9 +1983,9 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     assert.isTrue(await th.checkRecoveryMode(contracts));
 
     // Check token balances
-    assert.equal((await lusdToken.balanceOf(alice)).toString(), A_lusdAmount);
-    assert.equal((await lusdToken.balanceOf(bob)).toString(), B_lusdAmount);
-    assert.equal((await lusdToken.balanceOf(carol)).toString(), C_lusdAmount);
+    assert.equal((await oneuToken.balanceOf(alice)).toString(), A_oneuAmount);
+    assert.equal((await oneuToken.balanceOf(bob)).toString(), B_oneuAmount);
+    assert.equal((await oneuToken.balanceOf(carol)).toString(), C_oneuAmount);
 
     // Check sortedList size is 4
     assert.equal((await sortedTroves.getSize()).toString(), "4");
@@ -2004,9 +2004,9 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     assert.equal((await sortedTroves.getSize()).toString(), "1");
 
     // Confirm token balances have not changed
-    assert.equal((await lusdToken.balanceOf(alice)).toString(), A_lusdAmount);
-    assert.equal((await lusdToken.balanceOf(bob)).toString(), B_lusdAmount);
-    assert.equal((await lusdToken.balanceOf(carol)).toString(), C_lusdAmount);
+    assert.equal((await oneuToken.balanceOf(alice)).toString(), A_oneuAmount);
+    assert.equal((await oneuToken.balanceOf(bob)).toString(), B_oneuAmount);
+    assert.equal((await oneuToken.balanceOf(carol)).toString(), C_oneuAmount);
   });
 
   it("liquidate(), with 110% < ICR < TCR, can claim collateral, re-open, be reedemed and claim again", async () => {
@@ -3147,15 +3147,15 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     await openTrove({ ICR: toBN(dec(300, 16)), extraParams: { from: whale } });
 
     // D, E, F open troves that will fall below MCR when price drops to 100
-    const { lusdAmount: lusdAmountD } = await openTrove({
+    const { oneuAmount: oneuAmountD } = await openTrove({
       ICR: toBN(dec(200, 16)),
       extraParams: { from: dennis }
     });
-    const { lusdAmount: lusdAmountE } = await openTrove({
+    const { oneuAmount: oneuAmountE } = await openTrove({
       ICR: toBN(dec(133, 16)),
       extraParams: { from: erin }
     });
-    const { lusdAmount: lusdAmountF } = await openTrove({
+    const { oneuAmount: oneuAmountF } = await openTrove({
       ICR: toBN(dec(111, 16)),
       extraParams: { from: freddy }
     });
@@ -3164,9 +3164,9 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     assert.equal((await sortedTroves.getSize()).toString(), "4");
 
     // Check token balances before
-    assert.equal((await lusdToken.balanceOf(dennis)).toString(), lusdAmountD);
-    assert.equal((await lusdToken.balanceOf(erin)).toString(), lusdAmountE);
-    assert.equal((await lusdToken.balanceOf(freddy)).toString(), lusdAmountF);
+    assert.equal((await oneuToken.balanceOf(dennis)).toString(), oneuAmountD);
+    assert.equal((await oneuToken.balanceOf(erin)).toString(), oneuAmountE);
+    assert.equal((await oneuToken.balanceOf(freddy)).toString(), oneuAmountF);
 
     // Price drops
     await priceFeed.setPrice(dec(100, 18));
@@ -3186,28 +3186,28 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     assert.isFalse(await sortedTroves.contains(freddy));
 
     // Check token balances of users whose troves were liquidated, have not changed
-    assert.equal((await lusdToken.balanceOf(dennis)).toString(), lusdAmountD);
-    assert.equal((await lusdToken.balanceOf(erin)).toString(), lusdAmountE);
-    assert.equal((await lusdToken.balanceOf(freddy)).toString(), lusdAmountF);
+    assert.equal((await oneuToken.balanceOf(dennis)).toString(), oneuAmountD);
+    assert.equal((await oneuToken.balanceOf(erin)).toString(), oneuAmountE);
+    assert.equal((await oneuToken.balanceOf(freddy)).toString(), oneuAmountF);
   });
 
   it("liquidateTroves(): Liquidating troves at 100 < ICR < 110 with SP deposits correctly impacts their SP deposit and AUT gain", async () => {
     // Whale provides ONEU to the SP
-    const { lusdAmount: W_lusdAmount } = await openTrove({
+    const { oneuAmount: W_oneuAmount } = await openTrove({
       ICR: toBN(dec(300, 16)),
       extraONEUAmount: dec(4000, 18),
       extraParams: { from: whale }
     });
-    await stabilityPool.provideToSP(W_lusdAmount, ZERO_ADDRESS, { from: whale });
+    await stabilityPool.provideToSP(W_oneuAmount, ZERO_ADDRESS, { from: whale });
 
-    const { lusdAmount: A_lusdAmount, totalDebt: A_totalDebt, collateral: A_coll } = await openTrove(
+    const { oneuAmount: A_oneuAmount, totalDebt: A_totalDebt, collateral: A_coll } = await openTrove(
       {
         ICR: toBN(dec(191, 16)),
         extraONEUAmount: dec(40, 18),
         extraParams: { from: alice }
       }
     );
-    const { lusdAmount: B_lusdAmount, totalDebt: B_totalDebt, collateral: B_coll } = await openTrove(
+    const { oneuAmount: B_oneuAmount, totalDebt: B_totalDebt, collateral: B_coll } = await openTrove(
       {
         ICR: toBN(dec(200, 16)),
         extraONEUAmount: dec(240, 18),
@@ -3220,10 +3220,10 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     });
 
     // A, B provide to the SP
-    await stabilityPool.provideToSP(A_lusdAmount, ZERO_ADDRESS, { from: alice });
-    await stabilityPool.provideToSP(B_lusdAmount, ZERO_ADDRESS, { from: bob });
+    await stabilityPool.provideToSP(A_oneuAmount, ZERO_ADDRESS, { from: alice });
+    await stabilityPool.provideToSP(B_oneuAmount, ZERO_ADDRESS, { from: bob });
 
-    const totalDeposit = W_lusdAmount.add(A_lusdAmount).add(B_lusdAmount);
+    const totalDeposit = W_oneuAmount.add(A_oneuAmount).add(B_oneuAmount);
 
     assert.equal((await sortedTroves.getSize()).toString(), "4");
 
@@ -3302,21 +3302,21 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     assert.isAtMost(
       th.getDifference(
         whale_Deposit_After,
-        W_lusdAmount.sub(liquidatedDebt.mul(W_lusdAmount).div(totalDeposit))
+        W_oneuAmount.sub(liquidatedDebt.mul(W_oneuAmount).div(totalDeposit))
       ),
       100000
     );
     assert.isAtMost(
       th.getDifference(
         alice_Deposit_After,
-        A_lusdAmount.sub(liquidatedDebt.mul(A_lusdAmount).div(totalDeposit))
+        A_oneuAmount.sub(liquidatedDebt.mul(A_oneuAmount).div(totalDeposit))
       ),
       100000
     );
     assert.isAtMost(
       th.getDifference(
         bob_Deposit_After,
-        B_lusdAmount.sub(liquidatedDebt.mul(B_lusdAmount).div(totalDeposit))
+        B_oneuAmount.sub(liquidatedDebt.mul(B_oneuAmount).div(totalDeposit))
       ),
       100000
     );
@@ -3324,21 +3324,21 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     assert.isAtMost(
       th.getDifference(
         whale_AUTGain,
-        th.applyLiquidationFee(liquidatedColl).mul(W_lusdAmount).div(totalDeposit)
+        th.applyLiquidationFee(liquidatedColl).mul(W_oneuAmount).div(totalDeposit)
       ),
       2000
     );
     assert.isAtMost(
       th.getDifference(
         alice_AUTGain,
-        th.applyLiquidationFee(liquidatedColl).mul(A_lusdAmount).div(totalDeposit)
+        th.applyLiquidationFee(liquidatedColl).mul(A_oneuAmount).div(totalDeposit)
       ),
       2000
     );
     assert.isAtMost(
       th.getDifference(
         bob_AUTGain,
-        th.applyLiquidationFee(liquidatedColl).mul(B_lusdAmount).div(totalDeposit)
+        th.applyLiquidationFee(liquidatedColl).mul(B_oneuAmount).div(totalDeposit)
       ),
       2000
     );
@@ -3807,7 +3807,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
       liquidatedDebt,
       liquidatedColl,
       collGasComp,
-      lusdGasComp
+      oneuGasComp
     ] = th.getEmittedLiquidationValues(liquidationTx);
 
     th.assertIsApproximatelyEqual(liquidatedDebt, A_totalDebt.add(B_totalDebt));
@@ -3819,7 +3819,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
       collGasComp,
       equivalentColl.sub(th.applyLiquidationFee(equivalentColl))
     ); // 0.5% of 283/120*1.1
-    assert.equal(lusdGasComp.toString(), dec(400, 18));
+    assert.equal(oneuGasComp.toString(), dec(400, 18));
 
     // check collateral surplus
     const alice_remainingCollateral = A_coll.sub(A_totalDebt.mul(th.toBN(dec(11, 17))).div(price));
@@ -4200,7 +4200,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: alice });
 
     // to compensate borrowing fee
-    await lusdToken.transfer(alice, A_totalDebt, { from: whale });
+    await oneuToken.transfer(alice, A_totalDebt, { from: whale });
     // Alice closes trove
     await borrowerOperations.closeTrove({ from: alice });
 
@@ -4659,7 +4659,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
       liquidatedDebt,
       liquidatedColl,
       collGasComp,
-      lusdGasComp
+      oneuGasComp
     ] = th.getEmittedLiquidationValues(liquidationTx);
 
     th.assertIsApproximatelyEqual(liquidatedDebt, A_totalDebt.add(B_totalDebt));
@@ -4671,7 +4671,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
       collGasComp,
       equivalentColl.sub(th.applyLiquidationFee(equivalentColl))
     ); // 0.5% of 283/120*1.1
-    assert.equal(lusdGasComp.toString(), dec(400, 18));
+    assert.equal(oneuGasComp.toString(), dec(400, 18));
 
     // check collateral surplus
     const alice_remainingCollateral = A_coll.sub(A_totalDebt.mul(th.toBN(dec(11, 17))).div(price));

@@ -96,12 +96,12 @@ class DeploymentHelper {
     const functionCaller = await FunctionCaller.new();
     const borrowerOperations = await BorrowerOperations.new();
     const hintHelpers = await HintHelpers.new();
-    const lusdToken = await ONEUToken.new(
+    const oneuToken = await ONEUToken.new(
       troveManager.address,
       stabilityPool.address,
       borrowerOperations.address
     );
-    ONEUToken.setAsDeployed(lusdToken);
+    ONEUToken.setAsDeployed(oneuToken);
     DefaultPool.setAsDeployed(defaultPool);
     PriceFeedTestnet.setAsDeployed(priceFeedTestnet);
     SortedTroves.setAsDeployed(sortedTroves);
@@ -116,7 +116,7 @@ class DeploymentHelper {
 
     const coreContracts = {
       priceFeedTestnet,
-      lusdToken,
+      oneuToken,
       sortedTroves,
       troveManager,
       activePool,
@@ -149,7 +149,7 @@ class DeploymentHelper {
     testerContracts.troveManager = await TroveManagerTester.new();
     testerContracts.functionCaller = await FunctionCaller.new();
     testerContracts.hintHelpers = await HintHelpers.new();
-    testerContracts.lusdToken = await ONEUTokenTester.new(
+    testerContracts.oneuToken = await ONEUTokenTester.new(
       testerContracts.troveManager.address,
       testerContracts.stabilityPool.address,
       testerContracts.borrowerOperations.address
@@ -227,14 +227,14 @@ class DeploymentHelper {
     const functionCaller = await FunctionCaller.new();
     const borrowerOperations = await BorrowerOperations.new();
     const hintHelpers = await HintHelpers.new();
-    const lusdToken = await ONEUToken.new(
+    const oneuToken = await ONEUToken.new(
       troveManager.address,
       stabilityPool.address,
       borrowerOperations.address
     );
     const coreContracts = {
       priceFeedTestnet,
-      lusdToken,
+      oneuToken,
       sortedTroves,
       troveManager,
       activePool,
@@ -275,7 +275,7 @@ class DeploymentHelper {
   }
 
   static async deployONEUToken(contracts) {
-    contracts.lusdToken = await ONEUToken.new(
+    contracts.oneuToken = await ONEUToken.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
@@ -284,7 +284,7 @@ class DeploymentHelper {
   }
 
   static async deployONEUTokenTester(contracts) {
-    contracts.lusdToken = await ONEUTokenTester.new(
+    contracts.oneuToken = await ONEUTokenTester.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
@@ -334,12 +334,12 @@ class DeploymentHelper {
 
     contracts.sortedTroves = new SortedTrovesProxy(owner, proxies, contracts.sortedTroves);
 
-    const lusdTokenScript = await TokenScript.new(contracts.lusdToken.address);
-    contracts.lusdToken = new TokenProxy(
+    const oneuTokenScript = await TokenScript.new(contracts.oneuToken.address);
+    contracts.oneuToken = new TokenProxy(
       owner,
       proxies,
-      lusdTokenScript.address,
-      contracts.lusdToken
+      oneuTokenScript.address,
+      contracts.oneuToken
     );
 
     const lqtyTokenScript = await TokenScript.new(LQTYContracts.lqtyToken.address);
@@ -381,7 +381,7 @@ class DeploymentHelper {
       contracts.gasPool.address,
       contracts.collSurplusPool.address,
       contracts.priceFeedTestnet.address,
-      contracts.lusdToken.address,
+      contracts.oneuToken.address,
       contracts.sortedTroves.address,
       LQTYContracts.lqtyToken.address,
       LQTYContracts.lqtyStaking.address
@@ -397,7 +397,7 @@ class DeploymentHelper {
       contracts.collSurplusPool.address,
       contracts.priceFeedTestnet.address,
       contracts.sortedTroves.address,
-      contracts.lusdToken.address,
+      contracts.oneuToken.address,
       LQTYContracts.lqtyStaking.address
     );
 
@@ -406,7 +406,7 @@ class DeploymentHelper {
       contracts.borrowerOperations.address,
       contracts.troveManager.address,
       contracts.activePool.address,
-      contracts.lusdToken.address,
+      contracts.oneuToken.address,
       contracts.sortedTroves.address,
       contracts.priceFeedTestnet.address,
       LQTYContracts.communityIssuance.address
@@ -445,7 +445,7 @@ class DeploymentHelper {
   static async connectLQTYContractsToCore(LQTYContracts, coreContracts) {
     await LQTYContracts.lqtyStaking.setAddresses(
       LQTYContracts.lqtyToken.address,
-      coreContracts.lusdToken.address,
+      coreContracts.oneuToken.address,
       coreContracts.troveManager.address,
       coreContracts.borrowerOperations.address,
       coreContracts.activePool.address

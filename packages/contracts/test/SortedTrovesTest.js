@@ -67,7 +67,7 @@ contract("SortedTroves", async accounts => {
   let sortedTroves;
   let troveManager;
   let borrowerOperations;
-  let lusdToken;
+  let oneuToken;
 
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
 
@@ -80,7 +80,7 @@ contract("SortedTroves", async accounts => {
     beforeEach(async () => {
       contracts = await deploymentHelper.deployLiquityCore();
       contracts.troveManager = await TroveManagerTester.new();
-      contracts.lusdToken = await ONEUToken.new(
+      contracts.oneuToken = await ONEUToken.new(
         contracts.troveManager.address,
         contracts.stabilityPool.address,
         contracts.borrowerOperations.address
@@ -95,7 +95,7 @@ contract("SortedTroves", async accounts => {
       sortedTroves = contracts.sortedTroves;
       troveManager = contracts.troveManager;
       borrowerOperations = contracts.borrowerOperations;
-      lusdToken = contracts.lusdToken;
+      oneuToken = contracts.oneuToken;
 
       await deploymentHelper.connectLQTYContracts(LQTYContracts);
       await deploymentHelper.connectCoreContracts(contracts, LQTYContracts);
@@ -144,9 +144,9 @@ contract("SortedTroves", async accounts => {
       await openTrove({ ICR: toBN(dec(2000, 18)), extraParams: { from: carol } });
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, dec(1000, 18), { from: whale });
-      await lusdToken.transfer(bob, dec(1000, 18), { from: whale });
-      await lusdToken.transfer(carol, dec(1000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(1000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(1000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(1000, 18), { from: whale });
 
       // A, B, C close troves
       await borrowerOperations.closeTrove({ from: alice });
@@ -177,9 +177,9 @@ contract("SortedTroves", async accounts => {
       await openTrove({ ICR: toBN(dec(2000, 18)), extraParams: { from: carol } });
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, dec(1000, 18), { from: whale });
-      await lusdToken.transfer(bob, dec(1000, 18), { from: whale });
-      await lusdToken.transfer(carol, dec(1000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(1000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(1000, 18), { from: whale });
+      await oneuToken.transfer(carol, dec(1000, 18), { from: whale });
 
       // A, B, C close troves
       await borrowerOperations.closeTrove({ from: alice });

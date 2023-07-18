@@ -28,7 +28,7 @@ contract("CollSurplusPool", async accounts => {
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts.lusdToken = await ONEUToken.new(
+    contracts.oneuToken = await ONEUToken.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
@@ -96,11 +96,11 @@ contract("CollSurplusPool", async accounts => {
 
     // open trove from NonPayable proxy contract
     const B_coll = toBN(dec(60, 18));
-    const B_lusdAmount = toBN(dec(3000, 18));
-    const B_netDebt = await th.getAmountWithBorrowingFee(contracts, B_lusdAmount);
+    const B_oneuAmount = toBN(dec(3000, 18));
+    const B_netDebt = await th.getAmountWithBorrowingFee(contracts, B_oneuAmount);
     const openTroveData = th.getTransactionData("openTrove(uint256,uint256,address,address)", [
       "0xde0b6b3a7640000",
-      web3.utils.toHex(B_lusdAmount),
+      web3.utils.toHex(B_oneuAmount),
       B,
       B
     ]);

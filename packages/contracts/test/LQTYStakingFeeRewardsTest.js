@@ -32,7 +32,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
   const [owner, A, B, C, D, E, F, G, whale] = accounts;
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -62,7 +62,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
 
     nonPayable = await NonPayable.new();
     priceFeed = contracts.priceFeedTestnet;
-    lusdToken = contracts.lusdToken;
+    oneuToken = contracts.oneuToken;
     sortedTroves = contracts.sortedTroves;
     troveManager = contracts.troveManager;
     activePool = contracts.activePool;
@@ -127,7 +127,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     const F_AUT_Before = await lqtyStaking.F_AUT();
     assert.equal(F_AUT_Before, "0");
 
-    const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
+    const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
     const redemptionTx = await th.redeemCollateralAndGetTxObject(
       B,
@@ -136,7 +136,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
       GAS_PRICE
     );
 
-    const B_BalAfterRedemption = await lusdToken.balanceOf(B);
+    const B_BalAfterRedemption = await oneuToken.balanceOf(B);
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption));
 
     // check AUT fee emitted in event is non-zero
@@ -189,7 +189,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     const F_AUT_Before = await lqtyStaking.F_AUT();
     assert.equal(F_AUT_Before, "0");
 
-    const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
+    const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
     const redemptionTx = await th.redeemCollateralAndGetTxObject(
       B,
@@ -198,7 +198,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
       GAS_PRICE
     );
 
-    const B_BalAfterRedemption = await lusdToken.balanceOf(B);
+    const B_BalAfterRedemption = await oneuToken.balanceOf(B);
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption));
 
     // check AUT fee emitted in event is non-zero
@@ -251,7 +251,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     const F_ONEU_Before = await lqtyStaking.F_AUT();
     assert.equal(F_ONEU_Before, "0");
 
-    const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
+    const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
     const redemptionTx = await th.redeemCollateralAndGetTxObject(
       B,
@@ -260,7 +260,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const B_BalAfterRedemption = await lusdToken.balanceOf(B);
+    const B_BalAfterRedemption = await oneuToken.balanceOf(B);
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption));
 
     // Check base rate is now non-zero
@@ -320,7 +320,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     const F_ONEU_Before = await lqtyStaking.F_AUT();
     assert.equal(F_ONEU_Before, "0");
 
-    const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
+    const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
     const redemptionTx = await th.redeemCollateralAndGetTxObject(
       B,
@@ -329,7 +329,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const B_BalAfterRedemption = await lusdToken.balanceOf(B);
+    const B_BalAfterRedemption = await oneuToken.balanceOf(B);
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption));
 
     // Check base rate is now non-zero
@@ -385,7 +385,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
     await lqtyStaking.stake(dec(100, 18), { from: A });
 
-    const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
+    const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(
       B,
@@ -394,14 +394,14 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const B_BalAfterRedemption = await lusdToken.balanceOf(B);
+    const B_BalAfterRedemption = await oneuToken.balanceOf(B);
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption));
 
     // check AUT fee 1 emitted in event is non-zero
     const emittedAUTFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3]);
     assert.isTrue(emittedAUTFee_1.gt(toBN("0")));
 
-    const C_BalBeforeREdemption = await lusdToken.balanceOf(C);
+    const C_BalBeforeREdemption = await oneuToken.balanceOf(C);
     // C redeems
     const redemptionTx_2 = await th.redeemCollateralAndGetTxObject(
       C,
@@ -410,7 +410,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const C_BalAfterRedemption = await lusdToken.balanceOf(C);
+    const C_BalAfterRedemption = await oneuToken.balanceOf(C);
     assert.isTrue(C_BalAfterRedemption.lt(C_BalBeforeREdemption));
 
     // check AUT fee 2 emitted in event is non-zero
@@ -439,7 +439,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     const expectedTotalONEUGain = emittedONEUFee_1.add(emittedONEUFee_2);
 
     const A_AUTBalance_Before = toBN(await web3.eth.getBalance(A));
-    const A_ONEUBalance_Before = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_Before = toBN(await oneuToken.balanceOf(A));
 
     // A un-stakes
     const GAS_Used = th.gasUsed(
@@ -447,7 +447,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     );
 
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
-    const A_ONEUBalance_After = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_After = toBN(await oneuToken.balanceOf(A));
 
     const A_AUTGain = A_AUTBalance_After.sub(A_AUTBalance_Before).add(toBN(GAS_Used * GAS_PRICE));
     const A_ONEUGain = A_ONEUBalance_After.sub(A_ONEUBalance_Before);
@@ -493,7 +493,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
     await lqtyStaking.stake(dec(50, 18), { from: A });
 
-    const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
+    const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(
       B,
@@ -502,14 +502,14 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const B_BalAfterRedemption = await lusdToken.balanceOf(B);
+    const B_BalAfterRedemption = await oneuToken.balanceOf(B);
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption));
 
     // check AUT fee 1 emitted in event is non-zero
     const emittedAUTFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3]);
     assert.isTrue(emittedAUTFee_1.gt(toBN("0")));
 
-    const C_BalBeforeREdemption = await lusdToken.balanceOf(C);
+    const C_BalBeforeREdemption = await oneuToken.balanceOf(C);
     // C redeems
     const redemptionTx_2 = await th.redeemCollateralAndGetTxObject(
       C,
@@ -518,7 +518,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const C_BalAfterRedemption = await lusdToken.balanceOf(C);
+    const C_BalAfterRedemption = await oneuToken.balanceOf(C);
     assert.isTrue(C_BalAfterRedemption.lt(C_BalBeforeREdemption));
 
     // check AUT fee 2 emitted in event is non-zero
@@ -547,7 +547,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     const expectedTotalONEUGain = emittedONEUFee_1.add(emittedONEUFee_2);
 
     const A_AUTBalance_Before = toBN(await web3.eth.getBalance(A));
-    const A_ONEUBalance_Before = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_Before = toBN(await oneuToken.balanceOf(A));
 
     // A tops up
     const GAS_Used = th.gasUsed(
@@ -555,7 +555,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     );
 
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
-    const A_ONEUBalance_After = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_After = toBN(await oneuToken.balanceOf(A));
 
     const A_AUTGain = A_AUTBalance_After.sub(A_AUTBalance_Before).add(toBN(GAS_Used * GAS_PRICE));
     const A_ONEUGain = A_ONEUBalance_After.sub(A_ONEUBalance_Before);
@@ -601,7 +601,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
     await lqtyStaking.stake(dec(50, 18), { from: A });
 
-    const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
+    const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(
       B,
@@ -610,14 +610,14 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const B_BalAfterRedemption = await lusdToken.balanceOf(B);
+    const B_BalAfterRedemption = await oneuToken.balanceOf(B);
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption));
 
     // check AUT fee 1 emitted in event is non-zero
     const emittedAUTFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3]);
     assert.isTrue(emittedAUTFee_1.gt(toBN("0")));
 
-    const C_BalBeforeREdemption = await lusdToken.balanceOf(C);
+    const C_BalBeforeREdemption = await oneuToken.balanceOf(C);
     // C redeems
     const redemptionTx_2 = await th.redeemCollateralAndGetTxObject(
       C,
@@ -626,7 +626,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const C_BalAfterRedemption = await lusdToken.balanceOf(C);
+    const C_BalAfterRedemption = await oneuToken.balanceOf(C);
     assert.isTrue(C_BalAfterRedemption.lt(C_BalBeforeREdemption));
 
     // check AUT fee 2 emitted in event is non-zero
@@ -677,7 +677,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
     await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
     await lqtyStaking.stake(dec(50, 18), { from: A });
 
-    const B_BalBeforeREdemption = await lusdToken.balanceOf(B);
+    const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(
       B,
@@ -686,14 +686,14 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const B_BalAfterRedemption = await lusdToken.balanceOf(B);
+    const B_BalAfterRedemption = await oneuToken.balanceOf(B);
     assert.isTrue(B_BalAfterRedemption.lt(B_BalBeforeREdemption));
 
     // check AUT fee 1 emitted in event is non-zero
     const emittedAUTFee_1 = toBN((await th.getEmittedRedemptionValues(redemptionTx_1))[3]);
     assert.isTrue(emittedAUTFee_1.gt(toBN("0")));
 
-    const C_BalBeforeREdemption = await lusdToken.balanceOf(C);
+    const C_BalBeforeREdemption = await oneuToken.balanceOf(C);
     // C redeems
     const redemptionTx_2 = await th.redeemCollateralAndGetTxObject(
       C,
@@ -702,7 +702,7 @@ contract("LQTYStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const C_BalAfterRedemption = await lusdToken.balanceOf(C);
+    const C_BalAfterRedemption = await oneuToken.balanceOf(C);
     assert.isTrue(C_BalAfterRedemption.lt(C_BalBeforeREdemption));
 
     // check AUT fee 2 emitted in event is non-zero
@@ -914,13 +914,13 @@ contract("LQTYStaking revenue share tests", async accounts => {
     const expectedONEUGain_D = toBN("50").mul(emittedONEUFee_3).div(toBN("650"));
 
     const A_AUTBalance_Before = toBN(await web3.eth.getBalance(A));
-    const A_ONEUBalance_Before = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_Before = toBN(await oneuToken.balanceOf(A));
     const B_AUTBalance_Before = toBN(await web3.eth.getBalance(B));
-    const B_ONEUBalance_Before = toBN(await lusdToken.balanceOf(B));
+    const B_ONEUBalance_Before = toBN(await oneuToken.balanceOf(B));
     const C_AUTBalance_Before = toBN(await web3.eth.getBalance(C));
-    const C_ONEUBalance_Before = toBN(await lusdToken.balanceOf(C));
+    const C_ONEUBalance_Before = toBN(await oneuToken.balanceOf(C));
     const D_AUTBalance_Before = toBN(await web3.eth.getBalance(D));
-    const D_ONEUBalance_Before = toBN(await lusdToken.balanceOf(D));
+    const D_ONEUBalance_Before = toBN(await oneuToken.balanceOf(D));
 
     // A-D un-stake
     const A_GAS_Used = th.gasUsed(
@@ -944,13 +944,13 @@ contract("LQTYStaking revenue share tests", async accounts => {
 
     // Get A-D AUT and ONEU balances
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
-    const A_ONEUBalance_After = toBN(await lusdToken.balanceOf(A));
+    const A_ONEUBalance_After = toBN(await oneuToken.balanceOf(A));
     const B_AUTBalance_After = toBN(await web3.eth.getBalance(B));
-    const B_ONEUBalance_After = toBN(await lusdToken.balanceOf(B));
+    const B_ONEUBalance_After = toBN(await oneuToken.balanceOf(B));
     const C_AUTBalance_After = toBN(await web3.eth.getBalance(C));
-    const C_ONEUBalance_After = toBN(await lusdToken.balanceOf(C));
+    const C_ONEUBalance_After = toBN(await oneuToken.balanceOf(C));
     const D_AUTBalance_After = toBN(await web3.eth.getBalance(D));
-    const D_ONEUBalance_After = toBN(await lusdToken.balanceOf(D));
+    const D_ONEUBalance_After = toBN(await oneuToken.balanceOf(D));
 
     // Get AUT and ONEU gains
     const A_AUTGain = A_AUTBalance_After.sub(A_AUTBalance_Before).add(toBN(A_GAS_Used * GAS_PRICE));

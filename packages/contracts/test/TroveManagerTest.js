@@ -49,7 +49,7 @@ contract("TroveManager", async accounts => {
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -61,7 +61,7 @@ contract("TroveManager", async accounts => {
 
   let contracts;
 
-  const getOpenTroveTotalDebt = async lusdAmount => th.getOpenTroveTotalDebt(contracts, lusdAmount);
+  const getOpenTroveTotalDebt = async oneuAmount => th.getOpenTroveTotalDebt(contracts, oneuAmount);
   const getOpenTroveONEUAmount = async totalDebt => th.getOpenTroveONEUAmount(contracts, totalDebt);
   const getActualDebtFromComposite = async compositeDebt =>
     th.getActualDebtFromComposite(compositeDebt, contracts);
@@ -73,7 +73,7 @@ contract("TroveManager", async accounts => {
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts.lusdToken = await ONEUTokenTester.new(
+    contracts.oneuToken = await ONEUTokenTester.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
@@ -85,7 +85,7 @@ contract("TroveManager", async accounts => {
     );
 
     priceFeed = contracts.priceFeedTestnet;
-    lusdToken = contracts.lusdToken;
+    oneuToken = contracts.oneuToken;
     sortedTroves = contracts.sortedTroves;
     troveManager = contracts.troveManager;
     activePool = contracts.activePool;
@@ -801,7 +801,7 @@ contract("TroveManager", async accounts => {
     });
 
     // Bob sends tokens to Dennis, who has no trove
-    await lusdToken.transfer(dennis, spDeposit, { from: bob });
+    await oneuToken.transfer(dennis, spDeposit, { from: bob });
 
     //Dennis provides ONEU to SP
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: dennis });
@@ -991,17 +991,17 @@ contract("TroveManager", async accounts => {
 
   it("liquidate(): does not alter the liquidated user's token balance", async () => {
     await openTrove({ ICR: toBN(dec(10, 18)), extraParams: { from: whale } });
-    const { lusdAmount: A_lusdAmount } = await openTrove({
+    const { oneuAmount: A_oneuAmount } = await openTrove({
       ICR: toBN(dec(2, 18)),
       extraONEUAmount: toBN(dec(300, 18)),
       extraParams: { from: alice }
     });
-    const { lusdAmount: B_lusdAmount } = await openTrove({
+    const { oneuAmount: B_oneuAmount } = await openTrove({
       ICR: toBN(dec(2, 18)),
       extraONEUAmount: toBN(dec(200, 18)),
       extraParams: { from: bob }
     });
-    const { lusdAmount: C_lusdAmount } = await openTrove({
+    const { oneuAmount: C_oneuAmount } = await openTrove({
       ICR: toBN(dec(2, 18)),
       extraONEUAmount: toBN(dec(100, 18)),
       extraParams: { from: carol }
@@ -1038,9 +1038,9 @@ contract("TroveManager", async accounts => {
     assert.equal((await sortedTroves.getSize()).toString(), "1");
 
     // Confirm token balances have not changed
-    assert.equal((await lusdToken.balanceOf(alice)).toString(), A_lusdAmount);
-    assert.equal((await lusdToken.balanceOf(bob)).toString(), B_lusdAmount);
-    assert.equal((await lusdToken.balanceOf(carol)).toString(), C_lusdAmount);
+    assert.equal((await oneuToken.balanceOf(alice)).toString(), A_oneuAmount);
+    assert.equal((await oneuToken.balanceOf(bob)).toString(), B_oneuAmount);
+    assert.equal((await oneuToken.balanceOf(carol)).toString(), C_oneuAmount);
   });
 
   it("liquidate(): liquidates based on entire/collateral debt (including pending rewards), not raw collateral/debt", async () => {
@@ -1635,9 +1635,9 @@ contract("TroveManager", async accounts => {
     await openTrove({ ICR: toBN(dec(216, 16)), extraParams: { from: erin } });
     await openTrove({ ICR: toBN(dec(210, 16)), extraParams: { from: flyn } });
 
-    const D_balanceBefore = await lusdToken.balanceOf(dennis);
-    const E_balanceBefore = await lusdToken.balanceOf(erin);
-    const F_balanceBefore = await lusdToken.balanceOf(flyn);
+    const D_balanceBefore = await oneuToken.balanceOf(dennis);
+    const E_balanceBefore = await oneuToken.balanceOf(erin);
+    const F_balanceBefore = await oneuToken.balanceOf(flyn);
 
     // Check list size is 4
     assert.equal((await sortedTroves.getSize()).toString(), "4");
@@ -1664,9 +1664,9 @@ contract("TroveManager", async accounts => {
     assert.isFalse(await sortedTroves.contains(flyn));
 
     // Check token balances of users whose troves were liquidated, have not changed
-    assert.equal((await lusdToken.balanceOf(dennis)).toString(), D_balanceBefore);
-    assert.equal((await lusdToken.balanceOf(erin)).toString(), E_balanceBefore);
-    assert.equal((await lusdToken.balanceOf(flyn)).toString(), F_balanceBefore);
+    assert.equal((await oneuToken.balanceOf(dennis)).toString(), D_balanceBefore);
+    assert.equal((await oneuToken.balanceOf(erin)).toString(), E_balanceBefore);
+    assert.equal((await oneuToken.balanceOf(flyn)).toString(), F_balanceBefore);
   });
 
   it("liquidateTroves(): A liquidation sequence containing Pool offsets increases the TCR", async () => {
@@ -1896,13 +1896,13 @@ contract("TroveManager", async accounts => {
     Total liquidated debt = 150 + 350 + 150 = 650 ONEU
     Total liquidated AUT = 1.1 + 3.1 + 1.1 = 5.3 AUT
 
-    whale lusd loss: 650 * (400/800) = 325 lusd
-    alice lusd loss:  650 *(100/800) = 81.25 lusd
-    bob lusd loss: 650 * (300/800) = 243.75 lusd
+    whale oneu loss: 650 * (400/800) = 325 oneu
+    alice oneu loss:  650 *(100/800) = 81.25 oneu
+    bob oneu loss: 650 * (300/800) = 243.75 oneu
 
-    whale remaining deposit: (400 - 325) = 75 lusd
-    alice remaining deposit: (100 - 81.25) = 18.75 lusd
-    bob remaining deposit: (300 - 243.75) = 56.25 lusd
+    whale remaining deposit: (400 - 325) = 75 oneu
+    alice remaining deposit: (100 - 81.25) = 18.75 oneu
+    bob remaining deposit: (300 - 243.75) = 56.25 oneu
 
     whale eth gain: 5*0.995 * (400/800) = 2.4875 eth
     alice eth gain: 5*0.995 *(100/800) = 0.621875 eth
@@ -2457,7 +2457,7 @@ contract("TroveManager", async accounts => {
     await stabilityPool.provideToSP(spDeposit, ZERO_ADDRESS, { from: whale });
 
     // Whale transfers to Carol so she can close her trove
-    await lusdToken.transfer(carol, dec(100, 18), { from: whale });
+    await oneuToken.transfer(carol, dec(100, 18), { from: whale });
 
     // --- TEST ---
 
@@ -2683,7 +2683,7 @@ contract("TroveManager", async accounts => {
 
     const dennis_AUTBalance_Before = toBN(await web3.eth.getBalance(dennis));
 
-    const dennis_ONEUBalance_Before = await lusdToken.balanceOf(dennis);
+    const dennis_ONEUBalance_Before = await oneuToken.balanceOf(dennis);
 
     const price = await priceFeed.getPrice();
     assert.equal(price, dec(200, 18));
@@ -2760,7 +2760,7 @@ contract("TroveManager", async accounts => {
     // console.log("*********************************************************************************")
     th.assertIsApproximatelyEqual(expectedReceivedAUT, receivedAUT);
 
-    const dennis_ONEUBalance_After = (await lusdToken.balanceOf(dennis)).toString();
+    const dennis_ONEUBalance_After = (await oneuToken.balanceOf(dennis)).toString();
     assert.equal(dennis_ONEUBalance_After, dennis_ONEUBalance_Before.sub(redemptionAmount));
   });
 
@@ -2792,7 +2792,7 @@ contract("TroveManager", async accounts => {
 
     const dennis_AUTBalance_Before = toBN(await web3.eth.getBalance(dennis));
 
-    const dennis_ONEUBalance_Before = await lusdToken.balanceOf(dennis);
+    const dennis_ONEUBalance_Before = await oneuToken.balanceOf(dennis);
 
     const price = await priceFeed.getPrice();
     assert.equal(price, dec(200, 18));
@@ -2859,7 +2859,7 @@ contract("TroveManager", async accounts => {
 
     th.assertIsApproximatelyEqual(expectedReceivedAUT, receivedAUT);
 
-    const dennis_ONEUBalance_After = (await lusdToken.balanceOf(dennis)).toString();
+    const dennis_ONEUBalance_After = (await oneuToken.balanceOf(dennis)).toString();
     assert.equal(dennis_ONEUBalance_After, dennis_ONEUBalance_Before.sub(redemptionAmount));
   });
 
@@ -2891,7 +2891,7 @@ contract("TroveManager", async accounts => {
 
     const dennis_AUTBalance_Before = toBN(await web3.eth.getBalance(dennis));
 
-    const dennis_ONEUBalance_Before = await lusdToken.balanceOf(dennis);
+    const dennis_ONEUBalance_Before = await oneuToken.balanceOf(dennis);
 
     const price = await priceFeed.getPrice();
     assert.equal(price, dec(200, 18));
@@ -2958,7 +2958,7 @@ contract("TroveManager", async accounts => {
 
     th.assertIsApproximatelyEqual(expectedReceivedAUT, receivedAUT);
 
-    const dennis_ONEUBalance_After = (await lusdToken.balanceOf(dennis)).toString();
+    const dennis_ONEUBalance_After = (await oneuToken.balanceOf(dennis)).toString();
     assert.equal(dennis_ONEUBalance_After, dennis_ONEUBalance_Before.sub(redemptionAmount));
   });
 
@@ -2990,7 +2990,7 @@ contract("TroveManager", async accounts => {
 
     const dennis_AUTBalance_Before = toBN(await web3.eth.getBalance(dennis));
 
-    const dennis_ONEUBalance_Before = await lusdToken.balanceOf(dennis);
+    const dennis_ONEUBalance_Before = await oneuToken.balanceOf(dennis);
 
     const price = await priceFeed.getPrice();
     assert.equal(price, dec(200, 18));
@@ -3062,7 +3062,7 @@ contract("TroveManager", async accounts => {
 
     th.assertIsApproximatelyEqual(expectedReceivedAUT, receivedAUT);
 
-    const dennis_ONEUBalance_After = (await lusdToken.balanceOf(dennis)).toString();
+    const dennis_ONEUBalance_After = (await oneuToken.balanceOf(dennis)).toString();
     assert.equal(dennis_ONEUBalance_After, dennis_ONEUBalance_Before.sub(redemptionAmount));
   });
 
@@ -3101,7 +3101,7 @@ contract("TroveManager", async accounts => {
     // --- TEST ---
 
     // open trove from redeemer.  Redeemer has highest ICR (100AUT, 100 ONEU), 20000%
-    const { lusdAmount: F_lusdAmount } = await openTrove({
+    const { oneuAmount: F_oneuAmount } = await openTrove({
       ICR: toBN(dec(200, 18)),
       extraONEUAmount: redemptionAmount.mul(toBN(2)),
       extraParams: { from: flyn }
@@ -3116,8 +3116,8 @@ contract("TroveManager", async accounts => {
     });
 
     // Check Flyn's redemption has reduced his balance from 100 to (100-60) = 40 ONEU
-    const flynBalance = await lusdToken.balanceOf(flyn);
-    th.assertIsApproximatelyEqual(flynBalance, F_lusdAmount.sub(redemptionAmount));
+    const flynBalance = await oneuToken.balanceOf(flyn);
+    th.assertIsApproximatelyEqual(flynBalance, F_oneuAmount.sub(redemptionAmount));
 
     // Check debt of Alice, Bob, Carol
     const alice_Debt = await troveManager.getTroveDebt(alice);
@@ -3176,7 +3176,7 @@ contract("TroveManager", async accounts => {
     // --- TEST ---
 
     // open trove from redeemer.  Redeemer has highest ICR (100AUT, 100 ONEU), 20000%
-    const { lusdAmount: F_lusdAmount } = await openTrove({
+    const { oneuAmount: F_oneuAmount } = await openTrove({
       ICR: toBN(dec(200, 18)),
       extraONEUAmount: redemptionAmount.mul(toBN(2)),
       extraParams: { from: flyn }
@@ -3198,8 +3198,8 @@ contract("TroveManager", async accounts => {
     );
 
     // Check Flyn's redemption has reduced his balance from 100 to (100-40) = 60 ONEU
-    const flynBalance = (await lusdToken.balanceOf(flyn)).toString();
-    th.assertIsApproximatelyEqual(flynBalance, F_lusdAmount.sub(redemptionAmount));
+    const flynBalance = (await oneuToken.balanceOf(flyn)).toString();
+    th.assertIsApproximatelyEqual(flynBalance, F_oneuAmount.sub(redemptionAmount));
 
     // Check debt of Alice, Bob, Carol
     const alice_Debt = await troveManager.getTroveDebt(alice);
@@ -3243,8 +3243,8 @@ contract("TroveManager", async accounts => {
     );
 
     // A and C send all their tokens to B
-    await lusdToken.transfer(B, await lusdToken.balanceOf(A), { from: A });
-    await lusdToken.transfer(B, await lusdToken.balanceOf(C), { from: C });
+    await oneuToken.transfer(B, await oneuToken.balanceOf(A), { from: A });
+    await oneuToken.transfer(B, await oneuToken.balanceOf(C), { from: C });
 
     await troveManager.setBaseRate(0);
 
@@ -3289,8 +3289,8 @@ contract("TroveManager", async accounts => {
     );
 
     // A and C send all their tokens to B
-    await lusdToken.transfer(B, await lusdToken.balanceOf(A), { from: A });
-    await lusdToken.transfer(B, await lusdToken.balanceOf(C), { from: C });
+    await oneuToken.transfer(B, await oneuToken.balanceOf(A), { from: A });
+    await oneuToken.transfer(B, await oneuToken.balanceOf(C), { from: C });
 
     await troveManager.setBaseRate(0);
 
@@ -3342,7 +3342,7 @@ contract("TroveManager", async accounts => {
 
     const dennis_AUTBalance_Before = toBN(await web3.eth.getBalance(dennis));
 
-    const dennis_ONEUBalance_Before = await lusdToken.balanceOf(dennis);
+    const dennis_ONEUBalance_Before = await oneuToken.balanceOf(dennis);
 
     const price = await priceFeed.getPrice();
     assert.equal(price, dec(200, 18));
@@ -3426,7 +3426,7 @@ contract("TroveManager", async accounts => {
 
     th.assertIsApproximatelyEqual(expectedReceivedAUT, receivedAUT);
 
-    const dennis_ONEUBalance_After = (await lusdToken.balanceOf(dennis)).toString();
+    const dennis_ONEUBalance_After = (await oneuToken.balanceOf(dennis)).toString();
     th.assertIsApproximatelyEqual(
       dennis_ONEUBalance_After,
       dennis_ONEUBalance_Before.sub(fullfilledRedemptionAmount.sub(frontRunRedepmtion))
@@ -3445,7 +3445,7 @@ contract("TroveManager", async accounts => {
       extraParams: { from: bob }
     });
 
-    await lusdToken.transfer(carol, amount, { from: bob });
+    await oneuToken.transfer(carol, amount, { from: bob });
 
     const price = dec(100, 18);
     await priceFeed.setPrice(price);
@@ -3484,7 +3484,7 @@ contract("TroveManager", async accounts => {
     const receivedAUT = carol_AUTBalance_After.sub(carol_AUTBalance_Before);
     assert.isTrue(expectedReceivedAUT.eq(receivedAUT));
 
-    const carol_ONEUBalance_After = (await lusdToken.balanceOf(carol)).toString();
+    const carol_ONEUBalance_After = (await oneuToken.balanceOf(carol)).toString();
     assert.equal(carol_ONEUBalance_After, "0");
   });
 
@@ -3495,13 +3495,13 @@ contract("TroveManager", async accounts => {
       ICR: toBN(dec(13, 18)),
       extraParams: { from: alice }
     });
-    const { lusdAmount: B_lusdAmount, totalDebt: B_totalDebt } = await openTrove({
+    const { oneuAmount: B_oneuAmount, totalDebt: B_totalDebt } = await openTrove({
       ICR: toBN(dec(133, 16)),
       extraONEUAmount: A_debt,
       extraParams: { from: bob }
     });
 
-    await lusdToken.transfer(carol, B_lusdAmount, { from: bob });
+    await oneuToken.transfer(carol, B_oneuAmount, { from: bob });
 
     // Put Bob's Trove below 110% ICR
     const price = dec(100, 18);
@@ -3637,7 +3637,7 @@ contract("TroveManager", async accounts => {
       extraONEUAmount: dec(500, 18),
       extraParams: { from: alice }
     });
-    await lusdToken.transfer(erin, dec(500, 18), { from: alice });
+    await oneuToken.transfer(erin, dec(500, 18), { from: alice });
 
     // B, C and D open troves
     await openTrove({ ICR: toBN(dec(200, 16)), extraParams: { from: bob } });
@@ -3754,7 +3754,7 @@ contract("TroveManager", async accounts => {
     const expectedTotalSupply = A_totalDebt.add(B_totalDebt).add(C_totalDebt);
 
     // Check total ONEU supply
-    const totalSupply = await lusdToken.totalSupply();
+    const totalSupply = await oneuToken.totalSupply();
     th.assertIsApproximatelyEqual(totalSupply, expectedTotalSupply);
 
     await troveManager.setBaseRate(0);
@@ -3816,7 +3816,7 @@ contract("TroveManager", async accounts => {
     const expectedTotalSupply = A_totalDebt.add(B_totalDebt).add(C_totalDebt);
 
     // Check total ONEU supply
-    const totalSupply = await lusdToken.totalSupply();
+    const totalSupply = await oneuToken.totalSupply();
     th.assertIsApproximatelyEqual(totalSupply, expectedTotalSupply);
 
     await troveManager.setBaseRate(0);
@@ -3917,7 +3917,7 @@ contract("TroveManager", async accounts => {
       extraONEUAmount: redemptionAmount,
       extraParams: { from: alice }
     });
-    await lusdToken.transfer(erin, redemptionAmount, { from: alice });
+    await oneuToken.transfer(erin, redemptionAmount, { from: alice });
 
     // B, C, D deposit some of their tokens to the Stability Pool
     await stabilityPool.provideToSP(dec(50, 18), ZERO_ADDRESS, { from: bob });
@@ -4003,10 +4003,10 @@ contract("TroveManager", async accounts => {
       extraONEUAmount: dec(400, 18),
       extraParams: { from: alice }
     });
-    await lusdToken.transfer(erin, dec(400, 18), { from: alice });
+    await oneuToken.transfer(erin, dec(400, 18), { from: alice });
 
     // Check Erin's balance before
-    const erin_balance_before = await lusdToken.balanceOf(erin);
+    const erin_balance_before = await oneuToken.balanceOf(erin);
     assert.equal(erin_balance_before, dec(400, 18));
 
     // B, C, D open trove
@@ -4079,7 +4079,7 @@ contract("TroveManager", async accounts => {
     assert.equal(activePool_coll_after.toString(), activePool_coll_before.sub(toBN(dec(2, 18))));
 
     // Check Erin's balance after
-    const erin_balance_after = (await lusdToken.balanceOf(erin)).toString();
+    const erin_balance_after = (await oneuToken.balanceOf(erin)).toString();
     assert.equal(erin_balance_after, "0");
   });
 
@@ -4095,10 +4095,10 @@ contract("TroveManager", async accounts => {
       extraONEUAmount: dec(400, 18),
       extraParams: { from: alice }
     });
-    await lusdToken.transfer(erin, dec(400, 18), { from: alice });
+    await oneuToken.transfer(erin, dec(400, 18), { from: alice });
 
     // Check Erin's balance before
-    const erin_balance_before = await lusdToken.balanceOf(erin);
+    const erin_balance_before = await oneuToken.balanceOf(erin);
     assert.equal(erin_balance_before, dec(400, 18));
 
     // B, C, D open trove
@@ -4283,9 +4283,9 @@ contract("TroveManager", async accounts => {
       extraONEUAmount: dec(4990, 18),
       extraParams: { from: alice }
     });
-    await lusdToken.transfer(erin, dec(1000, 18), { from: alice });
-    await lusdToken.transfer(flyn, dec(1000, 18), { from: alice });
-    await lusdToken.transfer(graham, dec(1000, 18), { from: alice });
+    await oneuToken.transfer(erin, dec(1000, 18), { from: alice });
+    await oneuToken.transfer(flyn, dec(1000, 18), { from: alice });
+    await oneuToken.transfer(graham, dec(1000, 18), { from: alice });
 
     // B, C, D open trove
     const { collateral: B_coll } = await openTrove({
@@ -4430,9 +4430,9 @@ contract("TroveManager", async accounts => {
   // the only way to test it is before any trove is opened
   it("redeemCollateral(): reverts if there is zero outstanding system debt", async () => {
     // --- SETUP --- illegally mint ONEU to Bob
-    await lusdToken.unprotectedMint(bob, dec(100, 18));
+    await oneuToken.unprotectedMint(bob, dec(100, 18));
 
-    assert.equal(await lusdToken.balanceOf(bob), dec(100, 18));
+    assert.equal(await oneuToken.balanceOf(bob), dec(100, 18));
 
     const price = await priceFeed.getPrice();
 
@@ -4468,9 +4468,9 @@ contract("TroveManager", async accounts => {
 
   it("redeemCollateral(): reverts if caller's tries to redeem more than the outstanding system debt", async () => {
     // --- SETUP --- illegally mint ONEU to Bob
-    await lusdToken.unprotectedMint(bob, "101000000000000000000");
+    await oneuToken.unprotectedMint(bob, "101000000000000000000");
 
-    assert.equal(await lusdToken.balanceOf(bob), "101000000000000000000");
+    assert.equal(await oneuToken.balanceOf(bob), "101000000000000000000");
 
     const { collateral: C_coll, totalDebt: C_totalDebt } = await openTrove({
       ICR: toBN(dec(1000, 16)),
@@ -4544,12 +4544,12 @@ contract("TroveManager", async accounts => {
     // skip bootstrapping phase
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider);
 
-    const A_balanceBefore = await lusdToken.balanceOf(A);
+    const A_balanceBefore = await oneuToken.balanceOf(A);
 
     await th.redeemCollateral(A, contracts, dec(10, 18), GAS_PRICE);
 
     // Check A's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     // Check baseRate is now non-zero
     assert.isTrue((await troveManager.baseRate()).gt(toBN("0")));
@@ -4582,8 +4582,8 @@ contract("TroveManager", async accounts => {
     // Check baseRate == 0
     assert.equal(await troveManager.baseRate(), "0");
 
-    const A_balanceBefore = await lusdToken.balanceOf(A);
-    const B_balanceBefore = await lusdToken.balanceOf(B);
+    const A_balanceBefore = await oneuToken.balanceOf(A);
+    const B_balanceBefore = await oneuToken.balanceOf(B);
 
     // A redeems 10 ONEU
     const redemptionTx_A = await th.redeemCollateralAndGetTxObject(
@@ -4595,7 +4595,7 @@ contract("TroveManager", async accounts => {
     const timeStamp_A = await th.getTimestampFromTx(redemptionTx_A, web3);
 
     // Check A's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     // Check baseRate is now non-zero
     const baseRate_1 = await troveManager.baseRate();
@@ -4611,7 +4611,7 @@ contract("TroveManager", async accounts => {
     const timeStamp_B = await th.getTimestampFromTx(redemptionTx_B, web3);
 
     // Check B's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     // Check negligible time difference (< 1 minute) between txs
     assert.isTrue(Number(timeStamp_B) - Number(timeStamp_A) < 60);
@@ -4644,13 +4644,13 @@ contract("TroveManager", async accounts => {
     // skip bootstrapping phase
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider);
 
-    const A_balanceBefore = await lusdToken.balanceOf(A);
+    const A_balanceBefore = await oneuToken.balanceOf(A);
 
     // A redeems 10 ONEU
     await th.redeemCollateral(A, contracts, dec(10, 18), GAS_PRICE);
 
     // Check A's balance has decreased by 10 ONEU
-    assert.equal(A_balanceBefore.sub(await lusdToken.balanceOf(A)), dec(10, 18));
+    assert.equal(A_balanceBefore.sub(await oneuToken.balanceOf(A)), dec(10, 18));
 
     // Check baseRate is now non-zero
     const baseRate_1 = await troveManager.baseRate();
@@ -4718,13 +4718,13 @@ contract("TroveManager", async accounts => {
     const lqtyStakingBalance_Before = await web3.eth.getBalance(lqtyStaking.address);
     assert.equal(lqtyStakingBalance_Before, "0");
 
-    const A_balanceBefore = await lusdToken.balanceOf(A);
+    const A_balanceBefore = await oneuToken.balanceOf(A);
 
     // A redeems 10 ONEU
     await th.redeemCollateral(A, contracts, dec(10, 18), GAS_PRICE);
 
     // Check A's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     // Check baseRate is now non-zero
     const baseRate_1 = await troveManager.baseRate();
@@ -4766,13 +4766,13 @@ contract("TroveManager", async accounts => {
     const F_AUT_Before = await lqtyStaking.F_AUT();
     assert.equal(F_AUT_Before, "0");
 
-    const A_balanceBefore = await lusdToken.balanceOf(A);
+    const A_balanceBefore = await oneuToken.balanceOf(A);
 
     // A redeems 10 ONEU
     await th.redeemCollateral(A, contracts, dec(10, 18), GAS_PRICE);
 
     // Check A's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     // Check baseRate is now non-zero
     const baseRate_1 = await troveManager.baseRate();
@@ -4810,14 +4810,14 @@ contract("TroveManager", async accounts => {
     // Check baseRate == 0
     assert.equal(await troveManager.baseRate(), "0");
 
-    const A_balanceBefore = await lusdToken.balanceOf(A);
-    const B_balanceBefore = await lusdToken.balanceOf(B);
+    const A_balanceBefore = await oneuToken.balanceOf(A);
+    const B_balanceBefore = await oneuToken.balanceOf(B);
 
     // A redeems 10 ONEU
     await th.redeemCollateral(A, contracts, dec(10, 18), GAS_PRICE);
 
     // Check A's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     // Check baseRate is now non-zero
     const baseRate_1 = await troveManager.baseRate();
@@ -4829,7 +4829,7 @@ contract("TroveManager", async accounts => {
     await th.redeemCollateral(B, contracts, dec(10, 18), GAS_PRICE);
 
     // Check B's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     const lqtyStakingBalance_After = toBN(await web3.eth.getBalance(lqtyStaking.address));
 
@@ -4864,14 +4864,14 @@ contract("TroveManager", async accounts => {
     // Check baseRate == 0
     assert.equal(await troveManager.baseRate(), "0");
 
-    const A_balanceBefore = await lusdToken.balanceOf(A);
-    const B_balanceBefore = await lusdToken.balanceOf(B);
+    const A_balanceBefore = await oneuToken.balanceOf(A);
+    const B_balanceBefore = await oneuToken.balanceOf(B);
 
     // A redeems 10 ONEU
     await th.redeemCollateral(A, contracts, dec(10, 18), GAS_PRICE);
 
     // Check A's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(A), A_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     // Check baseRate is now non-zero
     const baseRate_1 = await troveManager.baseRate();
@@ -4884,7 +4884,7 @@ contract("TroveManager", async accounts => {
     await th.redeemCollateral(B, contracts, dec(10, 18), GAS_PRICE);
 
     // Check B's balance has decreased by 10 ONEU
-    assert.equal(await lusdToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString());
+    assert.equal(await oneuToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
     const F_AUT_After = await lqtyStaking.F_AUT();
 
@@ -5334,7 +5334,7 @@ contract("TroveManager", async accounts => {
 
   it("redeemCollateral(): reverts if fee eats up all returned collateral", async () => {
     // --- SETUP ---
-    const { lusdAmount } = await openTrove({
+    const { oneuAmount } = await openTrove({
       ICR: toBN(dec(200, 16)),
       extraONEUAmount: dec(1, 24),
       extraParams: { from: alice }
@@ -5355,11 +5355,11 @@ contract("TroveManager", async accounts => {
       const {
         firstRedemptionHint,
         partialRedemptionHintNICR
-      } = await hintHelpers.getRedemptionHints(lusdAmount, price, 0);
+      } = await hintHelpers.getRedemptionHints(oneuAmount, price, 0);
 
       // Don't pay for gas, as it makes it easier to calculate the received Ether
       const redemptionTx = await troveManager.redeemCollateral(
-        lusdAmount,
+        oneuAmount,
         firstRedemptionHint,
         ZERO_ADDRESS,
         alice,
@@ -5373,21 +5373,21 @@ contract("TroveManager", async accounts => {
       );
 
       await openTrove({ ICR: toBN(dec(150, 16)), extraParams: { from: bob } });
-      await borrowerOperations.adjustTrove(th._100pct, 0, lusdAmount, true, alice, alice, {
+      await borrowerOperations.adjustTrove(th._100pct, 0, oneuAmount, true, alice, alice, {
         from: alice,
-        value: lusdAmount.mul(mv._1e18BN).div(price)
+        value: oneuAmount.mul(mv._1e18BN).div(price)
       });
     }
 
     const { firstRedemptionHint, partialRedemptionHintNICR } = await hintHelpers.getRedemptionHints(
-      lusdAmount,
+      oneuAmount,
       price,
       0
     );
 
     await assertRevert(
       troveManager.redeemCollateral(
-        lusdAmount,
+        oneuAmount,
         firstRedemptionHint,
         ZERO_ADDRESS,
         alice,
@@ -5674,7 +5674,7 @@ contract("TroveManager", async accounts => {
     });
 
     // to be able to repay:
-    await lusdToken.transfer(B, B_totalDebt, { from: A });
+    await oneuToken.transfer(B, B_totalDebt, { from: A });
     await borrowerOperations.closeTrove({ from: B });
 
     const A_Status = await troveManager.getTroveStatus(A);

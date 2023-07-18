@@ -52,7 +52,7 @@ contract("BorrowerOperations", async accounts => {
   // const frontEnds = [frontEnd_1, frontEnd_2, frontEnd_3]
 
   let priceFeed;
-  let lusdToken;
+  let oneuToken;
   let sortedTroves;
   let troveManager;
   let activePool;
@@ -102,7 +102,7 @@ contract("BorrowerOperations", async accounts => {
       }
 
       priceFeed = contracts.priceFeedTestnet;
-      lusdToken = contracts.lusdToken;
+      oneuToken = contracts.oneuToken;
       sortedTroves = contracts.sortedTroves;
       troveManager = contracts.troveManager;
       activePool = contracts.activePool;
@@ -820,7 +820,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: E }
       });
 
-      const A_ONEUBal = await lusdToken.balanceOf(A);
+      const A_ONEUBal = await oneuToken.balanceOf(A);
 
       // Artificially set base rate to 5%
       await troveManager.setBaseRate(dec(5, 16));
@@ -944,7 +944,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: E }
       });
 
-      const totalSupply = await lusdToken.totalSupply();
+      const totalSupply = await oneuToken.totalSupply();
 
       // Artificially make baseRate 5%
       await troveManager.setBaseRate(dec(5, 16));
@@ -1021,7 +1021,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: E }
       });
 
-      const totalSupply = await lusdToken.totalSupply();
+      const totalSupply = await oneuToken.totalSupply();
 
       // Artificially make baseRate 5%
       await troveManager.setBaseRate(dec(5, 16));
@@ -1224,7 +1224,7 @@ contract("BorrowerOperations", async accounts => {
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
       // Check LQTY ONEU balance before == 0
-      const lqtyStaking_ONEUBalance_Before = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
       await openTrove({ ICR: toBN(dec(10, 18)), extraParams: { from: whale } });
@@ -1264,7 +1264,7 @@ contract("BorrowerOperations", async accounts => {
       await borrowerOperations.withdrawONEU(th._100pct, dec(37, 18), C, C, { from: D });
 
       // Check LQTY ONEU balance after has increased
-      const lqtyStaking_ONEUBalance_After = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
     });
 
@@ -1392,7 +1392,7 @@ contract("BorrowerOperations", async accounts => {
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
       // Check LQTY Staking contract balance before == 0
-      const lqtyStaking_ONEUBalance_Before = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
       await openTrove({ ICR: toBN(dec(10, 18)), extraParams: { from: whale } });
@@ -1428,18 +1428,18 @@ contract("BorrowerOperations", async accounts => {
       // 2 hours pass
       th.fastForwardTime(7200, web3.currentProvider);
 
-      const D_ONEUBalanceBefore = await lusdToken.balanceOf(D);
+      const D_ONEUBalanceBefore = await oneuToken.balanceOf(D);
 
       // D withdraws ONEU
       const D_ONEURequest = toBN(dec(37, 18));
       await borrowerOperations.withdrawONEU(th._100pct, D_ONEURequest, D, D, { from: D });
 
       // Check LQTY staking ONEU balance has increased
-      const lqtyStaking_ONEUBalance_After = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
 
       // Check D's ONEU balance now equals their initial balance plus request ONEU
-      const D_ONEUBalanceAfter = await lusdToken.balanceOf(D);
+      const D_ONEUBalanceAfter = await oneuToken.balanceOf(D);
       assert.isTrue(D_ONEUBalanceAfter.eq(D_ONEUBalanceBefore.add(D_ONEURequest)));
     });
 
@@ -1519,14 +1519,14 @@ contract("BorrowerOperations", async accounts => {
       // 2 hours pass
       th.fastForwardTime(7200, web3.currentProvider);
 
-      const D_ONEUBalanceBefore = await lusdToken.balanceOf(D);
+      const D_ONEUBalanceBefore = await oneuToken.balanceOf(D);
 
       // D withdraws ONEU
       const D_ONEURequest = toBN(dec(37, 18));
       await borrowerOperations.withdrawONEU(th._100pct, dec(37, 18), D, D, { from: D });
 
       // Check D's ONEU balance now equals their requested ONEU
-      const D_ONEUBalanceAfter = await lusdToken.balanceOf(D);
+      const D_ONEUBalanceAfter = await oneuToken.balanceOf(D);
 
       // Check D's trove debt == D's ONEU balance + liquidation reserve
       assert.isTrue(D_ONEUBalanceAfter.eq(D_ONEUBalanceBefore.add(D_ONEURequest)));
@@ -1712,7 +1712,7 @@ contract("BorrowerOperations", async accounts => {
       await openTrove({ extraParams: { value: toBN(dec(100, "ether")), from: alice } });
 
       // check before
-      const alice_ONEUTokenBalance_Before = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_Before = await oneuToken.balanceOf(alice);
       assert.isTrue(alice_ONEUTokenBalance_Before.gt(toBN("0")));
 
       await borrowerOperations.withdrawONEU(th._100pct, dec(10000, 18), alice, alice, {
@@ -1720,7 +1720,7 @@ contract("BorrowerOperations", async accounts => {
       });
 
       // check after
-      const alice_ONEUTokenBalance_After = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_After = await oneuToken.balanceOf(alice);
       assert.isTrue(
         alice_ONEUTokenBalance_After.eq(alice_ONEUTokenBalance_Before.add(toBN(dec(10000, 18))))
       );
@@ -1800,7 +1800,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: bob }
       });
 
-      await lusdToken.transfer(alice, repayAmount, { from: bob });
+      await oneuToken.transfer(alice, repayAmount, { from: bob });
 
       await assertRevert(
         borrowerOperations.adjustTrove(th._100pct, 0, repayAmount, false, alice, alice, {
@@ -1937,7 +1937,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(aliceDebtBefore.gt(toBN("0")));
 
       // check before
-      const alice_ONEUTokenBalance_Before = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_Before = await oneuToken.balanceOf(alice);
       assert.isTrue(alice_ONEUTokenBalance_Before.gt(toBN("0")));
 
       await borrowerOperations.repayONEU(aliceDebtBefore.div(toBN(10)), alice, alice, {
@@ -1945,7 +1945,7 @@ contract("BorrowerOperations", async accounts => {
       }); // Repays 1/10 her debt
 
       // check after
-      const alice_ONEUTokenBalance_After = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_After = await oneuToken.balanceOf(alice);
       th.assertIsApproximatelyEqual(
         alice_ONEUTokenBalance_After,
         alice_ONEUTokenBalance_Before.sub(aliceDebtBefore.div(toBN(10)))
@@ -1993,14 +1993,14 @@ contract("BorrowerOperations", async accounts => {
         ICR: toBN(dec(2, 18)),
         extraParams: { from: B }
       });
-      const bobBalBefore = await lusdToken.balanceOf(B);
+      const bobBalBefore = await oneuToken.balanceOf(B);
       assert.isTrue(bobBalBefore.gt(toBN("0")));
 
       // Bob transfers all but 5 of his ONEU to Carol
-      await lusdToken.transfer(C, bobBalBefore.sub(toBN(dec(5, 18))), { from: B });
+      await oneuToken.transfer(C, bobBalBefore.sub(toBN(dec(5, 18))), { from: B });
 
       //Confirm B's ONEU balance has decreased to 5 ONEU
-      const bobBalAfter = await lusdToken.balanceOf(B);
+      const bobBalAfter = await oneuToken.balanceOf(B);
 
       assert.isTrue(bobBalAfter.eq(toBN(dec(5, 18))));
 
@@ -2336,7 +2336,7 @@ contract("BorrowerOperations", async accounts => {
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
       // Check LQTY ONEU balance before == 0
-      const lqtyStaking_ONEUBalance_Before = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
       await openTrove({ ICR: toBN(dec(10, 18)), extraParams: { from: whale } });
@@ -2375,7 +2375,7 @@ contract("BorrowerOperations", async accounts => {
       });
 
       // Check LQTY ONEU balance after has increased
-      const lqtyStaking_ONEUBalance_After = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
     });
 
@@ -2502,7 +2502,7 @@ contract("BorrowerOperations", async accounts => {
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
       // Check LQTY Staking contract balance before == 0
-      const lqtyStaking_ONEUBalance_Before = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
       await openTrove({ ICR: toBN(dec(10, 18)), extraParams: { from: whale } });
@@ -2527,7 +2527,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: D }
       });
 
-      const D_ONEUBalanceBefore = await lusdToken.balanceOf(D);
+      const D_ONEUBalanceBefore = await oneuToken.balanceOf(D);
 
       // Artificially make baseRate 5%
       await troveManager.setBaseRate(dec(5, 16));
@@ -2545,11 +2545,11 @@ contract("BorrowerOperations", async accounts => {
       await borrowerOperations.adjustTrove(th._100pct, 0, ONEURequest_D, true, D, D, { from: D });
 
       // Check LQTY staking ONEU balance has increased
-      const lqtyStaking_ONEUBalance_After = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
 
       // Check D's ONEU balance has increased by their requested ONEU
-      const D_ONEUBalanceAfter = await lusdToken.balanceOf(D);
+      const D_ONEUBalanceAfter = await oneuToken.balanceOf(D);
       assert.isTrue(D_ONEUBalanceAfter.eq(D_ONEUBalanceBefore.add(ONEURequest_D)));
     });
 
@@ -2584,14 +2584,14 @@ contract("BorrowerOperations", async accounts => {
       th.fastForwardTime(7200, web3.currentProvider);
 
       // Check staking ONEU balance before > 0
-      const lqtyStaking_ONEUBalance_Before = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_Before.gt(toBN("0")));
 
       // D adjusts trove
       await borrowerOperations.adjustTrove(th._100pct, 0, dec(37, 18), true, D, D, { from: D });
 
       // Check staking ONEU balance after > staking balance before
-      const lqtyStaking_ONEUBalance_After = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
     });
 
@@ -2672,7 +2672,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: D }
       });
 
-      const D_ONEUBalBefore = await lusdToken.balanceOf(D);
+      const D_ONEUBalBefore = await oneuToken.balanceOf(D);
       // Check baseRate is zero
       const baseRate_1 = await troveManager.baseRate();
       assert.equal(baseRate_1, "0");
@@ -2680,14 +2680,14 @@ contract("BorrowerOperations", async accounts => {
       // 2 hours pass
       th.fastForwardTime(7200, web3.currentProvider);
 
-      const DUSDBalanceBefore = await lusdToken.balanceOf(D);
+      const DUSDBalanceBefore = await oneuToken.balanceOf(D);
 
       // D adjusts trove
       const ONEURequest_D = toBN(dec(40, 18));
       await borrowerOperations.adjustTrove(th._100pct, 0, ONEURequest_D, true, D, D, { from: D });
 
       // Check D's ONEU balance increased by their requested ONEU
-      const ONEUBalanceAfter = await lusdToken.balanceOf(D);
+      const ONEUBalanceAfter = await oneuToken.balanceOf(D);
       assert.isTrue(ONEUBalanceAfter.eq(D_ONEUBalBefore.add(ONEURequest_D)));
     });
 
@@ -3082,7 +3082,7 @@ contract("BorrowerOperations", async accounts => {
       await lqtyToken.unprotectedMint(bob, dec(100, 18));
       await lqtyStaking.stake(dec(100, 18), { from: bob });
 
-      const lqtyStakingONEUBalanceBefore = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStakingONEUBalanceBefore = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStakingONEUBalanceBefore.gt(toBN("0")));
 
       const txAlice = await borrowerOperations.adjustTrove(
@@ -3105,7 +3105,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(await th.checkRecoveryMode(contracts));
 
       // Check no fee was sent to staking contract
-      const lqtyStakingONEUBalanceAfter = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStakingONEUBalanceAfter = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStakingONEUBalanceAfter.toString(), lqtyStakingONEUBalanceBefore.toString());
     });
 
@@ -3148,7 +3148,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(bobFee.gt(toBN("0")));
 
       // Alice transfers ONEU to bob to compensate borrowing fees
-      await lusdToken.transfer(bob, bobFee, { from: alice });
+      await oneuToken.transfer(bob, bobFee, { from: alice });
 
       const remainingDebt = (await troveManager.getTroveDebt(bob)).sub(ONEU_GAS_COMPENSATION);
 
@@ -3495,7 +3495,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: alice }
       });
 
-      const alice_ONEUTokenBalance_Before = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_Before = await oneuToken.balanceOf(alice);
       assert.isTrue(alice_ONEUTokenBalance_Before.gt(toBN("0")));
 
       // Alice adjusts trove - coll decrease and debt decrease
@@ -3510,7 +3510,7 @@ contract("BorrowerOperations", async accounts => {
       );
 
       // check after
-      const alice_ONEUTokenBalance_After = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_After = await oneuToken.balanceOf(alice);
       assert.isTrue(
         alice_ONEUTokenBalance_After.eq(alice_ONEUTokenBalance_Before.sub(toBN(dec(10, 18))))
       );
@@ -3529,7 +3529,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: alice }
       });
 
-      const alice_ONEUTokenBalance_Before = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_Before = await oneuToken.balanceOf(alice);
       assert.isTrue(alice_ONEUTokenBalance_Before.gt(toBN("0")));
 
       // Alice adjusts trove - coll increase and debt increase
@@ -3539,7 +3539,7 @@ contract("BorrowerOperations", async accounts => {
       });
 
       // check after
-      const alice_ONEUTokenBalance_After = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_After = await oneuToken.balanceOf(alice);
       assert.isTrue(
         alice_ONEUTokenBalance_After.eq(alice_ONEUTokenBalance_Before.add(toBN(dec(100, 18))))
       );
@@ -3802,10 +3802,10 @@ contract("BorrowerOperations", async accounts => {
       const bobDebt = await getTroveEntireDebt(B);
 
       // Bob transfers some ONEU to carol
-      await lusdToken.transfer(C, dec(10, 18), { from: B });
+      await oneuToken.transfer(C, dec(10, 18), { from: B });
 
       //Confirm B's ONEU balance is less than 50 ONEU
-      const B_ONEUBal = await lusdToken.balanceOf(B);
+      const B_ONEUBal = await oneuToken.balanceOf(B);
       assert.isTrue(B_ONEUBal.lt(bobDebt));
 
       const repayONEUPromise_B = borrowerOperations.adjustTrove(
@@ -3884,7 +3884,7 @@ contract("BorrowerOperations", async accounts => {
       const price = await priceFeed.getPrice();
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, dec(300, 18), { from: bob });
+      await oneuToken.transfer(alice, dec(300, 18), { from: bob });
 
       assert.isFalse(await troveManager.checkRecoveryMode(price));
 
@@ -3933,9 +3933,9 @@ contract("BorrowerOperations", async accounts => {
       });
 
       // Alice transfers her ONEU to Bob and Carol so they can cover fees
-      const aliceBal = await lusdToken.balanceOf(alice);
-      await lusdToken.transfer(bob, aliceBal.div(toBN(2)), { from: alice });
-      await lusdToken.transfer(carol, aliceBal.div(toBN(2)), { from: alice });
+      const aliceBal = await oneuToken.balanceOf(alice);
+      await oneuToken.transfer(bob, aliceBal.div(toBN(2)), { from: alice });
+      await oneuToken.transfer(carol, aliceBal.div(toBN(2)), { from: alice });
 
       // check Recovery Mode
       assert.isFalse(await th.checkRecoveryMode(contracts));
@@ -3963,10 +3963,10 @@ contract("BorrowerOperations", async accounts => {
       });
 
       // Artificially mint to Alice so she has enough to close her trove
-      await lusdToken.unprotectedMint(alice, dec(100000, 18));
+      await oneuToken.unprotectedMint(alice, dec(100000, 18));
 
       // Check she has more ONEU than her trove debt
-      const aliceBal = await lusdToken.balanceOf(alice);
+      const aliceBal = await oneuToken.balanceOf(alice);
       const aliceDebt = await getTroveEntireDebt(alice);
       assert.isTrue(aliceBal.gt(aliceDebt));
 
@@ -3994,12 +3994,12 @@ contract("BorrowerOperations", async accounts => {
       });
 
       const aliceCollBefore = await getTroveEntireColl(alice);
-      const dennisONEU = await lusdToken.balanceOf(dennis);
+      const dennisONEU = await oneuToken.balanceOf(dennis);
       assert.isTrue(aliceCollBefore.gt(toBN("0")));
       assert.isTrue(dennisONEU.gt(toBN("0")));
 
       // To compensate borrowing fees
-      await lusdToken.transfer(alice, dennisONEU.div(toBN(2)), { from: dennis });
+      await oneuToken.transfer(alice, dennisONEU.div(toBN(2)), { from: dennis });
 
       // Alice attempts to close trove
       await borrowerOperations.closeTrove({ from: alice });
@@ -4022,12 +4022,12 @@ contract("BorrowerOperations", async accounts => {
       });
 
       const aliceDebtBefore = await getTroveEntireColl(alice);
-      const dennisONEU = await lusdToken.balanceOf(dennis);
+      const dennisONEU = await oneuToken.balanceOf(dennis);
       assert.isTrue(aliceDebtBefore.gt(toBN("0")));
       assert.isTrue(dennisONEU.gt(toBN("0")));
 
       // To compensate borrowing fees
-      await lusdToken.transfer(alice, dennisONEU.div(toBN(2)), { from: dennis });
+      await oneuToken.transfer(alice, dennisONEU.div(toBN(2)), { from: dennis });
 
       // Alice attempts to close trove
       await borrowerOperations.closeTrove({ from: alice });
@@ -4052,12 +4052,12 @@ contract("BorrowerOperations", async accounts => {
       const aliceStakeBefore = await getTroveStake(alice);
       assert.isTrue(aliceStakeBefore.gt(toBN("0")));
 
-      const dennisONEU = await lusdToken.balanceOf(dennis);
+      const dennisONEU = await oneuToken.balanceOf(dennis);
       assert.isTrue(aliceStakeBefore.gt(toBN("0")));
       assert.isTrue(dennisONEU.gt(toBN("0")));
 
       // To compensate borrowing fees
-      await lusdToken.transfer(alice, dennisONEU.div(toBN(2)), { from: dennis });
+      await oneuToken.transfer(alice, dennisONEU.div(toBN(2)), { from: dennis });
 
       // Alice attempts to close trove
       await borrowerOperations.closeTrove({ from: alice });
@@ -4124,7 +4124,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(L_ONEUDebt_Snapshot_A_AfterLiquidation.gt(toBN("0")));
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, await lusdToken.balanceOf(dennis), { from: dennis });
+      await oneuToken.transfer(alice, await oneuToken.balanceOf(dennis), { from: dennis });
 
       await priceFeed.setPrice(dec(200, 18));
 
@@ -4160,7 +4160,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(await sortedTroves.contains(alice));
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, await lusdToken.balanceOf(dennis), { from: dennis });
+      await oneuToken.transfer(alice, await oneuToken.balanceOf(dennis), { from: dennis });
 
       // Close the trove
       await borrowerOperations.closeTrove({ from: alice });
@@ -4197,7 +4197,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(activePool_RawEther_before.eq(activePool_AUT_before));
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, await lusdToken.balanceOf(dennis), { from: dennis });
+      await oneuToken.transfer(alice, await oneuToken.balanceOf(dennis), { from: dennis });
 
       // Close the trove
       await borrowerOperations.closeTrove({ from: alice });
@@ -4232,7 +4232,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(activePool_Debt_before.gt(toBN("0")));
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, await lusdToken.balanceOf(dennis), { from: dennis });
+      await oneuToken.transfer(alice, await oneuToken.balanceOf(dennis), { from: dennis });
 
       // Close the trove
       await borrowerOperations.closeTrove({ from: alice });
@@ -4274,7 +4274,7 @@ contract("BorrowerOperations", async accounts => {
       );
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, await lusdToken.balanceOf(dennis), { from: dennis });
+      await oneuToken.transfer(alice, await oneuToken.balanceOf(dennis), { from: dennis });
 
       // Alice closes trove
       await borrowerOperations.closeTrove({ from: alice });
@@ -4307,7 +4307,7 @@ contract("BorrowerOperations", async accounts => {
         const alice_AUTBalance_Before = web3.utils.toBN(await web3.eth.getBalance(alice));
 
         // to compensate borrowing fees
-        await lusdToken.transfer(alice, await lusdToken.balanceOf(dennis), { from: dennis });
+        await oneuToken.transfer(alice, await oneuToken.balanceOf(dennis), { from: dennis });
 
         await borrowerOperations.closeTrove({ from: alice, gasPrice: 0 });
 
@@ -4334,16 +4334,16 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(aliceDebt.gt(toBN("0")));
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, await lusdToken.balanceOf(dennis), { from: dennis });
+      await oneuToken.transfer(alice, await oneuToken.balanceOf(dennis), { from: dennis });
 
-      const alice_ONEUBalance_Before = await lusdToken.balanceOf(alice);
+      const alice_ONEUBalance_Before = await oneuToken.balanceOf(alice);
       assert.isTrue(alice_ONEUBalance_Before.gt(toBN("0")));
 
       // close trove
       await borrowerOperations.closeTrove({ from: alice });
 
       // check alice ONEU balance after
-      const alice_ONEUBalance_After = await lusdToken.balanceOf(alice);
+      const alice_ONEUBalance_After = await oneuToken.balanceOf(alice);
       th.assertIsApproximatelyEqual(
         alice_ONEUBalance_After,
         alice_ONEUBalance_Before.sub(aliceDebt.sub(ONEU_GAS_COMPENSATION))
@@ -4380,8 +4380,8 @@ contract("BorrowerOperations", async accounts => {
       const carolColl = await getTroveEntireColl(carol);
 
       // Whale transfers to A and B to cover their fees
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
-      await lusdToken.transfer(bob, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(bob, dec(10000, 18), { from: whale });
 
       // --- TEST ---
 
@@ -4474,7 +4474,7 @@ contract("BorrowerOperations", async accounts => {
       });
 
       //Confirm Bob's ONEU balance is less than his trove debt
-      const B_ONEUBal = await lusdToken.balanceOf(B);
+      const B_ONEUBal = await oneuToken.balanceOf(B);
       const B_troveDebt = await getTroveEntireDebt(B);
 
       assert.isTrue(B_ONEUBal.lt(B_troveDebt));
@@ -4894,7 +4894,7 @@ contract("BorrowerOperations", async accounts => {
         extraParams: { from: C }
       });
 
-      const totalSupply = await lusdToken.totalSupply();
+      const totalSupply = await oneuToken.totalSupply();
 
       // Artificially make baseRate 5%
       await troveManager.setBaseRate(dec(5, 16));
@@ -5081,7 +5081,7 @@ contract("BorrowerOperations", async accounts => {
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
       // Check LQTY ONEU balance before == 0
-      const lqtyStaking_ONEUBalance_Before = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
       await openTrove({
@@ -5124,7 +5124,7 @@ contract("BorrowerOperations", async accounts => {
       });
 
       // Check LQTY ONEU balance after has increased
-      const lqtyStaking_ONEUBalance_After = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
     });
 
@@ -5254,7 +5254,7 @@ contract("BorrowerOperations", async accounts => {
       await lqtyStaking.stake(dec(1, 18), { from: multisig });
 
       // Check LQTY Staking contract balance before == 0
-      const lqtyStaking_ONEUBalance_Before = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_Before = await oneuToken.balanceOf(lqtyStaking.address);
       assert.equal(lqtyStaking_ONEUBalance_Before, "0");
 
       await openTrove({
@@ -5297,11 +5297,11 @@ contract("BorrowerOperations", async accounts => {
       });
 
       // Check LQTY staking ONEU balance has increased
-      const lqtyStaking_ONEUBalance_After = await lusdToken.balanceOf(lqtyStaking.address);
+      const lqtyStaking_ONEUBalance_After = await oneuToken.balanceOf(lqtyStaking.address);
       assert.isTrue(lqtyStaking_ONEUBalance_After.gt(lqtyStaking_ONEUBalance_Before));
 
       // Check D's ONEU balance now equals their requested ONEU
-      const ONEUBalance_D = await lusdToken.balanceOf(D);
+      const ONEUBalance_D = await oneuToken.balanceOf(D);
       assert.isTrue(ONEURequest_D.eq(ONEUBalance_D));
     });
 
@@ -5779,7 +5779,7 @@ contract("BorrowerOperations", async accounts => {
       assert.isTrue(await sortedTroves.contains(alice));
 
       // to compensate borrowing fees
-      await lusdToken.transfer(alice, dec(10000, 18), { from: whale });
+      await oneuToken.transfer(alice, dec(10000, 18), { from: whale });
 
       // Repay and close Trove
       await borrowerOperations.closeTrove({ from: alice });
@@ -5842,7 +5842,7 @@ contract("BorrowerOperations", async accounts => {
 
     it("openTrove(): increases user ONEUToken balance by correct amount", async () => {
       // check before
-      const alice_ONEUTokenBalance_Before = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_Before = await oneuToken.balanceOf(alice);
       assert.equal(alice_ONEUTokenBalance_Before, 0);
 
       await borrowerOperations.openTrove(th._100pct, dec(10000, 18), alice, alice, {
@@ -5851,7 +5851,7 @@ contract("BorrowerOperations", async accounts => {
       });
 
       // check after
-      const alice_ONEUTokenBalance_After = await lusdToken.balanceOf(alice);
+      const alice_ONEUTokenBalance_After = await oneuToken.balanceOf(alice);
       assert.equal(alice_ONEUTokenBalance_After, dec(10000, 18));
     });
 
@@ -6506,7 +6506,7 @@ contract("BorrowerOperations", async accounts => {
         });
 
         // Alice sends ONEU to NonPayable so its ONEU balance covers its debt
-        await lusdToken.transfer(nonPayable.address, dec(10000, 18), { from: alice });
+        await oneuToken.transfer(nonPayable.address, dec(10000, 18), { from: alice });
 
         // open trove from NonPayable proxy contract
         const _100pctHex = "0xde0b6b3a7640000";
