@@ -103,12 +103,12 @@ class BorrowerOperationsProxy extends Proxy {
     return this.forwardFunction(params, "withdrawColl(uint256,address,address)");
   }
 
-  async withdrawLUSD(...params) {
-    return this.forwardFunction(params, "withdrawLUSD(uint256,uint256,address,address)");
+  async withdrawONEU(...params) {
+    return this.forwardFunction(params, "withdrawONEU(uint256,uint256,address,address)");
   }
 
-  async repayLUSD(...params) {
-    return this.forwardFunction(params, "repayLUSD(uint256,address,address)");
+  async repayONEU(...params) {
+    return this.forwardFunction(params, "repayONEU(uint256,address,address)");
   }
 
   async closeTrove(...params) {
@@ -135,8 +135,8 @@ class BorrowerOperationsProxy extends Proxy {
     return this.proxyFunction("getCompositeDebt", params);
   }
 
-  async LUSD_GAS_COMPENSATION(...params) {
-    return this.proxyFunction("LUSD_GAS_COMPENSATION", params);
+  async ONEU_GAS_COMPENSATION(...params) {
+    return this.proxyFunction("ONEU_GAS_COMPENSATION", params);
   }
 
   async MIN_NET_DEBT(...params) {
@@ -202,8 +202,8 @@ class TroveManagerProxy extends Proxy {
     return this.proxyFunction("getPendingAUTReward", params);
   }
 
-  async getPendingLUSDDebtReward(...params) {
-    return this.proxyFunction("getPendingLUSDDebtReward", params);
+  async getPendingONEUDebtReward(...params) {
+    return this.proxyFunction("getPendingONEUDebtReward", params);
   }
 
   async liquidate(user) {
@@ -234,8 +234,8 @@ class TroveManagerProxy extends Proxy {
     return this.proxyFunction("L_AUT", []);
   }
 
-  async L_LUSDDebt() {
-    return this.proxyFunction("L_LUSDDebt", []);
+  async L_ONEUDebt() {
+    return this.proxyFunction("L_ONEUDebt", []);
   }
 
   async rewardSnapshots(user) {
@@ -291,8 +291,8 @@ class StabilityPoolProxy extends Proxy {
     return this.forwardFunction(params, "provideToSP(uint256,address)");
   }
 
-  async getCompoundedLUSDDeposit(user) {
-    return this.proxyFunctionWithUser("getCompoundedLUSDDeposit", user);
+  async getCompoundedONEUDeposit(user) {
+    return this.proxyFunctionWithUser("getCompoundedONEUDeposit", user);
   }
 
   async deposits(user) {
@@ -400,8 +400,8 @@ class LQTYStakingProxy extends Proxy {
     return this.proxyFunctionWithUser("stakes", user);
   }
 
-  async F_LUSD(user) {
-    return this.proxyFunctionWithUser("F_LUSD", user);
+  async F_ONEU(user) {
+    return this.proxyFunctionWithUser("F_ONEU", user);
   }
 }
 

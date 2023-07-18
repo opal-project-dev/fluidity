@@ -48,7 +48,7 @@ contract(
       const randomDefaulterIndex = Math.floor(Math.random() * remainingDefaulters.length);
       const randomDefaulter = remainingDefaulters[randomDefaulterIndex];
 
-      const liquidatedLUSD = (await troveManager.Troves(randomDefaulter))[0];
+      const liquidatedONEU = (await troveManager.Troves(randomDefaulter))[0];
       const liquidatedAUT = (await troveManager.Troves(randomDefaulter))[1];
 
       const price = await priceFeed.getPrice();
@@ -56,9 +56,9 @@ contract(
       const ICRPercent = ICR.slice(0, ICR.length - 16);
 
       console.log(`SP address: ${stabilityPool.address}`);
-      const LUSDinPoolBefore = await stabilityPool.getTotalLUSDDeposits();
+      const ONEUinPoolBefore = await stabilityPool.getTotalONEUDeposits();
       const liquidatedTx = await troveManager.liquidate(randomDefaulter, { from: accounts[0] });
-      const LUSDinPoolAfter = await stabilityPool.getTotalLUSDDeposits();
+      const ONEUinPoolAfter = await stabilityPool.getTotalONEUDeposits();
 
       assert.isTrue(liquidatedTx.receipt.status);
 
@@ -73,7 +73,7 @@ contract(
       console.log(
         `Liquidation. addr: ${th.squeezeAddr(
           randomDefaulter
-        )} ICR: ${ICRPercent}% coll: ${liquidatedAUT} debt: ${liquidatedLUSD} SP LUSD before: ${LUSDinPoolBefore} SP LUSD after: ${LUSDinPoolAfter} tx success: ${
+        )} ICR: ${ICRPercent}% coll: ${liquidatedAUT} debt: ${liquidatedONEU} SP ONEU before: ${ONEUinPoolBefore} SP ONEU after: ${ONEUinPoolAfter} tx success: ${
           liquidatedTx.receipt.status
         }`
       );
@@ -84,11 +84,11 @@ contract(
       const randomDepositor = depositorAccounts[randomIndex];
 
       const userBalance = await lusdToken.balanceOf(randomDepositor);
-      const maxLUSDDeposit = userBalance.div(toBN(dec(1, 18)));
+      const maxONEUDeposit = userBalance.div(toBN(dec(1, 18)));
 
-      const randomLUSDAmount = th.randAmountInWei(1, maxLUSDDeposit);
+      const randomONEUAmount = th.randAmountInWei(1, maxONEUDeposit);
 
-      const depositTx = await stabilityPool.provideToSP(randomLUSDAmount, ZERO_ADDRESS, {
+      const depositTx = await stabilityPool.provideToSP(randomONEUAmount, ZERO_ADDRESS, {
         from: randomDepositor
       });
 
@@ -102,7 +102,7 @@ contract(
       console.log(
         `SP deposit. addr: ${th.squeezeAddr(
           randomDepositor
-        )} amount: ${randomLUSDAmount} tx success: ${depositTx.receipt.status} `
+        )} amount: ${randomONEUAmount} tx success: ${depositTx.receipt.status} `
       );
     };
 
@@ -204,18 +204,18 @@ contract(
 
       for (depositor of currentDepositors) {
         const initialDeposit = (await stabilityPool.deposits(depositor))[0];
-        const finalDeposit = await stabilityPool.getCompoundedLUSDDeposit(depositor);
+        const finalDeposit = await stabilityPool.getCompoundedONEUDeposit(depositor);
         const AUTGain = await stabilityPool.getDepositorAUTGain(depositor);
         const AUTinSP = (await stabilityPool.getAUT()).toString();
-        const LUSDinSP = (await stabilityPool.getTotalLUSDDeposits()).toString();
+        const ONEUinSP = (await stabilityPool.getTotalONEUDeposits()).toString();
 
         // Attempt to withdraw
         const withdrawalTx = await stabilityPool.withdrawFromSP(dec(1, 36), { from: depositor });
 
         const AUTinSPAfter = (await stabilityPool.getAUT()).toString();
-        const LUSDinSPAfter = (await stabilityPool.getTotalLUSDDeposits()).toString();
-        const LUSDBalanceSPAfter = await lusdToken.balanceOf(stabilityPool.address);
-        const depositAfter = await stabilityPool.getCompoundedLUSDDeposit(depositor);
+        const ONEUinSPAfter = (await stabilityPool.getTotalONEUDeposits()).toString();
+        const ONEUBalanceSPAfter = await lusdToken.balanceOf(stabilityPool.address);
+        const depositAfter = await stabilityPool.getCompoundedONEUDeposit(depositor);
 
         console.log(`--Before withdrawal--
                     withdrawer addr: ${th.squeezeAddr(depositor)}
@@ -223,14 +223,14 @@ contract(
                      AUT gain: ${AUTGain}
                      AUT in SP: ${AUTinSP}
                      compounded deposit: ${finalDeposit} 
-                     LUSD in SP: ${LUSDinSP}
+                     ONEU in SP: ${ONEUinSP}
                     
                     --After withdrawal--
                      Withdrawal tx success: ${withdrawalTx.receipt.status} 
                      Deposit after: ${depositAfter}
                      AUT remaining in SP: ${AUTinSPAfter}
-                     SP LUSD deposits tracker after: ${LUSDinSPAfter}
-                     SP LUSD balance after: ${LUSDBalanceSPAfter}
+                     SP ONEU deposits tracker after: ${ONEUinSPAfter}
+                     SP ONEU balance after: ${ONEUBalanceSPAfter}
                      `);
         // Check each deposit can be withdrawn
         assert.isTrue(withdrawalTx.receipt.status);
@@ -281,13 +281,13 @@ contract(
 
         const defaulterCollMin = 1;
         const defaulterCollMax = 100000000;
-        const defaulterLUSDProportionMin = 91;
-        const defaulterLUSDProportionMax = 180;
+        const defaulterONEUProportionMin = 91;
+        const defaulterONEUProportionMax = 180;
 
         const depositorCollMin = 1;
         const depositorCollMax = 100000000;
-        const depositorLUSDProportionMin = 100;
-        const depositorLUSDProportionMax = 100;
+        const depositorONEUProportionMin = 100;
+        const depositorONEUProportionMax = 100;
 
         const remainingDefaulters = [...defaulterAccounts];
         const currentDepositors = [];
@@ -295,25 +295,25 @@ contract(
         const currentDepositorsDict = {};
 
         // setup:
-        // account set L all add coll and withdraw LUSD
-        await th.openTrove_allAccounts_randomAUT_randomLUSD(
+        // account set L all add coll and withdraw ONEU
+        await th.openTrove_allAccounts_randomAUT_randomONEU(
           defaulterCollMin,
           defaulterCollMax,
           defaulterAccounts,
           contracts,
-          defaulterLUSDProportionMin,
-          defaulterLUSDProportionMax,
+          defaulterONEUProportionMin,
+          defaulterONEUProportionMax,
           true
         );
 
-        // account set S all add coll and withdraw LUSD
-        await th.openTrove_allAccounts_randomAUT_randomLUSD(
+        // account set S all add coll and withdraw ONEU
+        await th.openTrove_allAccounts_randomAUT_randomONEU(
           depositorCollMin,
           depositorCollMax,
           depositorAccounts,
           contracts,
-          depositorLUSDProportionMin,
-          depositorLUSDProportionMax,
+          depositorONEUProportionMin,
+          depositorONEUProportionMax,
           true
         );
 
@@ -333,21 +333,21 @@ contract(
 
         await skyrocketPriceAndCheckAllTrovesSafe();
 
-        const totalLUSDDepositsBeforeWithdrawals = await stabilityPool.getTotalLUSDDeposits();
+        const totalONEUDepositsBeforeWithdrawals = await stabilityPool.getTotalONEUDeposits();
         const totalAUTRewardsBeforeWithdrawals = await stabilityPool.getAUT();
 
         await attemptWithdrawAllDeposits(currentDepositors);
 
-        const totalLUSDDepositsAfterWithdrawals = await stabilityPool.getTotalLUSDDeposits();
+        const totalONEUDepositsAfterWithdrawals = await stabilityPool.getTotalONEUDeposits();
         const totalAUTRewardsAfterWithdrawals = await stabilityPool.getAUT();
 
         console.log(
-          `Total LUSD deposits before any withdrawals: ${totalLUSDDepositsBeforeWithdrawals}`
+          `Total ONEU deposits before any withdrawals: ${totalONEUDepositsBeforeWithdrawals}`
         );
         console.log(`Total AUT rewards before any withdrawals: ${totalAUTRewardsBeforeWithdrawals}`);
 
         console.log(
-          `Remaining LUSD deposits after withdrawals: ${totalLUSDDepositsAfterWithdrawals}`
+          `Remaining ONEU deposits after withdrawals: ${totalONEUDepositsAfterWithdrawals}`
         );
         console.log(`Remaining AUT rewards after withdrawals: ${totalAUTRewardsAfterWithdrawals}`);
 
@@ -365,13 +365,13 @@ contract(
 
         const defaulterCollMin = 1;
         const defaulterCollMax = 10;
-        const defaulterLUSDProportionMin = 91;
-        const defaulterLUSDProportionMax = 180;
+        const defaulterONEUProportionMin = 91;
+        const defaulterONEUProportionMax = 180;
 
         const depositorCollMin = 1000000;
         const depositorCollMax = 100000000;
-        const depositorLUSDProportionMin = 100;
-        const depositorLUSDProportionMax = 100;
+        const depositorONEUProportionMin = 100;
+        const depositorONEUProportionMax = 100;
 
         const remainingDefaulters = [...defaulterAccounts];
         const currentDepositors = [];
@@ -379,24 +379,24 @@ contract(
         const currentDepositorsDict = {};
 
         // setup:
-        // account set L all add coll and withdraw LUSD
-        await th.openTrove_allAccounts_randomAUT_randomLUSD(
+        // account set L all add coll and withdraw ONEU
+        await th.openTrove_allAccounts_randomAUT_randomONEU(
           defaulterCollMin,
           defaulterCollMax,
           defaulterAccounts,
           contracts,
-          defaulterLUSDProportionMin,
-          defaulterLUSDProportionMax
+          defaulterONEUProportionMin,
+          defaulterONEUProportionMax
         );
 
-        // account set S all add coll and withdraw LUSD
-        await th.openTrove_allAccounts_randomAUT_randomLUSD(
+        // account set S all add coll and withdraw ONEU
+        await th.openTrove_allAccounts_randomAUT_randomONEU(
           depositorCollMin,
           depositorCollMax,
           depositorAccounts,
           contracts,
-          depositorLUSDProportionMin,
-          depositorLUSDProportionMax
+          depositorONEUProportionMin,
+          depositorONEUProportionMax
         );
 
         // price drops, all L liquidateable
@@ -415,21 +415,21 @@ contract(
 
         await skyrocketPriceAndCheckAllTrovesSafe();
 
-        const totalLUSDDepositsBeforeWithdrawals = await stabilityPool.getTotalLUSDDeposits();
+        const totalONEUDepositsBeforeWithdrawals = await stabilityPool.getTotalONEUDeposits();
         const totalAUTRewardsBeforeWithdrawals = await stabilityPool.getAUT();
 
         await attemptWithdrawAllDeposits(currentDepositors);
 
-        const totalLUSDDepositsAfterWithdrawals = await stabilityPool.getTotalLUSDDeposits();
+        const totalONEUDepositsAfterWithdrawals = await stabilityPool.getTotalONEUDeposits();
         const totalAUTRewardsAfterWithdrawals = await stabilityPool.getAUT();
 
         console.log(
-          `Total LUSD deposits before any withdrawals: ${totalLUSDDepositsBeforeWithdrawals}`
+          `Total ONEU deposits before any withdrawals: ${totalONEUDepositsBeforeWithdrawals}`
         );
         console.log(`Total AUT rewards before any withdrawals: ${totalAUTRewardsBeforeWithdrawals}`);
 
         console.log(
-          `Remaining LUSD deposits after withdrawals: ${totalLUSDDepositsAfterWithdrawals}`
+          `Remaining ONEU deposits after withdrawals: ${totalONEUDepositsAfterWithdrawals}`
         );
         console.log(`Remaining AUT rewards after withdrawals: ${totalAUTRewardsAfterWithdrawals}`);
 
@@ -447,13 +447,13 @@ contract(
 
         const defaulterCollMin = 1000000;
         const defaulterCollMax = 100000000;
-        const defaulterLUSDProportionMin = 91;
-        const defaulterLUSDProportionMax = 180;
+        const defaulterONEUProportionMin = 91;
+        const defaulterONEUProportionMax = 180;
 
         const depositorCollMin = 1;
         const depositorCollMax = 10;
-        const depositorLUSDProportionMin = 100;
-        const depositorLUSDProportionMax = 100;
+        const depositorONEUProportionMin = 100;
+        const depositorONEUProportionMax = 100;
 
         const remainingDefaulters = [...defaulterAccounts];
         const currentDepositors = [];
@@ -461,24 +461,24 @@ contract(
         const currentDepositorsDict = {};
 
         // setup:
-        // account set L all add coll and withdraw LUSD
-        await th.openTrove_allAccounts_randomAUT_randomLUSD(
+        // account set L all add coll and withdraw ONEU
+        await th.openTrove_allAccounts_randomAUT_randomONEU(
           defaulterCollMin,
           defaulterCollMax,
           defaulterAccounts,
           contracts,
-          defaulterLUSDProportionMin,
-          defaulterLUSDProportionMax
+          defaulterONEUProportionMin,
+          defaulterONEUProportionMax
         );
 
-        // account set S all add coll and withdraw LUSD
-        await th.openTrove_allAccounts_randomAUT_randomLUSD(
+        // account set S all add coll and withdraw ONEU
+        await th.openTrove_allAccounts_randomAUT_randomONEU(
           depositorCollMin,
           depositorCollMax,
           depositorAccounts,
           contracts,
-          depositorLUSDProportionMin,
-          depositorLUSDProportionMax
+          depositorONEUProportionMin,
+          depositorONEUProportionMax
         );
 
         // price drops, all L liquidateable
@@ -497,21 +497,21 @@ contract(
 
         await skyrocketPriceAndCheckAllTrovesSafe();
 
-        const totalLUSDDepositsBeforeWithdrawals = await stabilityPool.getTotalLUSDDeposits();
+        const totalONEUDepositsBeforeWithdrawals = await stabilityPool.getTotalONEUDeposits();
         const totalAUTRewardsBeforeWithdrawals = await stabilityPool.getAUT();
 
         await attemptWithdrawAllDeposits(currentDepositors);
 
-        const totalLUSDDepositsAfterWithdrawals = await stabilityPool.getTotalLUSDDeposits();
+        const totalONEUDepositsAfterWithdrawals = await stabilityPool.getTotalONEUDeposits();
         const totalAUTRewardsAfterWithdrawals = await stabilityPool.getAUT();
 
         console.log(
-          `Total LUSD deposits before any withdrawals: ${totalLUSDDepositsBeforeWithdrawals}`
+          `Total ONEU deposits before any withdrawals: ${totalONEUDepositsBeforeWithdrawals}`
         );
         console.log(`Total AUT rewards before any withdrawals: ${totalAUTRewardsBeforeWithdrawals}`);
 
         console.log(
-          `Remaining LUSD deposits after withdrawals: ${totalLUSDDepositsAfterWithdrawals}`
+          `Remaining ONEU deposits after withdrawals: ${totalONEUDepositsAfterWithdrawals}`
         );
         console.log(`Remaining AUT rewards after withdrawals: ${totalAUTRewardsAfterWithdrawals}`);
 
@@ -530,13 +530,13 @@ contract(
 
         const defaulterCollMin = 1000000;
         const defaulterCollMax = 100000000;
-        const defaulterLUSDProportionMin = 91;
-        const defaulterLUSDProportionMax = 180;
+        const defaulterONEUProportionMin = 91;
+        const defaulterONEUProportionMax = 180;
 
         const depositorCollMin = 1000000;
         const depositorCollMax = 100000000;
-        const depositorLUSDProportionMin = 100;
-        const depositorLUSDProportionMax = 100;
+        const depositorONEUProportionMin = 100;
+        const depositorONEUProportionMax = 100;
 
         const remainingDefaulters = [...defaulterAccounts];
         const currentDepositors = [];
@@ -544,24 +544,24 @@ contract(
         const currentDepositorsDict = {};
 
         // setup:
-        // account set L all add coll and withdraw LUSD
-        await th.openTrove_allAccounts_randomAUT_randomLUSD(
+        // account set L all add coll and withdraw ONEU
+        await th.openTrove_allAccounts_randomAUT_randomONEU(
           defaulterCollMin,
           defaulterCollMax,
           defaulterAccounts,
           contracts,
-          defaulterLUSDProportionMin,
-          defaulterLUSDProportionMax
+          defaulterONEUProportionMin,
+          defaulterONEUProportionMax
         );
 
-        // account set S all add coll and withdraw LUSD
-        await th.openTrove_allAccounts_randomAUT_randomLUSD(
+        // account set S all add coll and withdraw ONEU
+        await th.openTrove_allAccounts_randomAUT_randomONEU(
           depositorCollMin,
           depositorCollMax,
           depositorAccounts,
           contracts,
-          depositorLUSDProportionMin,
-          depositorLUSDProportionMax
+          depositorONEUProportionMin,
+          depositorONEUProportionMax
         );
 
         // price drops, all L liquidateable
@@ -580,21 +580,21 @@ contract(
 
         await skyrocketPriceAndCheckAllTrovesSafe();
 
-        const totalLUSDDepositsBeforeWithdrawals = await stabilityPool.getTotalLUSDDeposits();
+        const totalONEUDepositsBeforeWithdrawals = await stabilityPool.getTotalONEUDeposits();
         const totalAUTRewardsBeforeWithdrawals = await stabilityPool.getAUT();
 
         await attemptWithdrawAllDeposits(currentDepositors);
 
-        const totalLUSDDepositsAfterWithdrawals = await stabilityPool.getTotalLUSDDeposits();
+        const totalONEUDepositsAfterWithdrawals = await stabilityPool.getTotalONEUDeposits();
         const totalAUTRewardsAfterWithdrawals = await stabilityPool.getAUT();
 
         console.log(
-          `Total LUSD deposits before any withdrawals: ${totalLUSDDepositsBeforeWithdrawals}`
+          `Total ONEU deposits before any withdrawals: ${totalONEUDepositsBeforeWithdrawals}`
         );
         console.log(`Total AUT rewards before any withdrawals: ${totalAUTRewardsBeforeWithdrawals}`);
 
         console.log(
-          `Remaining LUSD deposits after withdrawals: ${totalLUSDDepositsAfterWithdrawals}`
+          `Remaining ONEU deposits after withdrawals: ${totalONEUDepositsAfterWithdrawals}`
         );
         console.log(`Remaining AUT rewards after withdrawals: ${totalAUTRewardsAfterWithdrawals}`);
 

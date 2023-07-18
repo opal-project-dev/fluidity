@@ -9,7 +9,7 @@ const mv = testHelpers.MoneyValues;
 const timeValues = testHelpers.TimeValues;
 
 const TroveManagerTester = artifacts.require("TroveManagerTester");
-const LUSDToken = artifacts.require("LUSDToken");
+const ONEUToken = artifacts.require("ONEUToken");
 
 contract("CollSurplusPool", async accounts => {
   const [owner, A, B, C, D, E] = accounts;
@@ -22,13 +22,13 @@ contract("CollSurplusPool", async accounts => {
 
   let contracts;
 
-  const getOpenTroveLUSDAmount = async totalDebt => th.getOpenTroveLUSDAmount(contracts, totalDebt);
+  const getOpenTroveONEUAmount = async totalDebt => th.getOpenTroveONEUAmount(contracts, totalDebt);
   const openTrove = async params => th.openTrove(contracts, params);
 
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts.lusdToken = await LUSDToken.new(
+    contracts.lusdToken = await ONEUToken.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
@@ -60,7 +60,7 @@ contract("CollSurplusPool", async accounts => {
       extraParams: { from: B }
     });
     await openTrove({
-      extraLUSDAmount: B_netDebt,
+      extraONEUAmount: B_netDebt,
       extraParams: { from: A, value: dec(3000, "ether") }
     });
 
@@ -106,7 +106,7 @@ contract("CollSurplusPool", async accounts => {
     ]);
     await nonPayable.forward(borrowerOperations.address, openTroveData, { value: B_coll });
     await openTrove({
-      extraLUSDAmount: B_netDebt,
+      extraONEUAmount: B_netDebt,
       extraParams: { from: A, value: dec(3000, "ether") }
     });
 

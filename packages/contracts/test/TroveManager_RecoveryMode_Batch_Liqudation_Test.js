@@ -3,7 +3,7 @@ const { TestHelper: th, MoneyValues: mv } = require("../utils/testHelpers.js");
 const { toBN, dec, ZERO_ADDRESS } = th;
 
 const TroveManagerTester = artifacts.require("./TroveManagerTester");
-const LUSDToken = artifacts.require("./LUSDToken.sol");
+const ONEUToken = artifacts.require("./ONEUToken.sol");
 
 contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async accounts => {
   const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
@@ -45,7 +45,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts.lusdToken = await LUSDToken.new(
+    contracts.lusdToken = await ONEUToken.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address
@@ -85,7 +85,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
 
       await openTrove({
         ICR: toBN(dec(340, 16)),
-        extraLUSDAmount: totalLiquidatedDebt,
+        extraONEUAmount: totalLiquidatedDebt,
         extraParams: { from: whale }
       });
       await stabilityPool.provideToSP(totalLiquidatedDebt, ZERO_ADDRESS, { from: whale });
@@ -149,7 +149,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
       const { A_coll, A_totalDebt, C_coll, C_totalDebt, totalLiquidatedDebt, price } = await setup();
 
       const spEthBefore = await stabilityPool.getAUT();
-      const spLusdBefore = await stabilityPool.getTotalLUSDDeposits();
+      const spLusdBefore = await stabilityPool.getTotalONEUDeposits();
 
       const tx = await troveManager.batchLiquidateTroves([alice, carol]);
 
@@ -162,7 +162,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
       assert.equal((await troveManager.Troves(carol))[3], "3");
 
       const spEthAfter = await stabilityPool.getAUT();
-      const spLusdAfter = await stabilityPool.getTotalLUSDDeposits();
+      const spLusdAfter = await stabilityPool.getTotalONEUDeposits();
 
       // liquidate collaterals with the gas compensation fee subtracted
       const expectedCollateralLiquidatedA = th.applyLiquidationFee(
@@ -170,11 +170,11 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
       );
       const expectedCollateralLiquidatedC = th.applyLiquidationFee(C_coll);
       // Stability Pool gains
-      const expectedGainInLUSD = expectedCollateralLiquidatedA
+      const expectedGainInONEU = expectedCollateralLiquidatedA
         .mul(price)
         .div(mv._1e18BN)
         .sub(A_totalDebt);
-      const realGainInLUSD = spEthAfter
+      const realGainInONEU = spEthAfter
         .sub(spEthBefore)
         .mul(price)
         .div(mv._1e18BN)
@@ -188,11 +188,11 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
       assert.equal(
         spLusdBefore.sub(spLusdAfter).toString(),
         A_totalDebt.toString(),
-        "Stability Pool LUSD doesn’t match"
+        "Stability Pool ONEU doesn’t match"
       );
       assert.equal(
-        realGainInLUSD.toString(),
-        expectedGainInLUSD.toString(),
+        realGainInONEU.toString(),
+        expectedGainInONEU.toString(),
         "Stability Pool gains don’t match"
       );
     });
@@ -215,7 +215,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
 
       await openTrove({
         ICR: toBN(dec(310, 16)),
-        extraLUSDAmount: totalLiquidatedDebt,
+        extraONEUAmount: totalLiquidatedDebt,
         extraParams: { from: whale }
       });
       await stabilityPool.provideToSP(totalLiquidatedDebt, ZERO_ADDRESS, { from: whale });
@@ -270,7 +270,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
 
       await openTrove({
         ICR: toBN(dec(300, 16)),
-        extraLUSDAmount: totalLiquidatedDebt,
+        extraONEUAmount: totalLiquidatedDebt,
         extraParams: { from: whale }
       });
       await stabilityPool.provideToSP(totalLiquidatedDebt, ZERO_ADDRESS, { from: whale });

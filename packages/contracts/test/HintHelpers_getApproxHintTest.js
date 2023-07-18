@@ -8,7 +8,7 @@ const moneyVals = testHelpers.MoneyValues;
 let latestRandomSeed = 31337;
 
 const TroveManagerTester = artifacts.require("TroveManagerTester");
-const LUSDToken = artifacts.require("LUSDToken");
+const ONEUToken = artifacts.require("ONEUToken");
 
 contract("HintHelpers", async accounts => {
   const [owner] = accounts;
@@ -28,19 +28,19 @@ contract("HintHelpers", async accounts => {
   const getNetBorrowingAmount = async debtWithFee =>
     th.getNetBorrowingAmount(contracts, debtWithFee);
 
-  /* Open a Trove for each account. LUSD debt is 200 LUSD each, with collateral beginning at
+  /* Open a Trove for each account. ONEU debt is 200 ONEU each, with collateral beginning at
   1.5 aut, and rising by 0.01 aut per Trove.  Hence, the ICR of account (i + 1) is always 1% greater than the ICR of account i. 
  */
 
-  // Open Troves in parallel, then withdraw LUSD in parallel
+  // Open Troves in parallel, then withdraw ONEU in parallel
   const makeTrovesInParallel = async (accounts, n) => {
     activeAccounts = accounts.slice(0, n);
     // console.log(`number of accounts used is: ${activeAccounts.length}`)
     // console.time("makeTrovesInParallel")
     const openTrovepromises = activeAccounts.map((account, index) => openTrove(account, index));
     await Promise.all(openTrovepromises);
-    const withdrawLUSDpromises = activeAccounts.map(account => withdrawLUSDfromTrove(account));
-    await Promise.all(withdrawLUSDpromises);
+    const withdrawONEUpromises = activeAccounts.map(account => withdrawONEUfromTrove(account));
+    await Promise.all(withdrawONEUpromises);
     // console.timeEnd("makeTrovesInParallel")
   };
 
@@ -53,13 +53,13 @@ contract("HintHelpers", async accounts => {
     });
   };
 
-  const withdrawLUSDfromTrove = async account => {
-    await borrowerOperations.withdrawLUSD(th._100pct, "100000000000000000000", account, account, {
+  const withdrawONEUfromTrove = async account => {
+    await borrowerOperations.withdrawONEU(th._100pct, "100000000000000000000", account, account, {
       from: account
     });
   };
 
-  // Sequentially add coll and withdraw LUSD, 1 account at a time
+  // Sequentially add coll and withdraw ONEU, 1 account at a time
   const makeTrovesInSequence = async (accounts, n) => {
     activeAccounts = accounts.slice(0, n);
     // console.log(`number of accounts used is: ${activeAccounts.length}`)
@@ -70,7 +70,7 @@ contract("HintHelpers", async accounts => {
     for (const account of activeAccounts) {
       const ICR_BN = toBN(ICR.toString().concat("0".repeat(16)));
       await th.openTrove(contracts, {
-        extraLUSDAmount: toBN(dec(10000, 18)),
+        extraONEUAmount: toBN(dec(10000, 18)),
         ICR: ICR_BN,
         extraParams: { from: account }
       });
@@ -83,7 +83,7 @@ contract("HintHelpers", async accounts => {
   before(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
     contracts.troveManager = await TroveManagerTester.new();
-    contracts.lusdToken = await LUSDToken.new(
+    contracts.lusdToken = await ONEUToken.new(
       contracts.troveManager.address,
       contracts.stabilityPool.address,
       contracts.borrowerOperations.address

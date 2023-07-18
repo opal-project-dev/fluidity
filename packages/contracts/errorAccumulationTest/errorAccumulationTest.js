@@ -72,22 +72,22 @@ contract("TroveManager", async accounts => {
 
     // check DefaultPool
     const AUT_DefaultPool = await defaultPool.getAUT();
-    const LUSDDebt_DefaultPool = await defaultPool.getLUSDDebt();
+    const ONEUDebt_DefaultPool = await defaultPool.getONEUDebt();
     console.log(`AUT left in Default Pool is: ${AUT_DefaultPool}`);
-    console.log(`LUSDDebt left in Default Pool is: ${LUSDDebt_DefaultPool}`);
+    console.log(`ONEUDebt left in Default Pool is: ${ONEUDebt_DefaultPool}`);
   });
 
   /* ABDK64, no error correction:
     AUT left in Default Pool is: 34
-    LUSDDebt left in Default Pool is: 98
+    ONEUDebt left in Default Pool is: 98
 
     DeciMath, no error correction:
     AUT left in Default Pool is: 7
-    LUSDDebt left in Default Pool is: 37
+    ONEUDebt left in Default Pool is: 37
 
     Pure division, no correction for rewards:
     AUT left in Default Pool is: 52
-    LUSDDebt left in Default Pool is: 96
+    ONEUDebt left in Default Pool is: 96
   */
 
   it("101 accounts with random coll. 1 liquidation. 100 accounts do a Trove operation (apply rewards)", async () => {
@@ -116,21 +116,21 @@ contract("TroveManager", async accounts => {
     });
     // check DefaultPool
     const AUT_DefaultPool = await defaultPool.getAUT();
-    const LUSDDebt_DefaultPool = await defaultPool.getLUSDDebt();
+    const ONEUDebt_DefaultPool = await defaultPool.getONEUDebt();
     console.log(`AUT left in Default Pool is: ${AUT_DefaultPool}`);
-    console.log(`LUSDDebt left in Default Pool is: ${LUSDDebt_DefaultPool}`);
+    console.log(`ONEUDebt left in Default Pool is: ${ONEUDebt_DefaultPool}`);
   });
 
   /* ABDK64, no error correction:
     AUT left in Default Pool is: 908
-    LUSDDebt left in Default Pool is: 108
+    ONEUDebt left in Default Pool is: 108
 
     DeciMath, no error correction:
     --Subtraction Overflow
 
     Pure division, no correction for rewards:
     AUT left in Default Pool is: 167
-    LUSDDebt left in Default Pool is: 653
+    ONEUDebt left in Default Pool is: 653
   */
 
   it("11 accounts. 1 liquidation. 10 accounts do Trove operations (apply rewards)", async () => {
@@ -152,21 +152,21 @@ contract("TroveManager", async accounts => {
     await borrowerOperations.addColl(accounts[99], accounts[99], { from: accounts[99], value: 1 });
     // check DefaultPool
     const AUT_DefaultPool = await defaultPool.getAUT();
-    const LUSDDebt_DefaultPool = await defaultPool.getLUSDDebt();
+    const ONEUDebt_DefaultPool = await defaultPool.getONEUDebt();
     console.log(`AUT left in Default Pool is: ${AUT_DefaultPool}`);
-    console.log(`LUSDDebt left in Default Pool is: ${LUSDDebt_DefaultPool}`);
+    console.log(`ONEUDebt left in Default Pool is: ${ONEUDebt_DefaultPool}`);
   });
 
   /* ABDK64, no error correction:
     AUT left in Default Pool is: 64
-    LUSDDebt left in Default Pool is: 75 
+    ONEUDebt left in Default Pool is: 75 
     
     DeciMath, no error correction:
     --Subtraction Overflow
 
     Pure division, no correction:
     AUT left in Default Pool is: 64
-    LUSDDebt left in Default Pool is: 75
+    ONEUDebt left in Default Pool is: 75
   */
 
   it("101 accounts. 1 liquidation. 100 accounts do Trove operations (apply rewards)", async () => {
@@ -188,21 +188,21 @@ contract("TroveManager", async accounts => {
 
     // check DefaultPool
     const AUT_DefaultPool = await defaultPool.getAUT();
-    const LUSDDebt_DefaultPool = await defaultPool.getLUSDDebt();
+    const ONEUDebt_DefaultPool = await defaultPool.getONEUDebt();
     console.log(`AUT left in Default Pool is: ${AUT_DefaultPool}`);
-    console.log(`LUSDDebt left in Default Pool is: ${LUSDDebt_DefaultPool}`);
+    console.log(`ONEUDebt left in Default Pool is: ${ONEUDebt_DefaultPool}`);
   });
 
   /* ABDK64, no error correction:
     AUT left in Default Pool is: 100
-    LUSDDebt left in Default Pool is: 180 
+    ONEUDebt left in Default Pool is: 180 
     
     DeciMath, no error correction:
     --Subtraction Overflow
 
     Pure division, no correction:
     AUT left in Default Pool is: 100
-    LUSDDebt left in Default Pool is: 180
+    ONEUDebt left in Default Pool is: 180
   */
 
   it("1001 accounts. 1 liquidation. 1000 accounts do Trove operations (apply rewards)", async () => {
@@ -227,22 +227,22 @@ contract("TroveManager", async accounts => {
 
     // check DefaultPool
     const AUT_DefaultPool = await defaultPool.getAUT();
-    const LUSDDebt_DefaultPool = await defaultPool.getLUSDDebt();
+    const ONEUDebt_DefaultPool = await defaultPool.getONEUDebt();
     console.log(`AUT left in Default Pool is: ${AUT_DefaultPool}`);
-    console.log(`LUSDDebt left in Default Pool is: ${LUSDDebt_DefaultPool}:`);
+    console.log(`ONEUDebt left in Default Pool is: ${ONEUDebt_DefaultPool}:`);
   });
 
   /*
     ABDK64, no error correction:
     AUT left in Default Pool is: 1000
-    LUSDDebt left in Default Pool is: 180: 
+    ONEUDebt left in Default Pool is: 180: 
     
     DeciMath, no error correction:
     -- overflow
 
     Pure division, no correction:
     AUT left in Default Pool is: 1000
-    LUSDDebt left in Default Pool is: 180:
+    ONEUDebt left in Default Pool is: 180:
   */
 
   // --- Error accumulation from repeated Liquidations  - pure distribution, empty SP  ---
@@ -266,40 +266,40 @@ contract("TroveManager", async accounts => {
 
     // Grab total active coll and debt before liquidations
     let totalAUTPoolDifference = web3.utils.toBN(0);
-    let totalLUSDDebtPoolDifference = web3.utils.toBN(0);
+    let totalONEUDebtPoolDifference = web3.utils.toBN(0);
 
     for (account of accounts.slice(1, 11)) {
       const activePoolAUT = await activePool.getAUT();
-      const activePoolLUSDDebt = await activePool.getLUSD();
+      const activePoolONEUDebt = await activePool.getONEU();
 
       await troveManager.liquidate(account);
 
       const defaultPoolAUT = await defaultPool.getAUT();
-      const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+      const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
       totalAUTPoolDifference.add(activePoolAUT.sub(defaultPoolAUT));
-      totalLUSDDebtPoolDifference.add(activePoolLUSDDebt.sub(defaultPoolLUSDDebt));
+      totalONEUDebtPoolDifference.add(activePoolONEUDebt.sub(defaultPoolONEUDebt));
     }
 
     console.log(
       `Accumulated AUT difference between Default and Active Pools is: ${totalAUTPoolDifference}`
     );
     console.log(
-      `Accumulated LUSDDebt difference between Active and Default Pools is: ${totalLUSDDebtPoolDifference}`
+      `Accumulated ONEUDebt difference between Active and Default Pools is: ${totalONEUDebtPoolDifference}`
     );
   });
 
   /* ABDK64, no error correction
     Accumulated AUT difference between Default and Active Pools is: 0
-    Accumulated LUSDDebt difference between Active and Default Pools is: 0
+    Accumulated ONEUDebt difference between Active and Default Pools is: 0
     
     DeciMath, no error correction:
     Accumulated AUT difference between Default and Active Pools is: 0
-    Accumulated LUSDDebt difference between Active and Default Pools is: 0
+    Accumulated ONEUDebt difference between Active and Default Pools is: 0
     
     Pure division with correction:
     Accumulated AUT difference between Default and Active Pools is: 0
-    Accumulated LUSDDebt difference between Active and Default Pools is: 0
+    Accumulated ONEUDebt difference between Active and Default Pools is: 0
   */
 
   it("11 accounts. 10 liquidations. Check (DefaultPool - totalRewards) differences", async () => {
@@ -319,43 +319,43 @@ contract("TroveManager", async accounts => {
     }
 
     const L_AUT = await troveManager.L_AUT();
-    const L_LUSDDebt = await troveManager.L_LUSDDebt();
+    const L_ONEUDebt = await troveManager.L_ONEUDebt();
 
     const totalColl = await activePool.getAUT();
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18));
     const totalAUTRewards = totalColl.mul(L_AUT).div(_1e18_BN);
-    const totalLUSDRewards = totalColl.mul(L_LUSDDebt).div(_1e18_BN);
+    const totalONEURewards = totalColl.mul(L_ONEUDebt).div(_1e18_BN);
 
     const defaultPoolAUT = await defaultPool.getAUT();
-    const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+    const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
     const AUTRewardDifference = defaultPoolAUT.sub(totalAUTRewards);
-    const LUSDDebtRewardDifference = defaultPoolLUSDDebt.sub(totalLUSDRewards);
+    const ONEUDebtRewardDifference = defaultPoolONEUDebt.sub(totalONEURewards);
 
     console.log(
       `AUT difference between total pending rewards and DefaultPool: ${AUTRewardDifference} `
     );
     console.log(
-      `LUSDDebt difference between total pending rewards and DefaultPool: ${LUSDDebtRewardDifference} `
+      `ONEUDebt difference between total pending rewards and DefaultPool: ${ONEUDebtRewardDifference} `
     );
   });
 
   /* ABDK64, no error correction:
     AUT difference between total pending rewards and DefaultPool: 700
-    LUSDDebt difference between total pending rewards and DefaultPool: 800
+    ONEUDebt difference between total pending rewards and DefaultPool: 800
 
     ABDK64 WITH correction:
     AUT difference between total pending rewards and DefaultPool: 300
-    LUSDDebt difference between total pending rewards and DefaultPool: 400
+    ONEUDebt difference between total pending rewards and DefaultPool: 400
     
     DeciMath, no error correction:
     AUT difference between total pending rewards and DefaultPool: -100
-    LUSDDebt difference between total pending rewards and DefaultPool: -200
+    ONEUDebt difference between total pending rewards and DefaultPool: -200
 
     Pure division with correction: 
     AUT difference between total pending rewards and DefaultPool: 0
-    LUSDDebt difference between total pending rewards and DefaultPool: 0
+    ONEUDebt difference between total pending rewards and DefaultPool: 0
   */
 
   it("101 accounts. 100 liquidations. Check (DefaultPool - totalRewards) differences", async () => {
@@ -375,52 +375,52 @@ contract("TroveManager", async accounts => {
     }
 
     const L_AUT = await troveManager.L_AUT();
-    const L_LUSDDebt = await troveManager.L_LUSDDebt();
+    const L_ONEUDebt = await troveManager.L_ONEUDebt();
 
     const totalColl = await activePool.getAUT();
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18));
     const totalAUTRewards = totalColl.mul(L_AUT).div(_1e18_BN);
-    const totalLUSDRewards = totalColl.mul(L_LUSDDebt).div(_1e18_BN);
+    const totalONEURewards = totalColl.mul(L_ONEUDebt).div(_1e18_BN);
 
     const defaultPoolAUT = await defaultPool.getAUT();
-    const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+    const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
     const AUTRewardDifference = defaultPoolAUT.sub(totalAUTRewards);
-    const LUSDDebtRewardDifference = defaultPoolLUSDDebt.sub(totalLUSDRewards);
+    const ONEUDebtRewardDifference = defaultPoolONEUDebt.sub(totalONEURewards);
 
     console.log(
       `AUT difference between total pending rewards and DefaultPool: ${AUTRewardDifference} `
     );
     console.log(
-      `LUSDDebt difference between total pending rewards and DefaultPool: ${LUSDDebtRewardDifference} `
+      `ONEUDebt difference between total pending rewards and DefaultPool: ${ONEUDebtRewardDifference} `
     );
   });
 
   /* ABDK64, no error correction:
     AUT difference between total pending rewards and DefaultPool: 51000
-    LUSDDebt difference between total pending rewards and DefaultPool: 55000
+    ONEUDebt difference between total pending rewards and DefaultPool: 55000
     
     ABDK64 WITH correction:
     AUT difference between total pending rewards and DefaultPool: 31000
-    LUSDDebt difference between total pending rewards and DefaultPool: 31000
+    ONEUDebt difference between total pending rewards and DefaultPool: 31000
 
     DeciMath, no error correction:
     AUT difference between total pending rewards and DefaultPool: 2000
-    LUSDDebt difference between total pending rewards and DefaultPool: -2000
+    ONEUDebt difference between total pending rewards and DefaultPool: -2000
     
     Pure division with correction:
     AUT difference between total pending rewards and DefaultPool: 0
-    LUSDDebt difference between total pending rewards and DefaultPool: 0
+    ONEUDebt difference between total pending rewards and DefaultPool: 0
   */
 
-  it("11 accounts with random AUT and proportional LUSD (180:1). 10 liquidations. Check (DefaultPool - totalRewards) differences", async () => {
+  it("11 accounts with random AUT and proportional ONEU (180:1). 10 liquidations. Check (DefaultPool - totalRewards) differences", async () => {
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(100, "ether")
     });
 
-    await th.openTrove_allAccounts_randomAUT_ProportionalLUSD(
+    await th.openTrove_allAccounts_randomAUT_ProportionalONEU(
       1,
       2,
       accounts.slice(0, 11),
@@ -436,52 +436,52 @@ contract("TroveManager", async accounts => {
       await troveManager.liquidate(account);
     }
     const L_AUT = await troveManager.L_AUT();
-    const L_LUSDDebt = await troveManager.L_LUSDDebt();
+    const L_ONEUDebt = await troveManager.L_ONEUDebt();
 
     const totalColl = await activePool.getAUT();
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18));
     const totalAUTRewards = totalColl.mul(L_AUT).div(_1e18_BN);
-    const totalLUSDRewards = totalColl.mul(L_LUSDDebt).div(_1e18_BN);
+    const totalONEURewards = totalColl.mul(L_ONEUDebt).div(_1e18_BN);
 
     const defaultPoolAUT = await defaultPool.getAUT();
-    const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+    const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
     const AUTRewardDifference = defaultPoolAUT.sub(totalAUTRewards);
-    const LUSDDebtRewardDifference = defaultPoolLUSDDebt.sub(totalLUSDRewards);
+    const ONEUDebtRewardDifference = defaultPoolONEUDebt.sub(totalONEURewards);
 
     console.log(
       `AUT difference between total pending rewards and DefaultPool: ${AUTRewardDifference} `
     );
     console.log(
-      `LUSDDebt difference between total pending rewards and DefaultPool: ${LUSDDebtRewardDifference} `
+      `ONEUDebt difference between total pending rewards and DefaultPool: ${ONEUDebtRewardDifference} `
     );
   });
 
   /* ABDK64, no error correction:
     AUT difference between total pending rewards and DefaultPool: 4500
-    LUSDDebt difference between total pending rewards and DefaultPool: 8000
+    ONEUDebt difference between total pending rewards and DefaultPool: 8000
 
     ABDK64 WITH correction:
     AUT difference between total pending rewards and DefaultPool: 300
-    LUSDDebt difference between total pending rewards and DefaultPool: 300
+    ONEUDebt difference between total pending rewards and DefaultPool: 300
       
     DeciMath, no error correction:
     AUT difference between total pending rewards and DefaultPool: 0
-    LUSDDebt difference between total pending rewards and DefaultPool: -200
+    ONEUDebt difference between total pending rewards and DefaultPool: -200
 
     Pure division with correction:
     AUT difference between total pending rewards and DefaultPool: 100
-    LUSDDebt difference between total pending rewards and DefaultPool: 100
+    ONEUDebt difference between total pending rewards and DefaultPool: 100
   */
 
-  it("101 accounts with random AUT and proportional LUSD (180:1). 100 liquidations. Check 1) (DefaultPool - totalDistributionRewards) difference, and 2) ", async () => {
+  it("101 accounts with random AUT and proportional ONEU (180:1). 100 liquidations. Check 1) (DefaultPool - totalDistributionRewards) difference, and 2) ", async () => {
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(1000, "ether")
     });
 
-    await th.openTrove_allAccounts_randomAUT_ProportionalLUSD(
+    await th.openTrove_allAccounts_randomAUT_ProportionalONEU(
       1,
       2,
       accounts.slice(0, 101),
@@ -499,166 +499,166 @@ contract("TroveManager", async accounts => {
 
     // check (DefaultPool  - totalRewards)
     const L_AUT = await troveManager.L_AUT();
-    const L_LUSDDebt = await troveManager.L_LUSDDebt();
+    const L_ONEUDebt = await troveManager.L_ONEUDebt();
 
     const totalColl = await activePool.getAUT();
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18));
     const totalAUTRewards = totalColl.mul(L_AUT).div(_1e18_BN);
-    const totalLUSDRewards = totalColl.mul(L_LUSDDebt).div(_1e18_BN);
+    const totalONEURewards = totalColl.mul(L_ONEUDebt).div(_1e18_BN);
 
     const defaultPoolAUT = await defaultPool.getAUT();
-    const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+    const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
     const AUTRewardDifference = defaultPoolAUT.sub(totalAUTRewards);
-    const LUSDDebtRewardDifference = defaultPoolLUSDDebt.sub(totalLUSDRewards);
+    const ONEUDebtRewardDifference = defaultPoolONEUDebt.sub(totalONEURewards);
 
     console.log(
       `AUT difference between total pending rewards and DefaultPool: ${AUTRewardDifference} `
     );
     console.log(
-      `LUSDDebt difference between total pending rewards and DefaultPool: ${LUSDDebtRewardDifference} `
+      `ONEUDebt difference between total pending rewards and DefaultPool: ${ONEUDebtRewardDifference} `
     );
   });
 
   /* ABDK64, no error correction:
     AUT difference between total pending rewards and DefaultPool: 53900
-    LUSDDebt difference between total pending rewards and DefaultPool: 61000
+    ONEUDebt difference between total pending rewards and DefaultPool: 61000
 
     ABDK64 WITH correction:
     AUT difference between total pending rewards and DefaultPool: 31300
-    LUSDDebt difference between total pending rewards and DefaultPool: 30000
+    ONEUDebt difference between total pending rewards and DefaultPool: 30000
     
     DeciMath, no error correction:
     AUT difference between total pending rewards and DefaultPool: -4300
-    LUSDDebt difference between total pending rewards and DefaultPool: -8000
+    ONEUDebt difference between total pending rewards and DefaultPool: -8000
   
     Pure division with correction:
     AUT difference between total pending rewards and DefaultPool: 400
-    LUSDDebt difference between total pending rewards and DefaultPool: 1000
+    ONEUDebt difference between total pending rewards and DefaultPool: 1000
   */
 
   // --- Error accumulation from repeated Liquidations - SP Pool, partial offsets  ---
 
   it("11 accounts. 10 liquidations, partial offsets. Check (DefaultPool - totalRewards) differences", async () => {
-    // Acct 99 opens trove with 100 LUSD
+    // Acct 99 opens trove with 100 ONEU
     await borrowerOperations.openTrove(0, 0, accounts[99], {
       from: accounts[99],
       value: dec(100, "ether")
     });
-    await borrowerOperations.withdrawLUSD(0, dec(100, 18), accounts[99], { from: accounts[99] });
+    await borrowerOperations.withdrawONEU(0, dec(100, 18), accounts[99], { from: accounts[99] });
 
     await th.openTrove_allAccounts(accounts.slice(0, 11), contracts, dec(1, "ether"), dec(170, 18));
 
     await priceFeed.setPrice(dec(100, 18));
     await troveManager.liquidate(accounts[0]);
 
-    // On loop: Account[99] adds 10 LUSD to pool -> a trove gets liquidated and partially offset against SP, emptying the SP
+    // On loop: Account[99] adds 10 ONEU to pool -> a trove gets liquidated and partially offset against SP, emptying the SP
     for (account of accounts.slice(1, 11)) {
       await stabilityPool.provideToSP(dec(10, 18), ZERO_ADDRESS, { from: account[99] });
       await troveManager.liquidate(account);
     }
     // check (DefaultPool - totalRewards from distribution)
     const L_AUT = await troveManager.L_AUT();
-    const L_LUSDDebt = await troveManager.L_LUSDDebt();
+    const L_ONEUDebt = await troveManager.L_ONEUDebt();
 
     const totalColl = await activePool.getAUT();
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18));
     const totalAUTRewards_Distribution = totalColl.mul(L_AUT).div(_1e18_BN);
-    const totalLUSDRewards_Distribution = totalColl.mul(L_LUSDDebt).div(_1e18_BN);
+    const totalONEURewards_Distribution = totalColl.mul(L_ONEUDebt).div(_1e18_BN);
 
     const defaultPoolAUT = await defaultPool.getAUT();
-    const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+    const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
     const AUTRewardDifference = defaultPoolAUT.sub(totalAUTRewards_Distribution);
-    const LUSDDebtRewardDifference = defaultPoolLUSDDebt.sub(totalLUSDRewards_Distribution);
+    const ONEUDebtRewardDifference = defaultPoolONEUDebt.sub(totalONEURewards_Distribution);
 
     console.log(
       `AUT difference between total pending distribution rewards and DefaultPool: ${AUTRewardDifference} `
     );
     console.log(
-      `LUSDDebt difference between total pending distribution rewards and DefaultPool: ${LUSDDebtRewardDifference} `
+      `ONEUDebt difference between total pending distribution rewards and DefaultPool: ${ONEUDebtRewardDifference} `
     );
   });
 
   /* ABDK64, no error correction
     AUT difference between total pending distribution rewards and DefaultPool: 550
-    LUSDDebt difference between total pending distribution rewards and DefaultPool: 600
+    ONEUDebt difference between total pending distribution rewards and DefaultPool: 600
     
     DeciMath, no error correction:
     AUT difference between total pending distribution rewards and DefaultPool: 150
-    LUSDDebt difference between total pending distribution rewards and DefaultPool: -200
+    ONEUDebt difference between total pending distribution rewards and DefaultPool: -200
     
     Pure division with error correction:
     AUT difference between total pending distribution rewards and DefaultPool: 50
-    LUSDDebt difference between total pending distribution rewards and DefaultPool: 0
+    ONEUDebt difference between total pending distribution rewards and DefaultPool: 0
   */
 
   it("101 accounts. 100 liquidations, partial offsets. Check (DefaultPool - totalRewards) differences", async () => {
-    // Acct 99 opens trove with 100 LUSD
+    // Acct 99 opens trove with 100 ONEU
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(100, "ether")
     });
-    await borrowerOperations.withdrawLUSD(0, dec(100, 18), accounts[999], { from: accounts[999] });
+    await borrowerOperations.withdrawONEU(0, dec(100, 18), accounts[999], { from: accounts[999] });
 
     await th.openTrove_allAccounts(accounts.slice(0, 101), contracts, dec(1, "ether"), dec(170, 18));
 
     await priceFeed.setPrice(dec(100, 18));
     await troveManager.liquidate(accounts[0]);
 
-    // On loop: Account[99] adds 10 LUSD to pool -> a trove gets liquidated and partially offset against SP, emptying the SP
+    // On loop: Account[99] adds 10 ONEU to pool -> a trove gets liquidated and partially offset against SP, emptying the SP
     for (account of accounts.slice(1, 101)) {
       await stabilityPool.provideToSP(dec(10, 18), ZERO_ADDRESS, { from: account[99] });
       await troveManager.liquidate(account);
     }
     // check (DefaultPool - totalRewards from distribution)
     const L_AUT = await troveManager.L_AUT();
-    const L_LUSDDebt = await troveManager.L_LUSDDebt();
+    const L_ONEUDebt = await troveManager.L_ONEUDebt();
 
     const totalColl = await activePool.getAUT();
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18));
     const totalAUTRewards_Distribution = totalColl.mul(L_AUT).div(_1e18_BN);
-    const totalLUSDRewards_Distribution = totalColl.mul(L_LUSDDebt).div(_1e18_BN);
+    const totalONEURewards_Distribution = totalColl.mul(L_ONEUDebt).div(_1e18_BN);
 
     const defaultPoolAUT = await defaultPool.getAUT();
-    const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+    const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
     const AUTRewardDifference = defaultPoolAUT.sub(totalAUTRewards_Distribution);
-    const LUSDDebtRewardDifference = defaultPoolLUSDDebt.sub(totalLUSDRewards_Distribution);
+    const ONEUDebtRewardDifference = defaultPoolONEUDebt.sub(totalONEURewards_Distribution);
 
     console.log(
       `AUT difference between total pending distribution rewards and DefaultPool: ${AUTRewardDifference} `
     );
     console.log(
-      `LUSDDebt difference between total pending distribution rewards and DefaultPool: ${LUSDDebtRewardDifference} `
+      `ONEUDebt difference between total pending distribution rewards and DefaultPool: ${ONEUDebtRewardDifference} `
     );
   });
 
   /* ABDK64, no error correction
     AUT difference between total pending distribution rewards and DefaultPool: 7600 
-    LUSDDebt difference between total pending distribution rewards and DefaultPool: 8900
+    ONEUDebt difference between total pending distribution rewards and DefaultPool: 8900
     
     DeciMath, no error correction:
     AUT difference between total pending distribution rewards and DefaultPool: -700
-    LUSDDebt difference between total pending distribution rewards and DefaultPool: 200
+    ONEUDebt difference between total pending distribution rewards and DefaultPool: 200
     
     Pure division with error correction:
     AUT difference between total pending distribution rewards and DefaultPool: 0
-    LUSDDebt difference between total pending distribution rewards and DefaultPool: 0
+    ONEUDebt difference between total pending distribution rewards and DefaultPool: 0
   */
 
   // --- Error accumulation from SP withdrawals ---
 
   it("11 accounts. 10 Borrowers add to SP. 1 liquidation, 10 Borrowers withdraw all their SP funds", async () => {
-    // Acct 99 opens trove with 100 LUSD
+    // Acct 99 opens trove with 100 ONEU
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(100, "ether")
     });
-    await borrowerOperations.withdrawLUSD(0, dec(100, 18), accounts[999], { from: accounts[999] });
+    await borrowerOperations.withdrawONEU(0, dec(100, 18), accounts[999], { from: accounts[999] });
 
     // Account 0 (to be liquidated) opens a trove
     await borrowerOperations.openTrove(0, dec(100, 18), accounts[0], {
@@ -678,46 +678,46 @@ contract("TroveManager", async accounts => {
       await stabilityPool.withdrawFromSP(dec(50, 18), { from: account });
     }
 
-    /* Sometimes, the error causes the last LUSD withdrawal from SP to underflow and fail. 
+    /* Sometimes, the error causes the last ONEU withdrawal from SP to underflow and fail. 
     So provideToSP from the whale, so that the last 'rewarded' depositor, account[1] can withdraw */
     const whaleSPDeposit = dec(100, 18);
     await stabilityPool.provideToSP(whaleSPDeposit, ZERO_ADDRESS, { from: accounts[999] });
 
     await stabilityPool.withdrawFromSP(dec(50, 18), { from: accounts[1] });
     const SP_AUT = await stabilityPool.getAUT();
-    const SP_LUSD = await stabilityPool.getTotalLUSDDeposits();
+    const SP_ONEU = await stabilityPool.getTotalONEUDeposits();
 
-    const SP_LUSD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_LUSD);
+    const SP_ONEU_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_ONEU);
 
     // check Stability Pool
     console.log(`Surplus AUT left in in Stability Pool is ${SP_AUT}`);
-    console.log(`LUSD insufficiency in Stability Pool is ${SP_LUSD_Insufficiency}`);
+    console.log(`ONEU insufficiency in Stability Pool is ${SP_ONEU_Insufficiency}`);
   });
 
   /* ABDK64, no error correction
-      Sometimes subtraction overflows on last withdrawal from SP - error leaves insufficient LUSD in Pool.
+      Sometimes subtraction overflows on last withdrawal from SP - error leaves insufficient ONEU in Pool.
       Noticed when reward shares are recurring fractions.
 
       Error in AUT gain accumulates in the Pool.
       Surplus AUT left in in Stability Pool is 530
-      LUSD insufficiency in Stability Pool is 530
+      ONEU insufficiency in Stability Pool is 530
       
       DeciMath, no error correction:
       Surplus AUT left in in Stability Pool is 0
-      LUSD insufficiency in Stability Pool is 0
+      ONEU insufficiency in Stability Pool is 0
 
       Pure division with error correction:
       Surplus AUT left in in Stability Pool is 0
-      LUSD insufficiency in Stability Pool is 0
+      ONEU insufficiency in Stability Pool is 0
     */
 
   it("101 accounts. 100 Borrowers add to SP. 1 liquidation, 100 Borrowers withdraw all their SP funds", async () => {
-    // Acct 99 opens trove with 100 LUSD
+    // Acct 99 opens trove with 100 ONEU
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(100, "ether")
     });
-    await borrowerOperations.withdrawLUSD(0, dec(100, 18), accounts[999], { from: accounts[999] });
+    await borrowerOperations.withdrawONEU(0, dec(100, 18), accounts[999], { from: accounts[999] });
 
     // Account 0 (to be liquidated) opens a trove
     await borrowerOperations.openTrove(0, dec(100, 18), accounts[0], {
@@ -737,42 +737,42 @@ contract("TroveManager", async accounts => {
       await stabilityPool.withdrawFromSP(dec(50, 18), { from: account });
     }
 
-    /* Sometimes, the error causes the last LUSD withdrawal from SP to underflow and fail. 
+    /* Sometimes, the error causes the last ONEU withdrawal from SP to underflow and fail. 
     So provideToSP from the whale, so that the last 'rewarded' depositor, account[1] can withdraw */
     const whaleSPDeposit = dec(100, 18);
     await stabilityPool.provideToSP(whaleSPDeposit, ZERO_ADDRESS, { from: accounts[999] });
 
     await stabilityPool.withdrawFromSP(dec(50, 18), { from: accounts[1] });
     const SP_AUT = await stabilityPool.getAUT();
-    const SP_LUSD = await stabilityPool.getTotalLUSDDeposits();
+    const SP_ONEU = await stabilityPool.getTotalONEUDeposits();
 
-    const SP_LUSD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_LUSD);
+    const SP_ONEU_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_ONEU);
 
     // check Stability Pool
     console.log(`Surplus AUT left in in Stability Pool is ${SP_AUT}`);
-    console.log(`LUSD insufficiency in Stability Pool is ${SP_LUSD_Insufficiency}`);
+    console.log(`ONEU insufficiency in Stability Pool is ${SP_ONEU_Insufficiency}`);
   });
 
   /* ABDK64, no error correction
     Surplus AUT left in in Stability Pool is 5300
-    LUSD insufficiency in Stability Pool is 5300
+    ONEU insufficiency in Stability Pool is 5300
       
     DeciMath, no error correction:
     Surplus AUT left in in Stability Pool is 0
-    LUSD insufficiency in Stability Pool is 0
+    ONEU insufficiency in Stability Pool is 0
 
     Pure division with error correction:
     Surplus AUT left in in Stability Pool is 0
-    LUSD insufficiency in Stability Pool is 0
+    ONEU insufficiency in Stability Pool is 0
    */
 
-  it("11 accounts. 10 Borrowers add to SP, random LUSD amounts. 1 liquidation, 10 Borrowers withdraw all their SP funds", async () => {
-    // Acct 99 opens trove with 100 LUSD
+  it("11 accounts. 10 Borrowers add to SP, random ONEU amounts. 1 liquidation, 10 Borrowers withdraw all their SP funds", async () => {
+    // Acct 99 opens trove with 100 ONEU
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(100, "ether")
     });
-    await borrowerOperations.withdrawLUSD(0, dec(100, 18), accounts[999], { from: accounts[999] });
+    await borrowerOperations.withdrawONEU(0, dec(100, 18), accounts[999], { from: accounts[999] });
 
     // Account 0 (to be liquidated) opens a trove
     await borrowerOperations.openTrove(0, dec(100, 18), accounts[0], {
@@ -796,49 +796,49 @@ contract("TroveManager", async accounts => {
       await stabilityPool.withdrawFromSP(dec(100, 18), { from: account });
     }
 
-    /* Sometimes, the error causes the last LUSD withdrawal from SP to underflow and fail. 
+    /* Sometimes, the error causes the last ONEU withdrawal from SP to underflow and fail. 
     So provideToSP from the whale, so that the last 'rewarded' depositor, account[1] can withdraw */
     const whaleSPDeposit = dec(100, 18);
     await stabilityPool.provideToSP(whaleSPDeposit, ZERO_ADDRESS, { from: accounts[999] });
 
     await stabilityPool.withdrawFromSP(account1SPDeposit, { from: accounts[1] });
     const SP_AUT = await stabilityPool.getAUT();
-    const SP_LUSD = await stabilityPool.getTotalLUSDDeposits();
+    const SP_ONEU = await stabilityPool.getTotalONEUDeposits();
 
-    const SP_LUSD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_LUSD);
+    const SP_ONEU_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_ONEU);
 
     // check Stability Pool
     console.log(`Surplus AUT left in in Stability Pool is ${SP_AUT}`);
-    console.log(`LUSD insufficiency in Stability Pool is ${SP_LUSD_Insufficiency}`);
+    console.log(`ONEU insufficiency in Stability Pool is ${SP_ONEU_Insufficiency}`);
   });
 
   /* ABDK64, no error correction
-      Sometimes subtraction overflows on last withdrawal from SP - error leaves insufficient LUSD in Pool.
+      Sometimes subtraction overflows on last withdrawal from SP - error leaves insufficient ONEU in Pool.
       Noticed when reward shares are recurring fractions.
 
       Error in AUT gain accumulates in the Pool.
       Surplus AUT left in in Stability Pool is 84
-      LUSD insufficiency in Stability Pool is 442
+      ONEU insufficiency in Stability Pool is 442
 
       DeciMath, no error correction:
       -- Subtraction Overflow
 
       Pure division with no error correction:
       Surplus AUT left in in Stability Pool is 366
-      LUSD insufficiency in Stability Pool is 67
+      ONEU insufficiency in Stability Pool is 67
 
       Pure division with error correction:
       Surplus AUT left in in Stability Pool is 446
-      LUSD insufficiency in Stability Pool is 507
+      ONEU insufficiency in Stability Pool is 507
     */
 
-  it("101 accounts. 100 Borrowers add to SP, random LUSD amounts. 1 liquidation, 100 Borrowers withdraw all their SP funds", async () => {
-    // Acct 99 opens trove with 100 LUSD
+  it("101 accounts. 100 Borrowers add to SP, random ONEU amounts. 1 liquidation, 100 Borrowers withdraw all their SP funds", async () => {
+    // Acct 99 opens trove with 100 ONEU
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(100, "ether")
     });
-    await borrowerOperations.withdrawLUSD(0, dec(100, 18), accounts[999], { from: accounts[999] });
+    await borrowerOperations.withdrawONEU(0, dec(100, 18), accounts[999], { from: accounts[999] });
 
     // Account 0 (to be liquidated) opens a trove
     await borrowerOperations.openTrove(0, dec(100, 18), accounts[0], {
@@ -861,7 +861,7 @@ contract("TroveManager", async accounts => {
       await stabilityPool.withdrawFromSP(dec(100, 18), { from: account });
     }
 
-    /* Sometimes, the error causes the last LUSD withdrawal from SP to underflow and fail. 
+    /* Sometimes, the error causes the last ONEU withdrawal from SP to underflow and fail. 
     So provideToSP from the whale, so that the last 'rewarded' depositor, account[1] can withdraw */
     const whaleSPDeposit = dec(100, 18);
     await stabilityPool.provideToSP(whaleSPDeposit, ZERO_ADDRESS, { from: accounts[999] });
@@ -869,39 +869,39 @@ contract("TroveManager", async accounts => {
     await stabilityPool.withdrawFromSP(account1SPDeposit, { from: accounts[1] });
 
     const SP_AUT = await stabilityPool.getAUT();
-    const SP_LUSD = await stabilityPool.getTotalLUSDDeposits();
+    const SP_ONEU = await stabilityPool.getTotalONEUDeposits();
 
-    const SP_LUSD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_LUSD);
+    const SP_ONEU_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_ONEU);
 
     // check Stability Pool
     console.log(`Surplus AUT left in in Stability Pool is ${SP_AUT}`);
-    console.log(`LUSD insufficiency in Stability Pool is ${SP_LUSD_Insufficiency}`);
+    console.log(`ONEU insufficiency in Stability Pool is ${SP_ONEU_Insufficiency}`);
   });
 
   /* ABDK64, no error correction
     Surplus AUT left in in Stability Pool is 3321
-    LUSD insufficiency in Stability Pool is 1112
+    ONEU insufficiency in Stability Pool is 1112
 
     DeciMath, no error correction:
     Surplus AUT left in in Stability Pool is 1373
-    LUSD insufficiency in Stability Pool is -13
+    ONEU insufficiency in Stability Pool is -13
 
     Pure division with no error correction:
     Surplus AUT left in in Stability Pool is 4087
-    LUSD insufficiency in Stability Pool is 1960
+    ONEU insufficiency in Stability Pool is 1960
 
     Pure division with error correction:
     Surplus AUT left in in Stability Pool is 3072
-    LUSD insufficiency in Stability Pool is 452
+    ONEU insufficiency in Stability Pool is 452
   */
 
-  it("501 accounts. 500 Borrowers add to SP, random LUSD amounts. 1 liquidation, 500 Borrowers withdraw all their SP funds", async () => {
-    // Acct 99 opens trove with 100 LUSD
+  it("501 accounts. 500 Borrowers add to SP, random ONEU amounts. 1 liquidation, 500 Borrowers withdraw all their SP funds", async () => {
+    // Acct 99 opens trove with 100 ONEU
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(100, "ether")
     });
-    await borrowerOperations.withdrawLUSD(0, dec(100, 18), accounts[999], { from: accounts[999] });
+    await borrowerOperations.withdrawONEU(0, dec(100, 18), accounts[999], { from: accounts[999] });
 
     // Account 0 (to be liquidated) opens a trove
     await borrowerOperations.openTrove(0, dec(100, 18), accounts[0], {
@@ -924,7 +924,7 @@ contract("TroveManager", async accounts => {
       await stabilityPool.withdrawFromSP(dec(100, 18), { from: account });
     }
 
-    /* Sometimes, the error causes the last LUSD withdrawal from SP to underflow and fail. 
+    /* Sometimes, the error causes the last ONEU withdrawal from SP to underflow and fail. 
   So provideToSP from the whale, so that the last 'rewarded' depositor, account[1] can withdraw */
     const whaleSPDeposit = dec(100, 18);
     await stabilityPool.provideToSP(whaleSPDeposit, ZERO_ADDRESS, { from: accounts[999] });
@@ -932,27 +932,27 @@ contract("TroveManager", async accounts => {
     await stabilityPool.withdrawFromSP(account1SPDeposit, { from: accounts[1] });
 
     const SP_AUT = await stabilityPool.getAUT();
-    const SP_LUSD = await stabilityPool.getTotalLUSDDeposits();
+    const SP_ONEU = await stabilityPool.getTotalONEUDeposits();
 
-    const SP_LUSD_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_LUSD);
+    const SP_ONEU_Insufficiency = web3.utils.toBN(whaleSPDeposit).sub(SP_ONEU);
 
     // check Stability Pool
     console.log(`Surplus AUT left in in Stability Pool is ${SP_AUT}`);
-    console.log(`LUSD insufficiency in Stability Pool is ${SP_LUSD_Insufficiency}`);
+    console.log(`ONEU insufficiency in Stability Pool is ${SP_ONEU_Insufficiency}`);
   });
 
   /* ABDK64, no error correction:
     DeciMath, no error correction:
     Surplus AUT left in in Stability Pool is 2691
-    LUSD insufficiency in Stability Pool is -8445
+    ONEU insufficiency in Stability Pool is -8445
 
     Pure division, no correction:
     Surplus AUT left in in Stability Pool is 18708
-    LUSD insufficiency in Stability Pool is 25427
+    ONEU insufficiency in Stability Pool is 25427
 
     Pure division with error correction:
     Surplus AUT left in in Stability Pool is 1573
-    LUSD insufficiency in Stability Pool is 6037
+    ONEU insufficiency in Stability Pool is 6037
   */
 
   it("10 accounts. 10x liquidate -> addColl. Check stake and totalStakes (On-chain data vs off-chain simulation)", async () => {
@@ -1188,22 +1188,22 @@ contract("TroveManager", async accounts => {
     await borrowerOperations.addColl(accounts[99], accounts[99], { from: accounts[99], value: 1 });
     // check DefaultPool
     const AUT_DefaultPool = await defaultPool.getAUT();
-    const LUSDDebt_DefaultPool = await defaultPool.getLUSDDebt();
+    const ONEUDebt_DefaultPool = await defaultPool.getONEUDebt();
     console.log(`AUT left in Default Pool is: ${AUT_DefaultPool}`);
-    console.log(`LUSDDebt left in Default Pool is: ${LUSDDebt_DefaultPool}`);
+    console.log(`ONEUDebt left in Default Pool is: ${ONEUDebt_DefaultPool}`);
   });
 
   /* DeciMath:
   AUT left in Default Pool is: 563902502
-  LUSDDebt left in Default Pool is: 308731912
+  ONEUDebt left in Default Pool is: 308731912
 
   Pure division, correction:
   AUT left in Default Pool is: 1136050360
-  LUSDDebt left in Default Pool is: 997601870
+  ONEUDebt left in Default Pool is: 997601870
 
   Pure division, no correction:
   AUT left in Default Pool is: 810899932
-  LUSDDebt left in Default Pool is: 535042995
+  ONEUDebt left in Default Pool is: 535042995
 */
 
   it("101 accounts with random large coll, magnitude ~1e8 aut. 1 liquidation. 500 accounts do a Trove operation (apply rewards)", async () => {
@@ -1240,31 +1240,31 @@ contract("TroveManager", async accounts => {
     });
     // check DefaultPool
     const AUT_DefaultPool = await defaultPool.getAUT();
-    const LUSDDebt_DefaultPool = await defaultPool.getLUSDDebt();
+    const ONEUDebt_DefaultPool = await defaultPool.getONEUDebt();
     console.log(`AUT left in Default Pool is: ${AUT_DefaultPool}`);
-    console.log(`LUSDDebt left in Default Pool is: ${LUSDDebt_DefaultPool}`);
+    console.log(`ONEUDebt left in Default Pool is: ${ONEUDebt_DefaultPool}`);
   });
 
   /*
   Pure division, no correction:
   AUT left in Default Pool is: 8356761440
-  LUSDDebt left in Default Pool is: 14696382412
+  ONEUDebt left in Default Pool is: 14696382412
 
   Pure division, correction:
   AUT left in Default Pool is: 9281255535
-  LUSDDebt left in Default Pool is: 5854012464
+  ONEUDebt left in Default Pool is: 5854012464
   */
 
   // --- Liquidations, large coll and debt ---
 
-  it("11 accounts with random AUT and proportional LUSD (180:1). 10 liquidations. Check (DefaultPool - totalRewards) differences", async () => {
+  it("11 accounts with random AUT and proportional ONEU (180:1). 10 liquidations. Check (DefaultPool - totalRewards) differences", async () => {
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(1, 27)
     });
 
-    // Troves open with 100-200 million aut and proportional LUSD Debt
-    await th.openTrove_allAccounts_randomAUT_ProportionalLUSD(
+    // Troves open with 100-200 million aut and proportional ONEU Debt
+    await th.openTrove_allAccounts_randomAUT_ProportionalONEU(
       100000000,
       200000000,
       accounts.slice(0, 11),
@@ -1281,46 +1281,46 @@ contract("TroveManager", async accounts => {
     }
 
     const L_AUT = await troveManager.L_AUT();
-    const L_LUSDDebt = await troveManager.L_LUSDDebt();
+    const L_ONEUDebt = await troveManager.L_ONEUDebt();
 
     const totalColl = await activePool.getAUT();
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18));
     const totalAUTRewards = totalColl.mul(L_AUT).div(_1e18_BN);
-    const totalLUSDRewards = totalColl.mul(L_LUSDDebt).div(_1e18_BN);
+    const totalONEURewards = totalColl.mul(L_ONEUDebt).div(_1e18_BN);
 
     const defaultPoolAUT = await defaultPool.getAUT();
-    const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+    const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
     const AUTRewardDifference = defaultPoolAUT.sub(totalAUTRewards);
-    const LUSDDebtRewardDifference = defaultPoolLUSDDebt.sub(totalLUSDRewards);
+    const ONEUDebtRewardDifference = defaultPoolONEUDebt.sub(totalONEURewards);
 
     console.log(
       `AUT difference between total pending rewards and DefaultPool: ${AUTRewardDifference} `
     );
     console.log(
-      `LUSDDebt difference between total pending rewards and DefaultPool: ${LUSDDebtRewardDifference} `
+      `ONEUDebt difference between total pending rewards and DefaultPool: ${ONEUDebtRewardDifference} `
     );
   });
 
   /* 
   Pure division, no error correction:
   AUT difference between total pending rewards and DefaultPool: 9000000000
-  LUSDDebt difference between total pending rewards and DefaultPool: 12000000000
+  ONEUDebt difference between total pending rewards and DefaultPool: 12000000000
 
   Pure division with correction:
   AUT difference between total pending rewards and DefaultPool: 1000000000
-  LUSDDebt difference between total pending rewards and DefaultPool: 1000000000
+  ONEUDebt difference between total pending rewards and DefaultPool: 1000000000
   */
 
-  it("101 accounts with random AUT and proportional LUSD (180:1). 100 liquidations. Check 1) (DefaultPool - totalDistributionRewards) difference, and 2) ", async () => {
+  it("101 accounts with random AUT and proportional ONEU (180:1). 100 liquidations. Check 1) (DefaultPool - totalDistributionRewards) difference, and 2) ", async () => {
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(1, 28)
     });
 
-    // Troves open with 100-200 million aut and proportional LUSD Debt
-    await th.openTrove_allAccounts_randomAUT_ProportionalLUSD(
+    // Troves open with 100-200 million aut and proportional ONEU Debt
+    await th.openTrove_allAccounts_randomAUT_ProportionalONEU(
       100000000,
       200000000,
       accounts.slice(0, 101),
@@ -1339,35 +1339,35 @@ contract("TroveManager", async accounts => {
 
     // check (DefaultPool  - totalRewards)
     const L_AUT = await troveManager.L_AUT();
-    const L_LUSDDebt = await troveManager.L_LUSDDebt();
+    const L_ONEUDebt = await troveManager.L_ONEUDebt();
 
     const totalColl = await activePool.getAUT();
 
     const _1e18_BN = web3.utils.toBN(dec(1, 18));
     const totalAUTRewards = totalColl.mul(L_AUT).div(_1e18_BN);
-    const totalLUSDRewards = totalColl.mul(L_LUSDDebt).div(_1e18_BN);
+    const totalONEURewards = totalColl.mul(L_ONEUDebt).div(_1e18_BN);
 
     const defaultPoolAUT = await defaultPool.getAUT();
-    const defaultPoolLUSDDebt = await defaultPool.getLUSDDebt();
+    const defaultPoolONEUDebt = await defaultPool.getONEUDebt();
 
     const AUTRewardDifference = defaultPoolAUT.sub(totalAUTRewards);
-    const LUSDDebtRewardDifference = defaultPoolLUSDDebt.sub(totalLUSDRewards);
+    const ONEUDebtRewardDifference = defaultPoolONEUDebt.sub(totalONEURewards);
 
     console.log(
       `AUT difference between total pending rewards and DefaultPool: ${AUTRewardDifference} `
     );
     console.log(
-      `LUSDDebt difference between total pending rewards and DefaultPool: ${LUSDDebtRewardDifference} `
+      `ONEUDebt difference between total pending rewards and DefaultPool: ${ONEUDebtRewardDifference} `
     );
   });
   /*
     Pure division, no correction:
     AUT difference between total pending rewards and DefaultPool: 910000000000
-    LUSDDebt difference between total pending rewards and DefaultPool: 870000000000
+    ONEUDebt difference between total pending rewards and DefaultPool: 870000000000
 
     Pure division with correction:
     AUT difference between total pending rewards and DefaultPool: 10000000000
-    LUSDDebt difference between total pending rewards and DefaultPool: 10000000000
+    ONEUDebt difference between total pending rewards and DefaultPool: 10000000000
   */
 });
 
@@ -1388,15 +1388,15 @@ contract("TroveManager", async accounts => {
 
   ABDK64:
 
-  1) Reward applications accumulate AUT and LUSDDebt error in DefaultPool
+  1) Reward applications accumulate AUT and ONEUDebt error in DefaultPool
 
-  2) Liquidations accumulate AUT and LUSDDebt error in DefaultPool
+  2) Liquidations accumulate AUT and ONEUDebt error in DefaultPool
 
   3) Liquidations with partial offset send slightly too little to StabilityPool, and redistribute slightly too much
   
   4) StabilityPool Withdrawals accumulate AUT error in the StabilityPool
 
-  5) StabilityPool Withdrawals can accumulate LUSDLoss in the StabilityPool (i.e. they distribute too much LUSD), and can block
+  5) StabilityPool Withdrawals can accumulate ONEULoss in the StabilityPool (i.e. they distribute too much ONEU), and can block
   the final deposit withdrawal
 
   DeciMath:

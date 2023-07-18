@@ -41,7 +41,7 @@ contract(
     before(async () => {
       coreContracts = await deploymentHelper.deployLiquityCore();
       coreContracts.troveManager = await TroveManagerTester.new();
-      coreContracts = await deploymentHelper.deployLUSDTokenTester(coreContracts);
+      coreContracts = await deploymentHelper.deployONEUTokenTester(coreContracts);
       const LQTYContracts = await deploymentHelper.deployLQTYTesterContractsHardhat(
         bountyAddress,
         lpRewardsAddress,
@@ -70,7 +70,7 @@ contract(
 
       for (account of accounts.slice(0, 10)) {
         await th.openTrove(coreContracts, {
-          extraLUSDAmount: toBN(dec(20000, 18)),
+          extraONEUAmount: toBN(dec(20000, 18)),
           ICR: toBN(dec(2, 18)),
           extraParams: { from: account }
         });
@@ -233,22 +233,22 @@ contract(
         }
       });
 
-      // increaseLUSD
-      it("increaseLUSDDebt(): reverts when called by an account that is not BO nor TroveM", async () => {
+      // increaseONEU
+      it("increaseONEUDebt(): reverts when called by an account that is not BO nor TroveM", async () => {
         // Attempt call from alice
         try {
-          const txAlice = await activePool.increaseLUSDDebt(100, { from: alice });
+          const txAlice = await activePool.increaseONEUDebt(100, { from: alice });
         } catch (err) {
           assert.include(err.message, "revert");
           assert.include(err.message, "Caller is neither BorrowerOperations nor TroveManager");
         }
       });
 
-      // decreaseLUSD
-      it("decreaseLUSDDebt(): reverts when called by an account that is not BO nor TroveM nor SP", async () => {
+      // decreaseONEU
+      it("decreaseONEUDebt(): reverts when called by an account that is not BO nor TroveM nor SP", async () => {
         // Attempt call from alice
         try {
-          const txAlice = await activePool.decreaseLUSDDebt(100, { from: alice });
+          const txAlice = await activePool.decreaseONEUDebt(100, { from: alice });
         } catch (err) {
           assert.include(err.message, "revert");
           assert.include(
@@ -286,22 +286,22 @@ contract(
         }
       });
 
-      // increaseLUSD
-      it("increaseLUSDDebt(): reverts when called by an account that is not TroveManager", async () => {
+      // increaseONEU
+      it("increaseONEUDebt(): reverts when called by an account that is not TroveManager", async () => {
         // Attempt call from alice
         try {
-          const txAlice = await defaultPool.increaseLUSDDebt(100, { from: alice });
+          const txAlice = await defaultPool.increaseONEUDebt(100, { from: alice });
         } catch (err) {
           assert.include(err.message, "revert");
           assert.include(err.message, "Caller is not the TroveManager");
         }
       });
 
-      // decreaseLUSD
-      it("decreaseLUSD(): reverts when called by an account that is not TroveManager", async () => {
+      // decreaseONEU
+      it("decreaseONEU(): reverts when called by an account that is not TroveManager", async () => {
         // Attempt call from alice
         try {
-          const txAlice = await defaultPool.decreaseLUSDDebt(100, { from: alice });
+          const txAlice = await defaultPool.decreaseONEUDebt(100, { from: alice });
         } catch (err) {
           assert.include(err.message, "revert");
           assert.include(err.message, "Caller is not the TroveManager");
@@ -357,7 +357,7 @@ contract(
       });
     });
 
-    describe("LUSDToken", async accounts => {
+    describe("ONEUToken", async accounts => {
       //    mint
       it("mint(): reverts when called by an account that is not BorrowerOperations", async () => {
         // Attempt call from alice
@@ -475,9 +475,9 @@ contract(
     });
 
     describe("LQTYStaking", async accounts => {
-      it("increaseF_LUSD(): reverts when caller is not TroveManager", async () => {
+      it("increaseF_ONEU(): reverts when caller is not TroveManager", async () => {
         try {
-          const txAlice = await lqtyStaking.increaseF_LUSD(dec(1, 18), { from: alice });
+          const txAlice = await lqtyStaking.increaseF_ONEU(dec(1, 18), { from: alice });
         } catch (err) {
           assert.include(err.message, "revert");
         }
