@@ -9,7 +9,7 @@ import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 
 contract HintHelpers is LiquityBase, Ownable, CheckContract {
-    string constant public NAME = "HintHelpers";
+    string public constant NAME = "HintHelpers";
 
     ISortedTroves public sortedTroves;
     ITroveManager public troveManager;
@@ -24,10 +24,7 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
     function setAddresses(
         address _sortedTrovesAddress,
         address _troveManagerAddress
-    )
-        external
-        onlyOwner
-    {
+    ) external onlyOwner {
         checkContract(_sortedTrovesAddress);
         checkContract(_troveManagerAddress);
 
@@ -60,7 +57,7 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
      */
 
     function getRedemptionHints(
-        uint _LUSDamount, 
+        uint _LUSDamount,
         uint _price,
         uint _maxIterations
     )
@@ -77,7 +74,10 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
         uint remainingLUSD = _LUSDamount;
         address currentTroveuser = sortedTrovesCached.getLast();
 
-        while (currentTroveuser != address(0) && troveManager.getCurrentICR(currentTroveuser, _price) < MCR) {
+        while (
+            currentTroveuser != address(0) &&
+            troveManager.getCurrentICR(currentTroveuser, _price) < MCR
+        ) {
             currentTroveuser = sortedTrovesCached.getPrev(currentTroveuser);
         }
 
@@ -88,21 +88,29 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
         }
 
         while (currentTroveuser != address(0) && remainingLUSD > 0 && _maxIterations-- > 0) {
-            uint netLUSDDebt = _getNetDebt(troveManager.getTroveDebt(currentTroveuser))
-                .add(troveManager.getPendingLUSDDebtReward(currentTroveuser));
+            uint netLUSDDebt = _getNetDebt(troveManager.getTroveDebt(currentTroveuser)).add(
+                troveManager.getPendingLUSDDebtReward(currentTroveuser)
+            );
 
             if (netLUSDDebt > remainingLUSD) {
                 if (netLUSDDebt > MIN_NET_DEBT) {
-                    uint maxRedeemableLUSD = LiquityMath._min(remainingLUSD, netLUSDDebt.sub(MIN_NET_DEBT));
+                    uint maxRedeemableLUSD = LiquityMath._min(
+                        remainingLUSD,
+                        netLUSDDebt.sub(MIN_NET_DEBT)
+                    );
 
-                    uint ETH = troveManager.getTroveColl(currentTroveuser)
-                        .add(troveManager.getPendingETHReward(currentTroveuser));
+                    uint AUT = troveManager.getTroveColl(currentTroveuser).add(
+                        troveManager.getPendingAUTReward(currentTroveuser)
+                    );
 
-                    uint newColl = ETH.sub(maxRedeemableLUSD.mul(DECIMAL_PRECISION).div(_price));
+                    uint newColl = AUT.sub(maxRedeemableLUSD.mul(DECIMAL_PRECISION).div(_price));
                     uint newDebt = netLUSDDebt.sub(maxRedeemableLUSD);
 
                     uint compositeDebt = _getCompositeDebt(newDebt);
-                    partialRedemptionHintNICR = LiquityMath._computeNominalCR(newColl, compositeDebt);
+                    partialRedemptionHintNICR = LiquityMath._computeNominalCR(
+                        newColl,
+                        compositeDebt
+                    );
 
                     remainingLUSD = remainingLUSD.sub(maxRedeemableLUSD);
                 }
@@ -126,11 +134,11 @@ contract HintHelpers is LiquityBase, Ownable, CheckContract {
     Submitting numTrials = k * sqrt(length), with k = 15 makes it very, very likely that the ouput address will 
     be <= sqrt(length) positions away from the correct insert position.
     */
-    function getApproxHint(uint _CR, uint _numTrials, uint _inputRandomSeed)
-        external
-        view
-        returns (address hintAddress, uint diff, uint latestRandomSeed)
-    {
+    function getApproxHint(
+        uint _CR,
+        uint _numTrials,
+        uint _inputRandomSeed
+    ) external view returns (address hintAddress, uint diff, uint latestRandomSeed) {
         uint arrayLength = troveManager.getTroveOwnersCount();
 
         if (arrayLength == 0) {

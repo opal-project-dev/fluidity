@@ -12,7 +12,7 @@ import "./Dependencies/LiquityMath.sol";
 import "./Dependencies/console.sol";
 
 /*
- * PriceFeed for mainnet deployment, to be connected to Chainlink's live ETH:USD aggregator reference
+ * PriceFeed for mainnet deployment, to be connected to Chainlink's live AUT:USD aggregator reference
  * contract.
  *
  * The PriceFeed uses Chainlink as primary oracle.

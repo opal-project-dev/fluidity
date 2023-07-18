@@ -2,42 +2,39 @@
 
 pragma solidity 0.6.11;
 
-import './Interfaces/IDefaultPool.sol';
+import "./Interfaces/IDefaultPool.sol";
 import "./Dependencies/SafeMath.sol";
 import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 import "./Dependencies/console.sol";
 
 /*
- * The Default Pool holds the ETH and LUSD debt (but not LUSD tokens) from liquidations that have been redistributed
+ * The Default Pool holds the AUT and LUSD debt (but not LUSD tokens) from liquidations that have been redistributed
  * to active troves but not yet "applied", i.e. not yet recorded on a recipient active trove's struct.
  *
- * When a trove makes an operation that applies its pending ETH and LUSD debt, its pending ETH and LUSD debt is moved
+ * When a trove makes an operation that applies its pending AUT and LUSD debt, its pending AUT and LUSD debt is moved
  * from the Default Pool to the Active Pool.
  */
 contract DefaultPool is Ownable, CheckContract, IDefaultPool {
     using SafeMath for uint256;
 
-    string constant public NAME = "DefaultPool";
+    string public constant NAME = "DefaultPool";
 
     address public troveManagerAddress;
     address public activePoolAddress;
-    uint256 internal ETH;  // deposited ETH tracker
-    uint256 internal LUSDDebt;  // debt
+    uint256 internal AUT; // deposited AUT tracker
+    uint256 internal LUSDDebt; // debt
 
     event TroveManagerAddressChanged(address _newTroveManagerAddress);
     event DefaultPoolLUSDDebtUpdated(uint _LUSDDebt);
-    event DefaultPoolETHBalanceUpdated(uint _ETH);
+    event DefaultPoolAUTBalanceUpdated(uint _AUT);
 
     // --- Dependency setters ---
 
     function setAddresses(
         address _troveManagerAddress,
         address _activePoolAddress
-    )
-        external
-        onlyOwner
-    {
+    ) external onlyOwner {
         checkContract(_troveManagerAddress);
         checkContract(_activePoolAddress);
 
@@ -53,12 +50,12 @@ contract DefaultPool is Ownable, CheckContract, IDefaultPool {
     // --- Getters for public variables. Required by IPool interface ---
 
     /*
-    * Returns the ETH state variable.
-    *
-    * Not necessarily equal to the the contract's raw ETH balance - ether can be forcibly sent to contracts.
-    */
-    function getETH() external view override returns (uint) {
-        return ETH;
+     * Returns the AUT state variable.
+     *
+     * Not necessarily equal to the the contract's raw AUT balance - ether can be forcibly sent to contracts.
+     */
+    function getAUT() external view override returns (uint) {
+        return AUT;
     }
 
     function getLUSDDebt() external view override returns (uint) {
@@ -67,15 +64,15 @@ contract DefaultPool is Ownable, CheckContract, IDefaultPool {
 
     // --- Pool functionality ---
 
-    function sendETHToActivePool(uint _amount) external override {
+    function sendAUTToActivePool(uint _amount) external override {
         _requireCallerIsTroveManager();
         address activePool = activePoolAddress; // cache to save an SLOAD
-        ETH = ETH.sub(_amount);
-        emit DefaultPoolETHBalanceUpdated(ETH);
+        AUT = AUT.sub(_amount);
+        emit DefaultPoolAUTBalanceUpdated(AUT);
         emit EtherSent(activePool, _amount);
 
-        (bool success, ) = activePool.call{ value: _amount }("");
-        require(success, "DefaultPool: sending ETH failed");
+        (bool success, ) = activePool.call{value: _amount}("");
+        require(success, "DefaultPool: sending AUT failed");
     }
 
     function increaseLUSDDebt(uint _amount) external override {
@@ -104,7 +101,7 @@ contract DefaultPool is Ownable, CheckContract, IDefaultPool {
 
     receive() external payable {
         _requireCallerIsActivePool();
-        ETH = ETH.add(msg.value);
-        emit DefaultPoolETHBalanceUpdated(ETH);
+        AUT = AUT.add(msg.value);
+        emit DefaultPoolAUTBalanceUpdated(AUT);
     }
 }

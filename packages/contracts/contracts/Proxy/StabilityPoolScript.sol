@@ -5,9 +5,8 @@ pragma solidity 0.6.11;
 import "../Dependencies/CheckContract.sol";
 import "../Interfaces/IStabilityPool.sol";
 
-
 contract StabilityPoolScript is CheckContract {
-    string constant public NAME = "StabilityPoolScript";
+    string public constant NAME = "StabilityPoolScript";
 
     IStabilityPool immutable stabilityPool;
 
@@ -24,7 +23,7 @@ contract StabilityPoolScript is CheckContract {
         stabilityPool.withdrawFromSP(_amount);
     }
 
-    function withdrawETHGainToTrove(address _upperHint, address _lowerHint) external {
-        stabilityPool.withdrawETHGainToTrove(_upperHint, _lowerHint);
+    function withdrawAUTGainToTrove(address _upperHint, address _lowerHint) external {
+        stabilityPool.withdrawAUTGainToTrove(_upperHint, _lowerHint);
     }
 }

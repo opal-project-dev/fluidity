@@ -16,22 +16,22 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
     using SafeMath for uint;
 
     // --- Data ---
-    string constant public NAME = "LQTYStaking";
+    string public constant NAME = "LQTYStaking";
 
-    mapping( address => uint) public stakes;
+    mapping(address => uint) public stakes;
     uint public totalLQTYStaked;
 
-    uint public F_ETH;  // Running sum of ETH fees per-LQTY-staked
+    uint public F_AUT; // Running sum of AUT fees per-LQTY-staked
     uint public F_LUSD; // Running sum of LQTY fees per-LQTY-staked
 
-    // User snapshots of F_ETH and F_LUSD, taken at the point at which their latest deposit was made
-    mapping (address => Snapshot) public snapshots; 
+    // User snapshots of F_AUT and F_LUSD, taken at the point at which their latest deposit was made
+    mapping(address => Snapshot) public snapshots;
 
     struct Snapshot {
-        uint F_ETH_Snapshot;
+        uint F_AUT_Snapshot;
         uint F_LUSD_Snapshot;
     }
-    
+
     ILQTYToken public lqtyToken;
     ILUSDToken public lusdToken;
 
@@ -48,27 +48,22 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
     event ActivePoolAddressSet(address _activePoolAddress);
 
     event StakeChanged(address indexed staker, uint newStake);
-    event StakingGainsWithdrawn(address indexed staker, uint LUSDGain, uint ETHGain);
-    event F_ETHUpdated(uint _F_ETH);
+    event StakingGainsWithdrawn(address indexed staker, uint LUSDGain, uint AUTGain);
+    event F_AUTUpdated(uint _F_AUT);
     event F_LUSDUpdated(uint _F_LUSD);
     event TotalLQTYStakedUpdated(uint _totalLQTYStaked);
     event EtherSent(address _account, uint _amount);
-    event StakerSnapshotsUpdated(address _staker, uint _F_ETH, uint _F_LUSD);
+    event StakerSnapshotsUpdated(address _staker, uint _F_AUT, uint _F_LUSD);
 
     // --- Functions ---
 
-    function setAddresses
-    (
+    function setAddresses(
         address _lqtyTokenAddress,
         address _lusdTokenAddress,
-        address _troveManagerAddress, 
+        address _troveManagerAddress,
         address _borrowerOperationsAddress,
         address _activePoolAddress
-    ) 
-        external 
-        onlyOwner 
-        override 
-    {
+    ) external override onlyOwner {
         checkContract(_lqtyTokenAddress);
         checkContract(_lusdTokenAddress);
         checkContract(_troveManagerAddress);
@@ -90,21 +85,21 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
         _renounceOwnership();
     }
 
-    // If caller has a pre-existing stake, send any accumulated ETH and LUSD gains to them. 
+    // If caller has a pre-existing stake, send any accumulated AUT and LUSD gains to them.
     function stake(uint _LQTYamount) external override {
         _requireNonZeroAmount(_LQTYamount);
 
         uint currentStake = stakes[msg.sender];
 
-        uint ETHGain;
+        uint AUTGain;
         uint LUSDGain;
-        // Grab any accumulated ETH and LUSD gains from the current stake
+        // Grab any accumulated AUT and LUSD gains from the current stake
         if (currentStake != 0) {
-            ETHGain = _getPendingETHGain(msg.sender);
+            AUTGain = _getPendingAUTGain(msg.sender);
             LUSDGain = _getPendingLUSDGain(msg.sender);
         }
-    
-       _updateUserSnapshots(msg.sender);
+
+        _updateUserSnapshots(msg.sender);
 
         uint newStake = currentStake.add(_LQTYamount);
 
@@ -117,25 +112,25 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
         lqtyToken.sendToLQTYStaking(msg.sender, _LQTYamount);
 
         emit StakeChanged(msg.sender, newStake);
-        emit StakingGainsWithdrawn(msg.sender, LUSDGain, ETHGain);
+        emit StakingGainsWithdrawn(msg.sender, LUSDGain, AUTGain);
 
-         // Send accumulated LUSD and ETH gains to the caller
+        // Send accumulated LUSD and AUT gains to the caller
         if (currentStake != 0) {
             lusdToken.transfer(msg.sender, LUSDGain);
-            _sendETHGainToUser(ETHGain);
+            _sendAUTGainToUser(AUTGain);
         }
     }
 
-    // Unstake the LQTY and send the it back to the caller, along with their accumulated LUSD & ETH gains. 
+    // Unstake the LQTY and send the it back to the caller, along with their accumulated LUSD & AUT gains.
     // If requested amount > stake, send their entire stake.
     function unstake(uint _LQTYamount) external override {
         uint currentStake = stakes[msg.sender];
         _requireUserHasStake(currentStake);
 
-        // Grab any accumulated ETH and LUSD gains from the current stake
-        uint ETHGain = _getPendingETHGain(msg.sender);
+        // Grab any accumulated AUT and LUSD gains from the current stake
+        uint AUTGain = _getPendingAUTGain(msg.sender);
         uint LUSDGain = _getPendingLUSDGain(msg.sender);
-        
+
         _updateUserSnapshots(msg.sender);
 
         if (_LQTYamount > 0) {
@@ -154,45 +149,49 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
             emit StakeChanged(msg.sender, newStake);
         }
 
-        emit StakingGainsWithdrawn(msg.sender, LUSDGain, ETHGain);
+        emit StakingGainsWithdrawn(msg.sender, LUSDGain, AUTGain);
 
-        // Send accumulated LUSD and ETH gains to the caller
+        // Send accumulated LUSD and AUT gains to the caller
         lusdToken.transfer(msg.sender, LUSDGain);
-        _sendETHGainToUser(ETHGain);
+        _sendAUTGainToUser(AUTGain);
     }
 
     // --- Reward-per-unit-staked increase functions. Called by Liquity core contracts ---
 
-    function increaseF_ETH(uint _ETHFee) external override {
+    function increaseF_AUT(uint _AUTFee) external override {
         _requireCallerIsTroveManager();
-        uint ETHFeePerLQTYStaked;
-     
-        if (totalLQTYStaked > 0) {ETHFeePerLQTYStaked = _ETHFee.mul(DECIMAL_PRECISION).div(totalLQTYStaked);}
+        uint AUTFeePerLQTYStaked;
 
-        F_ETH = F_ETH.add(ETHFeePerLQTYStaked); 
-        emit F_ETHUpdated(F_ETH);
+        if (totalLQTYStaked > 0) {
+            AUTFeePerLQTYStaked = _AUTFee.mul(DECIMAL_PRECISION).div(totalLQTYStaked);
+        }
+
+        F_AUT = F_AUT.add(AUTFeePerLQTYStaked);
+        emit F_AUTUpdated(F_AUT);
     }
 
     function increaseF_LUSD(uint _LUSDFee) external override {
         _requireCallerIsBorrowerOperations();
         uint LUSDFeePerLQTYStaked;
-        
-        if (totalLQTYStaked > 0) {LUSDFeePerLQTYStaked = _LUSDFee.mul(DECIMAL_PRECISION).div(totalLQTYStaked);}
-        
+
+        if (totalLQTYStaked > 0) {
+            LUSDFeePerLQTYStaked = _LUSDFee.mul(DECIMAL_PRECISION).div(totalLQTYStaked);
+        }
+
         F_LUSD = F_LUSD.add(LUSDFeePerLQTYStaked);
         emit F_LUSDUpdated(F_LUSD);
     }
 
     // --- Pending reward functions ---
 
-    function getPendingETHGain(address _user) external view override returns (uint) {
-        return _getPendingETHGain(_user);
+    function getPendingAUTGain(address _user) external view override returns (uint) {
+        return _getPendingAUTGain(_user);
     }
 
-    function _getPendingETHGain(address _user) internal view returns (uint) {
-        uint F_ETH_Snapshot = snapshots[_user].F_ETH_Snapshot;
-        uint ETHGain = stakes[_user].mul(F_ETH.sub(F_ETH_Snapshot)).div(DECIMAL_PRECISION);
-        return ETHGain;
+    function _getPendingAUTGain(address _user) internal view returns (uint) {
+        uint F_AUT_Snapshot = snapshots[_user].F_AUT_Snapshot;
+        uint AUTGain = stakes[_user].mul(F_AUT.sub(F_AUT_Snapshot)).div(DECIMAL_PRECISION);
+        return AUTGain;
     }
 
     function getPendingLUSDGain(address _user) external view override returns (uint) {
@@ -208,15 +207,15 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
     // --- Internal helper functions ---
 
     function _updateUserSnapshots(address _user) internal {
-        snapshots[_user].F_ETH_Snapshot = F_ETH;
+        snapshots[_user].F_AUT_Snapshot = F_AUT;
         snapshots[_user].F_LUSD_Snapshot = F_LUSD;
-        emit StakerSnapshotsUpdated(_user, F_ETH, F_LUSD);
+        emit StakerSnapshotsUpdated(_user, F_AUT, F_LUSD);
     }
 
-    function _sendETHGainToUser(uint ETHGain) internal {
-        emit EtherSent(msg.sender, ETHGain);
-        (bool success, ) = msg.sender.call{value: ETHGain}("");
-        require(success, "LQTYStaking: Failed to send accumulated ETHGain");
+    function _sendAUTGainToUser(uint AUTGain) internal {
+        emit EtherSent(msg.sender, AUTGain);
+        (bool success, ) = msg.sender.call{value: AUTGain}("");
+        require(success, "LQTYStaking: Failed to send accumulated AUTGain");
     }
 
     // --- 'require' functions ---
@@ -229,16 +228,16 @@ contract LQTYStaking is ILQTYStaking, Ownable, CheckContract, BaseMath {
         require(msg.sender == borrowerOperationsAddress, "LQTYStaking: caller is not BorrowerOps");
     }
 
-     function _requireCallerIsActivePool() internal view {
+    function _requireCallerIsActivePool() internal view {
         require(msg.sender == activePoolAddress, "LQTYStaking: caller is not ActivePool");
     }
 
-    function _requireUserHasStake(uint currentStake) internal pure {  
-        require(currentStake > 0, 'LQTYStaking: User must have a non-zero stake');  
+    function _requireUserHasStake(uint currentStake) internal pure {
+        require(currentStake > 0, "LQTYStaking: User must have a non-zero stake");
     }
 
     function _requireNonZeroAmount(uint _amount) internal pure {
-        require(_amount > 0, 'LQTYStaking: Amount must be non-zero');
+        require(_amount > 0, "LQTYStaking: Amount must be non-zero");
     }
 
     receive() external payable {

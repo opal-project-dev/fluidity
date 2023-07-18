@@ -2,11 +2,9 @@
 
 pragma solidity 0.6.11;
 
-
 interface ICollSurplusPool {
-
     // --- Events ---
-    
+
     event BorrowerOperationsAddressChanged(address _newBorrowerOperationsAddress);
     event TroveManagerAddressChanged(address _newTroveManagerAddress);
     event ActivePoolAddressChanged(address _newActivePoolAddress);
@@ -22,7 +20,7 @@ interface ICollSurplusPool {
         address _activePoolAddress
     ) external;
 
-    function getETH() external view returns (uint);
+    function getAUT() external view returns (uint);
 
     function getCollateral(address _account) external view returns (uint);
 
