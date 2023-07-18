@@ -31,13 +31,13 @@ contract LockupContractFactory is ILockupContractFactory, Ownable, CheckContract
 
     uint public constant SECONDS_IN_ONE_YEAR = 31536000;
 
-    address public lqtyTokenAddress;
+    address public oplTokenAddress;
 
     mapping(address => address) public lockupContractToDeployer;
 
     // --- Events ---
 
-    event OPLTokenAddressSet(address _lqtyTokenAddress);
+    event OPLTokenAddressSet(address _oplTokenAddress);
     event LockupContractDeployedThroughFactory(
         address _lockupContractAddress,
         address _beneficiary,
@@ -47,20 +47,20 @@ contract LockupContractFactory is ILockupContractFactory, Ownable, CheckContract
 
     // --- Functions ---
 
-    function setOPLTokenAddress(address _lqtyTokenAddress) external override onlyOwner {
-        checkContract(_lqtyTokenAddress);
+    function setOPLTokenAddress(address _oplTokenAddress) external override onlyOwner {
+        checkContract(_oplTokenAddress);
 
-        lqtyTokenAddress = _lqtyTokenAddress;
-        emit OPLTokenAddressSet(_lqtyTokenAddress);
+        oplTokenAddress = _oplTokenAddress;
+        emit OPLTokenAddressSet(_oplTokenAddress);
 
         _renounceOwnership();
     }
 
     function deployLockupContract(address _beneficiary, uint _unlockTime) external override {
-        address lqtyTokenAddressCached = lqtyTokenAddress;
-        _requireOPLAddressIsSet(lqtyTokenAddressCached);
+        address oplTokenAddressCached = oplTokenAddress;
+        _requireOPLAddressIsSet(oplTokenAddressCached);
         LockupContract lockupContract = new LockupContract(
-            lqtyTokenAddressCached,
+            oplTokenAddressCached,
             _beneficiary,
             _unlockTime
         );
@@ -79,7 +79,7 @@ contract LockupContractFactory is ILockupContractFactory, Ownable, CheckContract
     }
 
     // --- 'require'  functions ---
-    function _requireOPLAddressIsSet(address _lqtyTokenAddress) internal pure {
-        require(_lqtyTokenAddress != address(0), "LCF: OPL Address is not set");
+    function _requireOPLAddressIsSet(address _oplTokenAddress) internal pure {
+        require(_oplTokenAddress != address(0), "LCF: OPL Address is not set");
     }
 }

@@ -15,7 +15,7 @@ interface IBorrowerOperations {
     event PriceFeedAddressChanged(address _newPriceFeedAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
     event ONEUTokenAddressChanged(address _oneuTokenAddress);
-    event OPLStakingAddressChanged(address _lqtyStakingAddress);
+    event OPLStakingAddressChanged(address _oplStakingAddress);
 
     event TroveCreated(address indexed _borrower, uint arrayIndex);
     event TroveUpdated(
@@ -39,7 +39,7 @@ interface IBorrowerOperations {
         address _priceFeedAddress,
         address _sortedTrovesAddress,
         address _oneuTokenAddress,
-        address _lqtyStakingAddress
+        address _oplStakingAddress
     ) external;
 
     function openTrove(

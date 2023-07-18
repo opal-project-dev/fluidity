@@ -29,9 +29,9 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
 
     IONEUToken public override oneuToken;
 
-    IOPLToken public override lqtyToken;
+    IOPLToken public override oplToken;
 
-    IOPLStaking public override lqtyStaking;
+    IOPLStaking public override oplStaking;
 
     // A doubly linked list of Troves, sorted by their sorted by their collateral ratios
     ISortedTroves public sortedTroves;
@@ -174,7 +174,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         IActivePool activePool;
         IDefaultPool defaultPool;
         IONEUToken oneuToken;
-        IOPLStaking lqtyStaking;
+        IOPLStaking oplStaking;
         ISortedTroves sortedTroves;
         ICollSurplusPool collSurplusPool;
         address gasPoolAddress;
@@ -209,8 +209,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
     event GasPoolAddressChanged(address _gasPoolAddress);
     event CollSurplusPoolAddressChanged(address _collSurplusPoolAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
-    event OPLTokenAddressChanged(address _lqtyTokenAddress);
-    event OPLStakingAddressChanged(address _lqtyStakingAddress);
+    event OPLTokenAddressChanged(address _oplTokenAddress);
+    event OPLStakingAddressChanged(address _oplStakingAddress);
 
     event Liquidation(
         uint _liquidatedDebt,
@@ -259,8 +259,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         address _priceFeedAddress,
         address _oneuTokenAddress,
         address _sortedTrovesAddress,
-        address _lqtyTokenAddress,
-        address _lqtyStakingAddress
+        address _oplTokenAddress,
+        address _oplStakingAddress
     ) external override onlyOwner {
         checkContract(_borrowerOperationsAddress);
         checkContract(_activePoolAddress);
@@ -271,8 +271,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         checkContract(_priceFeedAddress);
         checkContract(_oneuTokenAddress);
         checkContract(_sortedTrovesAddress);
-        checkContract(_lqtyTokenAddress);
-        checkContract(_lqtyStakingAddress);
+        checkContract(_oplTokenAddress);
+        checkContract(_oplStakingAddress);
 
         borrowerOperationsAddress = _borrowerOperationsAddress;
         activePool = IActivePool(_activePoolAddress);
@@ -283,8 +283,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         priceFeed = IPriceFeed(_priceFeedAddress);
         oneuToken = IONEUToken(_oneuTokenAddress);
         sortedTroves = ISortedTroves(_sortedTrovesAddress);
-        lqtyToken = IOPLToken(_lqtyTokenAddress);
-        lqtyStaking = IOPLStaking(_lqtyStakingAddress);
+        oplToken = IOPLToken(_oplTokenAddress);
+        oplStaking = IOPLStaking(_oplStakingAddress);
 
         emit BorrowerOperationsAddressChanged(_borrowerOperationsAddress);
         emit ActivePoolAddressChanged(_activePoolAddress);
@@ -295,8 +295,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         emit PriceFeedAddressChanged(_priceFeedAddress);
         emit ONEUTokenAddressChanged(_oneuTokenAddress);
         emit SortedTrovesAddressChanged(_sortedTrovesAddress);
-        emit OPLTokenAddressChanged(_lqtyTokenAddress);
-        emit OPLStakingAddressChanged(_lqtyStakingAddress);
+        emit OPLTokenAddressChanged(_oplTokenAddress);
+        emit OPLStakingAddressChanged(_oplStakingAddress);
 
         _renounceOwnership();
     }
@@ -1173,7 +1173,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
             activePool,
             defaultPool,
             oneuToken,
-            lqtyStaking,
+            oplStaking,
             sortedTroves,
             collSurplusPool,
             gasPoolAddress
@@ -1261,8 +1261,8 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
         _requireUserAcceptsFee(totals.AUTFee, totals.totalAUTDrawn, _maxFeePercentage);
 
         // Send the AUT fee to the OPL staking contract
-        contractsCache.activePool.sendAUT(address(contractsCache.lqtyStaking), totals.AUTFee);
-        contractsCache.lqtyStaking.increaseF_AUT(totals.AUTFee);
+        contractsCache.activePool.sendAUT(address(contractsCache.oplStaking), totals.AUTFee);
+        contractsCache.oplStaking.increaseF_AUT(totals.AUTFee);
 
         totals.AUTToSendToRedeemer = totals.totalAUTDrawn.sub(totals.AUTFee);
 
@@ -1791,7 +1791,7 @@ contract TroveManager is LiquityBase, Ownable, CheckContract, ITroveManager {
     }
 
     function _requireAfterBootstrapPeriod() internal view {
-        uint systemDeploymentTime = lqtyToken.getDeploymentStartTime();
+        uint systemDeploymentTime = oplToken.getDeploymentStartTime();
         require(
             block.timestamp >= systemDeploymentTime.add(BOOTSTRAP_PERIOD),
             "TroveManager: Redemptions are not allowed during bootstrap phase"

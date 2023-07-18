@@ -26,7 +26,7 @@ contract LockupContract {
 
     address public immutable beneficiary;
 
-    IOPLToken public lqtyToken;
+    IOPLToken public oplToken;
 
     // Unlock time is the Unix point in time at which the beneficiary can withdraw.
     uint public unlockTime;
@@ -38,8 +38,8 @@ contract LockupContract {
 
     // --- Functions ---
 
-    constructor(address _lqtyTokenAddress, address _beneficiary, uint _unlockTime) public {
-        lqtyToken = IOPLToken(_lqtyTokenAddress);
+    constructor(address _oplTokenAddress, address _beneficiary, uint _unlockTime) public {
+        oplToken = IOPLToken(_oplTokenAddress);
 
         /*
          * Set the unlock time to a chosen instant in the future, as long as it is at least 1 year after
@@ -56,9 +56,9 @@ contract LockupContract {
         _requireCallerIsBeneficiary();
         _requireLockupDurationHasPassed();
 
-        IOPLToken lqtyTokenCached = lqtyToken;
-        uint OPLBalance = lqtyTokenCached.balanceOf(address(this));
-        lqtyTokenCached.transfer(beneficiary, OPLBalance);
+        IOPLToken oplTokenCached = oplToken;
+        uint OPLBalance = oplTokenCached.balanceOf(address(this));
+        oplTokenCached.transfer(beneficiary, OPLBalance);
         emit LockupContractEmptied(OPLBalance);
     }
 
@@ -78,7 +78,7 @@ contract LockupContract {
     function _requireUnlockTimeIsAtLeastOneYearAfterSystemDeployment(
         uint _unlockTime
     ) internal view {
-        uint systemDeploymentTime = lqtyToken.getDeploymentStartTime();
+        uint systemDeploymentTime = oplToken.getDeploymentStartTime();
         require(
             _unlockTime >= systemDeploymentTime.add(SECONDS_IN_ONE_YEAR),
             "LockupContract: unlock time must be at least one year after system deployment"

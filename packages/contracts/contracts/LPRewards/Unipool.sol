@@ -74,7 +74,7 @@ contract Unipool is LPTokenWrapper, Ownable, CheckContract, IUnipool {
     string public constant NAME = "Unipool";
 
     uint256 public duration;
-    IOPLToken public lqtyToken;
+    IOPLToken public oplToken;
 
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
@@ -83,7 +83,7 @@ contract Unipool is LPTokenWrapper, Ownable, CheckContract, IUnipool {
     mapping(address => uint256) public userRewardPerTokenPaid;
     mapping(address => uint256) public rewards;
 
-    event OPLTokenAddressChanged(address _lqtyTokenAddress);
+    event OPLTokenAddressChanged(address _oplTokenAddress);
     event UniTokenAddressChanged(address _uniTokenAddress);
     event RewardAdded(uint256 reward);
     event Staked(address indexed user, uint256 amount);
@@ -92,20 +92,20 @@ contract Unipool is LPTokenWrapper, Ownable, CheckContract, IUnipool {
 
     // initialization function
     function setParams(
-        address _lqtyTokenAddress,
+        address _oplTokenAddress,
         address _uniTokenAddress,
         uint _duration
     ) external override onlyOwner {
-        checkContract(_lqtyTokenAddress);
+        checkContract(_oplTokenAddress);
         checkContract(_uniTokenAddress);
 
         uniToken = IERC20(_uniTokenAddress);
-        lqtyToken = IOPLToken(_lqtyTokenAddress);
+        oplToken = IOPLToken(_oplTokenAddress);
         duration = _duration;
 
-        _notifyRewardAmount(lqtyToken.getLpRewardsEntitlement(), _duration);
+        _notifyRewardAmount(oplToken.getLpRewardsEntitlement(), _duration);
 
-        emit OPLTokenAddressChanged(_lqtyTokenAddress);
+        emit OPLTokenAddressChanged(_oplTokenAddress);
         emit UniTokenAddressChanged(_uniTokenAddress);
 
         _renounceOwnership();
@@ -179,14 +179,14 @@ contract Unipool is LPTokenWrapper, Ownable, CheckContract, IUnipool {
         require(reward > 0, "Nothing to claim");
 
         rewards[msg.sender] = 0;
-        lqtyToken.transfer(msg.sender, reward);
+        oplToken.transfer(msg.sender, reward);
         emit RewardPaid(msg.sender, reward);
     }
 
     // Used only on initialization, sets the reward rate and the end time for the program
     function _notifyRewardAmount(uint256 _reward, uint256 _duration) internal {
         assert(_reward > 0);
-        assert(_reward == lqtyToken.balanceOf(address(this)));
+        assert(_reward == oplToken.balanceOf(address(this)));
         assert(periodFinish == 0);
 
         _updateReward();

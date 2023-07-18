@@ -43,7 +43,7 @@ contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMa
      */
     uint public constant OPLSupplyCap = 32e24; // 32 million
 
-    IOPLToken public lqtyToken;
+    IOPLToken public oplToken;
 
     address public stabilityPoolAddress;
 
@@ -52,7 +52,7 @@ contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMa
 
     // --- Events ---
 
-    event OPLTokenAddressSet(address _lqtyTokenAddress);
+    event OPLTokenAddressSet(address _oplTokenAddress);
     event StabilityPoolAddressSet(address _stabilityPoolAddress);
     event TotalOPLIssuedUpdated(uint _totalOPLIssued);
 
@@ -63,20 +63,20 @@ contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMa
     }
 
     function setAddresses(
-        address _lqtyTokenAddress,
+        address _oplTokenAddress,
         address _stabilityPoolAddress
     ) external override onlyOwner {
-        checkContract(_lqtyTokenAddress);
+        checkContract(_oplTokenAddress);
         checkContract(_stabilityPoolAddress);
 
-        lqtyToken = IOPLToken(_lqtyTokenAddress);
+        oplToken = IOPLToken(_oplTokenAddress);
         stabilityPoolAddress = _stabilityPoolAddress;
 
         // When OPLToken deployed, it should have transferred CommunityIssuance's OPL entitlement
-        uint OPLBalance = lqtyToken.balanceOf(address(this));
+        uint OPLBalance = oplToken.balanceOf(address(this));
         assert(OPLBalance >= OPLSupplyCap);
 
-        emit OPLTokenAddressSet(_lqtyTokenAddress);
+        emit OPLTokenAddressSet(_oplTokenAddress);
         emit StabilityPoolAddressSet(_stabilityPoolAddress);
 
         _renounceOwnership();
@@ -117,7 +117,7 @@ contract CommunityIssuance is ICommunityIssuance, Ownable, CheckContract, BaseMa
     function sendOPL(address _account, uint _OPLamount) external override {
         _requireCallerIsStabilityPool();
 
-        lqtyToken.transfer(_account, _OPLamount);
+        oplToken.transfer(_account, _OPLamount);
     }
 
     // --- 'require' functions ---

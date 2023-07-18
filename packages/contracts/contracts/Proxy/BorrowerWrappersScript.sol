@@ -24,17 +24,17 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
     IStabilityPool immutable stabilityPool;
     IPriceFeed immutable priceFeed;
     IERC20 immutable oneuToken;
-    IERC20 immutable lqtyToken;
-    IOPLStaking immutable lqtyStaking;
+    IERC20 immutable oplToken;
+    IOPLStaking immutable oplStaking;
 
     constructor(
         address _borrowerOperationsAddress,
         address _troveManagerAddress,
-        address _lqtyStakingAddress
+        address _oplStakingAddress
     )
         public
         BorrowerOperationsScript(IBorrowerOperations(_borrowerOperationsAddress))
-        OPLStakingScript(_lqtyStakingAddress)
+        OPLStakingScript(_oplStakingAddress)
     {
         checkContract(_troveManagerAddress);
         ITroveManager troveManagerCached = ITroveManager(_troveManagerAddress);
@@ -52,16 +52,16 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         checkContract(oneuTokenCached);
         oneuToken = IERC20(oneuTokenCached);
 
-        address lqtyTokenCached = address(troveManagerCached.lqtyToken());
-        checkContract(lqtyTokenCached);
-        lqtyToken = IERC20(lqtyTokenCached);
+        address oplTokenCached = address(troveManagerCached.oplToken());
+        checkContract(oplTokenCached);
+        oplToken = IERC20(oplTokenCached);
 
-        IOPLStaking lqtyStakingCached = troveManagerCached.lqtyStaking();
+        IOPLStaking oplStakingCached = troveManagerCached.oplStaking();
         require(
-            _lqtyStakingAddress == address(lqtyStakingCached),
+            _oplStakingAddress == address(oplStakingCached),
             "BorrowerWrappersScript: Wrong OPLStaking address"
         );
-        lqtyStaking = lqtyStakingCached;
+        oplStaking = oplStakingCached;
     }
 
     function claimCollateralAndOpenTrove(
@@ -97,13 +97,13 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         address _lowerHint
     ) external {
         uint collBalanceBefore = address(this).balance;
-        uint lqtyBalanceBefore = lqtyToken.balanceOf(address(this));
+        uint oplBalanceBefore = oplToken.balanceOf(address(this));
 
         // Claim rewards
         stabilityPool.withdrawFromSP(0);
 
         uint collBalanceAfter = address(this).balance;
-        uint lqtyBalanceAfter = lqtyToken.balanceOf(address(this));
+        uint oplBalanceAfter = oplToken.balanceOf(address(this));
         uint claimedCollateral = collBalanceAfter.sub(collBalanceBefore);
 
         // Add claimed AUT to trove, get more ONEU and stake it into the Stability Pool
@@ -125,9 +125,9 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
         }
 
         // Stake claimed OPL
-        uint claimedOPL = lqtyBalanceAfter.sub(lqtyBalanceBefore);
+        uint claimedOPL = oplBalanceAfter.sub(oplBalanceBefore);
         if (claimedOPL > 0) {
-            lqtyStaking.stake(claimedOPL);
+            oplStaking.stake(claimedOPL);
         }
     }
 
@@ -138,10 +138,10 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
     ) external {
         uint collBalanceBefore = address(this).balance;
         uint oneuBalanceBefore = oneuToken.balanceOf(address(this));
-        uint lqtyBalanceBefore = lqtyToken.balanceOf(address(this));
+        uint oplBalanceBefore = oplToken.balanceOf(address(this));
 
         // Claim gains
-        lqtyStaking.unstake(0);
+        oplStaking.unstake(0);
 
         uint gainedCollateral = address(this).balance.sub(collBalanceBefore); // stack too deep issues :'(
         uint gainedONEU = oneuToken.balanceOf(address(this)).sub(oneuBalanceBefore);
@@ -166,10 +166,10 @@ contract BorrowerWrappersScript is BorrowerOperationsScript, AUTTransferScript, 
             stabilityPool.provideToSP(totalONEU, address(0));
 
             // Providing to Stability Pool also triggers OPL claim, so stake it if any
-            uint lqtyBalanceAfter = lqtyToken.balanceOf(address(this));
-            uint claimedOPL = lqtyBalanceAfter.sub(lqtyBalanceBefore);
+            uint oplBalanceAfter = oplToken.balanceOf(address(this));
+            uint claimedOPL = oplBalanceAfter.sub(oplBalanceBefore);
             if (claimedOPL > 0) {
-                lqtyStaking.stake(claimedOPL);
+                oplStaking.stake(claimedOPL);
             }
         }
     }

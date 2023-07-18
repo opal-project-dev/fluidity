@@ -9,7 +9,7 @@ interface IOPLToken is IERC20, IERC2612 {
     // --- Events ---
 
     event CommunityIssuanceAddressSet(address _communityIssuanceAddress);
-    event OPLStakingAddressSet(address _lqtyStakingAddress);
+    event OPLStakingAddressSet(address _oplStakingAddress);
     event LockupContractFactoryAddressSet(address _lockupContractFactoryAddress);
 
     // --- Functions ---

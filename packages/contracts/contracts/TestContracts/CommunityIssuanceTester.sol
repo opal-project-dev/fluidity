@@ -6,7 +6,7 @@ import "../OPL/CommunityIssuance.sol";
 
 contract CommunityIssuanceTester is CommunityIssuance {
     function obtainOPL(uint _amount) external {
-        lqtyToken.transfer(msg.sender, _amount);
+        oplToken.transfer(msg.sender, _amount);
     }
 
     function getCumulativeIssuanceFraction() external view returns (uint) {

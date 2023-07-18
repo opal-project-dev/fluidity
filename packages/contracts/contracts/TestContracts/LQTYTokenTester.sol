@@ -7,7 +7,7 @@ import "../OPL/OPLToken.sol";
 contract OPLTokenTester is OPLToken {
     constructor(
         address _communityIssuanceAddress,
-        address _lqtyStakingAddress,
+        address _oplStakingAddress,
         address _lockupFactoryAddress,
         address _bountyAddress,
         address _lpRewardsAddress,
@@ -16,7 +16,7 @@ contract OPLTokenTester is OPLToken {
         public
         OPLToken(
             _communityIssuanceAddress,
-            _lqtyStakingAddress,
+            _oplStakingAddress,
             _lockupFactoryAddress,
             _bountyAddress,
             _lpRewardsAddress,
@@ -36,7 +36,7 @@ contract OPLTokenTester is OPLToken {
         if (_isFirstYear()) {
             _requireSenderIsNotMultisig(_sender);
         }
-        _transfer(_sender, lqtyStakingAddress, _amount);
+        _transfer(_sender, oplStakingAddress, _amount);
     }
 
     function callInternalApprove(

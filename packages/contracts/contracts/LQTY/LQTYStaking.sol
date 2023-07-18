@@ -32,7 +32,7 @@ contract OPLStaking is IOPLStaking, Ownable, CheckContract, BaseMath {
         uint F_ONEU_Snapshot;
     }
 
-    IOPLToken public lqtyToken;
+    IOPLToken public oplToken;
     IONEUToken public oneuToken;
 
     address public troveManagerAddress;
@@ -41,7 +41,7 @@ contract OPLStaking is IOPLStaking, Ownable, CheckContract, BaseMath {
 
     // --- Events ---
 
-    event OPLTokenAddressSet(address _lqtyTokenAddress);
+    event OPLTokenAddressSet(address _oplTokenAddress);
     event ONEUTokenAddressSet(address _oneuTokenAddress);
     event TroveManagerAddressSet(address _troveManager);
     event BorrowerOperationsAddressSet(address _borrowerOperationsAddress);
@@ -58,25 +58,25 @@ contract OPLStaking is IOPLStaking, Ownable, CheckContract, BaseMath {
     // --- Functions ---
 
     function setAddresses(
-        address _lqtyTokenAddress,
+        address _oplTokenAddress,
         address _oneuTokenAddress,
         address _troveManagerAddress,
         address _borrowerOperationsAddress,
         address _activePoolAddress
     ) external override onlyOwner {
-        checkContract(_lqtyTokenAddress);
+        checkContract(_oplTokenAddress);
         checkContract(_oneuTokenAddress);
         checkContract(_troveManagerAddress);
         checkContract(_borrowerOperationsAddress);
         checkContract(_activePoolAddress);
 
-        lqtyToken = IOPLToken(_lqtyTokenAddress);
+        oplToken = IOPLToken(_oplTokenAddress);
         oneuToken = IONEUToken(_oneuTokenAddress);
         troveManagerAddress = _troveManagerAddress;
         borrowerOperationsAddress = _borrowerOperationsAddress;
         activePoolAddress = _activePoolAddress;
 
-        emit OPLTokenAddressSet(_lqtyTokenAddress);
+        emit OPLTokenAddressSet(_oplTokenAddress);
         emit OPLTokenAddressSet(_oneuTokenAddress);
         emit TroveManagerAddressSet(_troveManagerAddress);
         emit BorrowerOperationsAddressSet(_borrowerOperationsAddress);
@@ -109,7 +109,7 @@ contract OPLStaking is IOPLStaking, Ownable, CheckContract, BaseMath {
         emit TotalOPLStakedUpdated(totalOPLStaked);
 
         // Transfer OPL from caller to this contract
-        lqtyToken.sendToOPLStaking(msg.sender, _OPLamount);
+        oplToken.sendToOPLStaking(msg.sender, _OPLamount);
 
         emit StakeChanged(msg.sender, newStake);
         emit StakingGainsWithdrawn(msg.sender, ONEUGain, AUTGain);
@@ -144,7 +144,7 @@ contract OPLStaking is IOPLStaking, Ownable, CheckContract, BaseMath {
             emit TotalOPLStakedUpdated(totalOPLStaked);
 
             // Transfer unstaked OPL to user
-            lqtyToken.transfer(msg.sender, OPLToWithdraw);
+            oplToken.transfer(msg.sender, OPLToWithdraw);
 
             emit StakeChanged(msg.sender, newStake);
         }

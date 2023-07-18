@@ -91,7 +91,7 @@ contract OPLToken is CheckContract, IOPLToken {
     address public immutable multisigAddress;
 
     address public immutable communityIssuanceAddress;
-    address public immutable lqtyStakingAddress;
+    address public immutable oplStakingAddress;
 
     uint internal immutable lpRewardsEntitlement;
 
@@ -100,28 +100,28 @@ contract OPLToken is CheckContract, IOPLToken {
     // --- Events ---
 
     event CommunityIssuanceAddressSet(address _communityIssuanceAddress);
-    event OPLStakingAddressSet(address _lqtyStakingAddress);
+    event OPLStakingAddressSet(address _oplStakingAddress);
     event LockupContractFactoryAddressSet(address _lockupContractFactoryAddress);
 
     // --- Functions ---
 
     constructor(
         address _communityIssuanceAddress,
-        address _lqtyStakingAddress,
+        address _oplStakingAddress,
         address _lockupFactoryAddress,
         address _bountyAddress,
         address _lpRewardsAddress,
         address _multisigAddress
     ) public {
         checkContract(_communityIssuanceAddress);
-        checkContract(_lqtyStakingAddress);
+        checkContract(_oplStakingAddress);
         checkContract(_lockupFactoryAddress);
 
         multisigAddress = _multisigAddress;
         deploymentStartTime = block.timestamp;
 
         communityIssuanceAddress = _communityIssuanceAddress;
-        lqtyStakingAddress = _lqtyStakingAddress;
+        oplStakingAddress = _oplStakingAddress;
         lockupContractFactory = ILockupContractFactory(_lockupFactoryAddress);
 
         bytes32 hashedName = keccak256(bytes(_NAME));
@@ -254,7 +254,7 @@ contract OPLToken is CheckContract, IOPLToken {
         if (_isFirstYear()) {
             _requireSenderIsNotMultisig(_sender);
         } // Prevent the multisig from staking OPL
-        _transfer(_sender, lqtyStakingAddress, _amount);
+        _transfer(_sender, oplStakingAddress, _amount);
     }
 
     // --- EIP 2612 functionality ---
@@ -355,7 +355,7 @@ contract OPLToken is CheckContract, IOPLToken {
             "OPL: Cannot transfer tokens directly to the OPL token contract or the zero address"
         );
         require(
-            _recipient != communityIssuanceAddress && _recipient != lqtyStakingAddress,
+            _recipient != communityIssuanceAddress && _recipient != oplStakingAddress,
             "OPL: Cannot transfer tokens directly to the community issuance or staking contract"
         );
     }
@@ -376,10 +376,7 @@ contract OPLToken is CheckContract, IOPLToken {
     }
 
     function _requireCallerIsOPLStaking() internal view {
-        require(
-            msg.sender == lqtyStakingAddress,
-            "OPLToken: caller must be the OPLStaking contract"
-        );
+        require(msg.sender == oplStakingAddress, "OPLToken: caller must be the OPLStaking contract");
     }
 
     // --- Optional functions ---

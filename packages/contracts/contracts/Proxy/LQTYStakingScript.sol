@@ -8,9 +8,9 @@ import "../Interfaces/IOPLStaking.sol";
 contract OPLStakingScript is CheckContract {
     IOPLStaking immutable OPLStaking;
 
-    constructor(address _lqtyStakingAddress) public {
-        checkContract(_lqtyStakingAddress);
-        OPLStaking = IOPLStaking(_lqtyStakingAddress);
+    constructor(address _oplStakingAddress) public {
+        checkContract(_oplStakingAddress);
+        OPLStaking = IOPLStaking(_oplStakingAddress);
     }
 
     function stake(uint _OPLamount) external {

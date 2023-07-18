@@ -21,8 +21,8 @@ interface ITroveManager is ILiquityBase {
     event GasPoolAddressChanged(address _gasPoolAddress);
     event CollSurplusPoolAddressChanged(address _collSurplusPoolAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
-    event OPLTokenAddressChanged(address _lqtyTokenAddress);
-    event OPLStakingAddressChanged(address _lqtyStakingAddress);
+    event OPLTokenAddressChanged(address _oplTokenAddress);
+    event OPLStakingAddressChanged(address _oplStakingAddress);
 
     event Liquidation(
         uint _liquidatedDebt,
@@ -59,17 +59,17 @@ interface ITroveManager is ILiquityBase {
         address _priceFeedAddress,
         address _oneuTokenAddress,
         address _sortedTrovesAddress,
-        address _lqtyTokenAddress,
-        address _lqtyStakingAddress
+        address _oplTokenAddress,
+        address _oplStakingAddress
     ) external;
 
     function stabilityPool() external view returns (IStabilityPool);
 
     function oneuToken() external view returns (IONEUToken);
 
-    function lqtyToken() external view returns (IOPLToken);
+    function oplToken() external view returns (IOPLToken);
 
-    function lqtyStaking() external view returns (IOPLStaking);
+    function oplStaking() external view returns (IOPLStaking);
 
     function getTroveOwnersCount() external view returns (uint);
 

@@ -5,7 +5,7 @@ pragma solidity 0.6.11;
 interface IOPLStaking {
     // --- Events --
 
-    event OPLTokenAddressSet(address _lqtyTokenAddress);
+    event OPLTokenAddressSet(address _oplTokenAddress);
     event ONEUTokenAddressSet(address _oneuTokenAddress);
     event TroveManagerAddressSet(address _troveManager);
     event BorrowerOperationsAddressSet(address _borrowerOperationsAddress);
@@ -22,7 +22,7 @@ interface IOPLStaking {
     // --- Functions ---
 
     function setAddresses(
-        address _lqtyTokenAddress,
+        address _oplTokenAddress,
         address _oneuTokenAddress,
         address _troveManagerAddress,
         address _borrowerOperationsAddress,
