@@ -150,12 +150,12 @@ contract("ONEUToken", async accounts => {
 
     it("name(): returns the token's name", async () => {
       const name = await oneuTokenTester.name();
-      assert.equal(name, "ONEU Stablecoin");
+      assert.equal(name, "oNEU Stablecoin");
     });
 
     it("symbol(): returns the token's symbol", async () => {
       const symbol = await oneuTokenTester.symbol();
-      assert.equal(symbol, "ONEU");
+      assert.equal(symbol, "oNEU");
     });
 
     it("decimal(): returns the number of decimal digits used", async () => {
