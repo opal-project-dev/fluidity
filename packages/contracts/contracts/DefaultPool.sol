@@ -52,7 +52,7 @@ contract DefaultPool is Ownable, CheckContract, IDefaultPool {
     /*
      * Returns the AUT state variable.
      *
-     * Not necessarily equal to the the contract's raw AUT balance - ether can be forcibly sent to contracts.
+     * Not necessarily equal to the the contract's raw AUT balance - aut can be forcibly sent to contracts.
      */
     function getAUT() external view override returns (uint) {
         return AUT;

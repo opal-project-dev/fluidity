@@ -24,7 +24,7 @@ contract ActivePool is Ownable, CheckContract, IActivePool {
     address public troveManagerAddress;
     address public stabilityPoolAddress;
     address public defaultPoolAddress;
-    uint256 internal AUT; // deposited ether tracker
+    uint256 internal AUT; // deposited aut tracker
     uint256 internal LUSDDebt;
 
     // --- Events ---
@@ -65,7 +65,7 @@ contract ActivePool is Ownable, CheckContract, IActivePool {
     /*
      * Returns the AUT state variable.
      *
-     *Not necessarily equal to the the contract's raw AUT balance - ether can be forcibly sent to contracts.
+     *Not necessarily equal to the the contract's raw AUT balance - aut can be forcibly sent to contracts.
      */
     function getAUT() external view override returns (uint) {
         return AUT;

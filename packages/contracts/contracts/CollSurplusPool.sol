@@ -17,7 +17,7 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
     address public troveManagerAddress;
     address public activePoolAddress;
 
-    // deposited ether tracker
+    // deposited aut tracker
     uint256 internal AUT;
     // Collateral surplus claimable by trove owners
     mapping(address => uint) internal balances;
@@ -54,7 +54,7 @@ contract CollSurplusPool is Ownable, CheckContract, ICollSurplusPool {
     }
 
     /* Returns the AUT state variable at ActivePool address.
-       Not necessarily equal to the raw ether balance - ether can be forcibly sent to contracts. */
+       Not necessarily equal to the raw aut balance - aut can be forcibly sent to contracts. */
     function getAUT() external view override returns (uint) {
         return AUT;
     }
