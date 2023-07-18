@@ -28,8 +28,8 @@ def setAddresses(contracts):
         contracts.priceFeedTestnet.address,
         contracts.oneuToken.address,
         contracts.sortedTroves.address,
-        contracts.lqtyToken.address,
-        contracts.lqtyStaking.address,
+        contracts.oplToken.address,
+        contracts.oplStaking.address,
         { 'from': accounts[0] }
     )
 
@@ -43,7 +43,7 @@ def setAddresses(contracts):
         contracts.priceFeedTestnet.address,
         contracts.sortedTroves.address,
         contracts.oneuToken.address,
-        contracts.lqtyStaking.address,
+        contracts.oplStaking.address,
         { 'from': accounts[0] }
     )
 
@@ -86,8 +86,8 @@ def setAddresses(contracts):
     )
 
     # OPL
-    contracts.lqtyStaking.setAddresses(
-        contracts.lqtyToken.address,
+    contracts.oplStaking.setAddresses(
+        contracts.oplToken.address,
         contracts.oneuToken.address,
         contracts.troveManager.address,
         contracts.borrowerOperations.address,
@@ -96,7 +96,7 @@ def setAddresses(contracts):
     )
 
     contracts.communityIssuance.setAddresses(
-        contracts.lqtyToken.address,
+        contracts.oplToken.address,
         contracts.stabilityPool.address,
         { 'from': accounts[0] }
     )
@@ -128,12 +128,12 @@ def contracts():
         { 'from': accounts[0] }
     )
     # OPL
-    contracts.lqtyStaking = OPLStaking.deploy({ 'from': accounts[0] })
+    contracts.oplStaking = OPLStaking.deploy({ 'from': accounts[0] })
     contracts.communityIssuance = CommunityIssuance.deploy({ 'from': accounts[0] })
     contracts.lockupContractFactory = LockupContractFactory.deploy({ 'from': accounts[0] })
-    contracts.lqtyToken = OPLToken.deploy(
+    contracts.oplToken = OPLToken.deploy(
         contracts.communityIssuance.address,
-        contracts.lqtyStaking.address,
+        contracts.oplStaking.address,
         contracts.lockupContractFactory.address,
         accounts[0], # bountyAddress
         accounts[0],  # lpRewardsAddress
