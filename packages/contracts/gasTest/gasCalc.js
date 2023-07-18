@@ -59,8 +59,8 @@ contract("Gas cost tests", async accounts => {
 
     functionCaller = contracts.functionCaller;
 
-    lqtyStaking = OPLContracts.lqtyStaking;
-    lqtyToken = OPLContracts.lqtyToken;
+    oplStaking = OPLContracts.oplStaking;
+    oplToken = OPLContracts.oplToken;
     communityIssuance = OPLContracts.communityIssuance;
     lockupContractFactory = OPLContracts.lockupContractFactory;
 

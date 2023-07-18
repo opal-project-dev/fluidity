@@ -23,8 +23,8 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
   const OPLEntitlement_D = dec(4, 24);
   const OPLEntitlement_E = dec(5, 24);
 
-  let lqtyStaking;
-  let lqtyToken;
+  let oplStaking;
+  let oplToken;
   let communityIssuance;
   let lockupContractFactory;
 
@@ -39,13 +39,13 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
     );
     await deploymentHelper.connectOPLContracts(OPLContracts);
 
-    lqtyStaking = OPLContracts.lqtyStaking;
-    lqtyToken = OPLContracts.lqtyToken;
+    oplStaking = OPLContracts.oplStaking;
+    oplToken = OPLContracts.oplToken;
     communityIssuance = OPLContracts.communityIssuance;
     lockupContractFactory = OPLContracts.lockupContractFactory;
 
     oneYearFromSystemDeployment = await th.getTimeFromSystemDeployment(
-      lqtyToken,
+      oplToken,
       web3,
       timeValues.SECONDS_IN_ONE_YEAR
     );
@@ -108,17 +108,17 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
 
     it("OPL Deployer can deploy LCs directly", async () => {
       // OPL deployer deploys LCs
-      const LC_A = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_A = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: liquityAG
       });
       const LC_A_txReceipt = await web3.eth.getTransactionReceipt(LC_A.transactionHash);
 
-      const LC_B = await LockupContract.new(lqtyToken.address, B, oneYearFromSystemDeployment, {
+      const LC_B = await LockupContract.new(oplToken.address, B, oneYearFromSystemDeployment, {
         from: liquityAG
       });
       const LC_B_txReceipt = await web3.eth.getTransactionReceipt(LC_B.transactionHash);
 
-      const LC_C = await LockupContract.new(lqtyToken.address, C, oneYearFromSystemDeployment, {
+      const LC_C = await LockupContract.new(oplToken.address, C, oneYearFromSystemDeployment, {
         from: liquityAG
       });
       const LC_C_txReceipt = await web3.eth.getTransactionReceipt(LC_C.transactionHash);
@@ -131,17 +131,17 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
 
     it("Anyone can deploy LCs directly", async () => {
       // Various EOAs deploy LCs
-      const LC_A = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_A = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: D
       });
       const LC_A_txReceipt = await web3.eth.getTransactionReceipt(LC_A.transactionHash);
 
-      const LC_B = await LockupContract.new(lqtyToken.address, B, oneYearFromSystemDeployment, {
+      const LC_B = await LockupContract.new(oplToken.address, B, oneYearFromSystemDeployment, {
         from: E
       });
       const LC_B_txReceipt = await web3.eth.getTransactionReceipt(LC_B.transactionHash);
 
-      const LC_C = await LockupContract.new(lqtyToken.address, C, oneYearFromSystemDeployment, {
+      const LC_C = await LockupContract.new(oplToken.address, C, oneYearFromSystemDeployment, {
         from: F
       });
       const LC_C_txReceipt = await web3.eth.getTransactionReceipt(LC_C.transactionHash);
@@ -316,11 +316,11 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
 
     it("Direct deployment of LC sets the unlockTime in the LC", async () => {
       // Deploy 3 LCs directly
-      const LC_A = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_A = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: liquityAG
       });
-      const LC_B = await LockupContract.new(lqtyToken.address, B, "230582305895235", { from: B });
-      const LC_C = await LockupContract.new(lqtyToken.address, C, dec(20, 18), { from: E });
+      const LC_B = await LockupContract.new(oplToken.address, B, "230582305895235", { from: B });
+      const LC_C = await LockupContract.new(oplToken.address, C, dec(20, 18), { from: E });
 
       // Grab contract addresses from deployment tx events
       const unlockTime_A = await LC_A.unlockTime();
@@ -364,11 +364,11 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
       const nearlyOneYear = toBN(oneYearFromSystemDeployment).sub(toBN("60")); // 1 minute short of 1 year
 
       // Deploy 3 LCs directly with unlockTime < 1 year from system deployment
-      const LCDeploymentPromise_A = LockupContract.new(lqtyToken.address, A, nearlyOneYear, {
+      const LCDeploymentPromise_A = LockupContract.new(oplToken.address, A, nearlyOneYear, {
         from: liquityAG
       });
-      const LCDeploymentPromise_B = LockupContract.new(lqtyToken.address, B, "37", { from: B });
-      const LCDeploymentPromise_C = LockupContract.new(lqtyToken.address, C, "43200", { from: E });
+      const LCDeploymentPromise_B = LockupContract.new(oplToken.address, B, "37", { from: B });
+      const LCDeploymentPromise_C = LockupContract.new(oplToken.address, C, "43200", { from: E });
 
       // Confirm contract deployments revert
       await assertRevert(
@@ -422,24 +422,24 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
       const LCAddress_D = await th.getLCAddressFromDeploymentTx(deployedLCtx_D);
       const LCAddress_E = await th.getLCAddressFromDeploymentTx(deployedLCtx_E);
 
-      assert.equal(await lqtyToken.balanceOf(LCAddress_A), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_B), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_C), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_D), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_E), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_A), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_B), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_C), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_D), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_E), "0");
 
       // Multisig transfers OPL to each LC
-      await lqtyToken.transfer(LCAddress_A, OPLEntitlement_A, { from: multisig });
-      await lqtyToken.transfer(LCAddress_B, OPLEntitlement_B, { from: multisig });
-      await lqtyToken.transfer(LCAddress_C, OPLEntitlement_C, { from: multisig });
-      await lqtyToken.transfer(LCAddress_D, OPLEntitlement_D, { from: multisig });
-      await lqtyToken.transfer(LCAddress_E, OPLEntitlement_E, { from: multisig });
+      await oplToken.transfer(LCAddress_A, OPLEntitlement_A, { from: multisig });
+      await oplToken.transfer(LCAddress_B, OPLEntitlement_B, { from: multisig });
+      await oplToken.transfer(LCAddress_C, OPLEntitlement_C, { from: multisig });
+      await oplToken.transfer(LCAddress_D, OPLEntitlement_D, { from: multisig });
+      await oplToken.transfer(LCAddress_E, OPLEntitlement_E, { from: multisig });
 
-      assert.equal(await lqtyToken.balanceOf(LCAddress_A), OPLEntitlement_A);
-      assert.equal(await lqtyToken.balanceOf(LCAddress_B), OPLEntitlement_B);
-      assert.equal(await lqtyToken.balanceOf(LCAddress_C), OPLEntitlement_C);
-      assert.equal(await lqtyToken.balanceOf(LCAddress_D), OPLEntitlement_D);
-      assert.equal(await lqtyToken.balanceOf(LCAddress_E), OPLEntitlement_E);
+      assert.equal(await oplToken.balanceOf(LCAddress_A), OPLEntitlement_A);
+      assert.equal(await oplToken.balanceOf(LCAddress_B), OPLEntitlement_B);
+      assert.equal(await oplToken.balanceOf(LCAddress_C), OPLEntitlement_C);
+      assert.equal(await oplToken.balanceOf(LCAddress_D), OPLEntitlement_D);
+      assert.equal(await oplToken.balanceOf(LCAddress_E), OPLEntitlement_E);
     });
 
     it("OPL Multisig can transfer OPL to LCs deployed through the factory by anyone", async () => {
@@ -477,24 +477,24 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
       const LCAddress_D = await th.getLCAddressFromDeploymentTx(deployedLCtx_D);
       const LCAddress_E = await th.getLCAddressFromDeploymentTx(deployedLCtx_E);
 
-      assert.equal(await lqtyToken.balanceOf(LCAddress_A), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_B), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_C), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_D), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_E), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_A), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_B), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_C), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_D), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_E), "0");
 
       // Multisig transfers OPL to each LC
-      await lqtyToken.transfer(LCAddress_A, dec(1, 18), { from: multisig });
-      await lqtyToken.transfer(LCAddress_B, dec(2, 18), { from: multisig });
-      await lqtyToken.transfer(LCAddress_C, dec(3, 18), { from: multisig });
-      await lqtyToken.transfer(LCAddress_D, dec(4, 18), { from: multisig });
-      await lqtyToken.transfer(LCAddress_E, dec(5, 18), { from: multisig });
+      await oplToken.transfer(LCAddress_A, dec(1, 18), { from: multisig });
+      await oplToken.transfer(LCAddress_B, dec(2, 18), { from: multisig });
+      await oplToken.transfer(LCAddress_C, dec(3, 18), { from: multisig });
+      await oplToken.transfer(LCAddress_D, dec(4, 18), { from: multisig });
+      await oplToken.transfer(LCAddress_E, dec(5, 18), { from: multisig });
 
-      assert.equal(await lqtyToken.balanceOf(LCAddress_A), dec(1, 18));
-      assert.equal(await lqtyToken.balanceOf(LCAddress_B), dec(2, 18));
-      assert.equal(await lqtyToken.balanceOf(LCAddress_C), dec(3, 18));
-      assert.equal(await lqtyToken.balanceOf(LCAddress_D), dec(4, 18));
-      assert.equal(await lqtyToken.balanceOf(LCAddress_E), dec(5, 18));
+      assert.equal(await oplToken.balanceOf(LCAddress_A), dec(1, 18));
+      assert.equal(await oplToken.balanceOf(LCAddress_B), dec(2, 18));
+      assert.equal(await oplToken.balanceOf(LCAddress_C), dec(3, 18));
+      assert.equal(await oplToken.balanceOf(LCAddress_D), dec(4, 18));
+      assert.equal(await oplToken.balanceOf(LCAddress_E), dec(5, 18));
     });
 
     // can't transfer OPL to any LCs that were deployed directly
@@ -525,13 +525,13 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
       const LC_C = await th.getLCFromDeploymentTx(deployedLCtx_C);
 
       // Multisig transfers OPL to each LC
-      await lqtyToken.transfer(LC_A.address, OPLEntitlement_A, { from: multisig });
-      await lqtyToken.transfer(LC_B.address, OPLEntitlement_B, { from: multisig });
-      await lqtyToken.transfer(LC_C.address, OPLEntitlement_C, { from: multisig });
+      await oplToken.transfer(LC_A.address, OPLEntitlement_A, { from: multisig });
+      await oplToken.transfer(LC_B.address, OPLEntitlement_B, { from: multisig });
+      await oplToken.transfer(LC_C.address, OPLEntitlement_C, { from: multisig });
 
-      assert.equal(await lqtyToken.balanceOf(LC_A.address), OPLEntitlement_A);
-      assert.equal(await lqtyToken.balanceOf(LC_B.address), OPLEntitlement_B);
-      assert.equal(await lqtyToken.balanceOf(LC_C.address), OPLEntitlement_C);
+      assert.equal(await oplToken.balanceOf(LC_A.address), OPLEntitlement_A);
+      assert.equal(await oplToken.balanceOf(LC_B.address), OPLEntitlement_B);
+      assert.equal(await oplToken.balanceOf(LC_C.address), OPLEntitlement_C);
 
       const LCs = [LC_A, LC_B, LC_C];
 
@@ -571,13 +571,13 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
       const LC_C = await th.getLCFromDeploymentTx(deployedLCtx_C);
 
       // Multisig transfers OPL to each LC
-      await lqtyToken.transfer(LC_A.address, OPLEntitlement_A, { from: multisig });
-      await lqtyToken.transfer(LC_B.address, OPLEntitlement_B, { from: multisig });
-      await lqtyToken.transfer(LC_C.address, OPLEntitlement_C, { from: multisig });
+      await oplToken.transfer(LC_A.address, OPLEntitlement_A, { from: multisig });
+      await oplToken.transfer(LC_B.address, OPLEntitlement_B, { from: multisig });
+      await oplToken.transfer(LC_C.address, OPLEntitlement_C, { from: multisig });
 
-      assert.equal(await lqtyToken.balanceOf(LC_A.address), OPLEntitlement_A);
-      assert.equal(await lqtyToken.balanceOf(LC_B.address), OPLEntitlement_B);
-      assert.equal(await lqtyToken.balanceOf(LC_C.address), OPLEntitlement_C);
+      assert.equal(await oplToken.balanceOf(LC_A.address), OPLEntitlement_A);
+      assert.equal(await oplToken.balanceOf(LC_B.address), OPLEntitlement_B);
+      assert.equal(await oplToken.balanceOf(LC_C.address), OPLEntitlement_C);
 
       const LCs = [LC_A, LC_B, LC_C];
 
@@ -602,9 +602,9 @@ contract("Deploying and funding One Year Lockup Contracts", async accounts => {
       const LC_A = await th.getLCFromDeploymentTx(deployedLCtx_A);
 
       // LiquityAG transfers OPL to the LC
-      await lqtyToken.transfer(LC_A.address, OPLEntitlement_A, { from: multisig });
+      await oplToken.transfer(LC_A.address, OPLEntitlement_A, { from: multisig });
 
-      assert.equal(await lqtyToken.balanceOf(LC_A.address), OPLEntitlement_A);
+      assert.equal(await oplToken.balanceOf(LC_A.address), OPLEntitlement_A);
 
       // Various EOAs attempt to withdraw from LCs
       try {

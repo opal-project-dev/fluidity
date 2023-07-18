@@ -40,7 +40,7 @@ contract("Gas costs for math functions", async accounts => {
     hintHelpers = contracts.hintHelpers;
 
     gtStaking = OPLContracts.gtStaking;
-    lqtyToken = OPLContracts.lqtyToken;
+    oplToken = OPLContracts.oplToken;
     communityIssuance = OPLContracts.communityIssuance;
     lockupContractFactory = OPLContracts.lockupContractFactory;
 

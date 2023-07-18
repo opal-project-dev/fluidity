@@ -1445,8 +1445,8 @@ class TestHelper {
     return Number(days) * (60 * 60 * 24);
   }
 
-  static async getTimeFromSystemDeployment(lqtyToken, web3, timePassedSinceDeployment) {
-    const deploymentTime = await lqtyToken.getDeploymentStartTime();
+  static async getTimeFromSystemDeployment(oplToken, web3, timePassedSinceDeployment) {
+    const deploymentTime = await oplToken.getDeploymentStartTime();
     return this.toBN(deploymentTime).add(this.toBN(timePassedSinceDeployment));
   }
 

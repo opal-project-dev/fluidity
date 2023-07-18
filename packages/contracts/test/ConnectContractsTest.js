@@ -16,8 +16,8 @@ contract(
     let defaultPool;
     let functionCaller;
     let borrowerOperations;
-    let lqtyStaking;
-    let lqtyToken;
+    let oplStaking;
+    let oplToken;
     let communityIssuance;
     let lockupContractFactory;
 
@@ -39,8 +39,8 @@ contract(
       functionCaller = coreContracts.functionCaller;
       borrowerOperations = coreContracts.borrowerOperations;
 
-      lqtyStaking = OPLContracts.lqtyStaking;
-      lqtyToken = OPLContracts.lqtyToken;
+      oplStaking = OPLContracts.oplStaking;
+      oplToken = OPLContracts.oplToken;
       communityIssuance = OPLContracts.communityIssuance;
       lockupContractFactory = OPLContracts.lockupContractFactory;
 
@@ -110,10 +110,10 @@ contract(
 
     // OPL Staking in TroveM
     it("Sets the correct OPLStaking address in TroveManager", async () => {
-      const lqtyStakingAddress = lqtyStaking.address;
+      const oplStakingAddress = oplStaking.address;
 
-      const recordedOPLStakingAddress = await troveManager.lqtyStaking();
-      assert.equal(lqtyStakingAddress, recordedOPLStakingAddress);
+      const recordedOPLStakingAddress = await troveManager.oplStaking();
+      assert.equal(oplStakingAddress, recordedOPLStakingAddress);
     });
 
     // Active Pool
@@ -255,27 +255,27 @@ contract(
 
     // OPL Staking in BO
     it("Sets the correct OPLStaking address in BorrowerOperations", async () => {
-      const lqtyStakingAddress = lqtyStaking.address;
+      const oplStakingAddress = oplStaking.address;
 
-      const recordedOPLStakingAddress = await borrowerOperations.lqtyStakingAddress();
-      assert.equal(lqtyStakingAddress, recordedOPLStakingAddress);
+      const recordedOPLStakingAddress = await borrowerOperations.oplStakingAddress();
+      assert.equal(oplStakingAddress, recordedOPLStakingAddress);
     });
 
     // --- OPL Staking ---
 
     // Sets OPLToken in OPLStaking
     it("Sets the correct OPLToken address in OPLStaking", async () => {
-      const lqtyTokenAddress = lqtyToken.address;
+      const oplTokenAddress = oplToken.address;
 
-      const recordedOPLTokenAddress = await lqtyStaking.lqtyToken();
-      assert.equal(lqtyTokenAddress, recordedOPLTokenAddress);
+      const recordedOPLTokenAddress = await oplStaking.oplToken();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
     });
 
     // Sets ActivePool in OPLStaking
     it("Sets the correct ActivePool address in OPLStaking", async () => {
       const activePoolAddress = activePool.address;
 
-      const recordedActivePoolAddress = await lqtyStaking.activePoolAddress();
+      const recordedActivePoolAddress = await oplStaking.activePoolAddress();
       assert.equal(activePoolAddress, recordedActivePoolAddress);
     });
 
@@ -283,7 +283,7 @@ contract(
     it("Sets the correct ActivePool address in OPLStaking", async () => {
       const oneuTokenAddress = oneuToken.address;
 
-      const recordedONEUTokenAddress = await lqtyStaking.oneuToken();
+      const recordedONEUTokenAddress = await oplStaking.oneuToken();
       assert.equal(oneuTokenAddress, recordedONEUTokenAddress);
     });
 
@@ -291,7 +291,7 @@ contract(
     it("Sets the correct ActivePool address in OPLStaking", async () => {
       const troveManagerAddress = troveManager.address;
 
-      const recordedTroveManagerAddress = await lqtyStaking.troveManagerAddress();
+      const recordedTroveManagerAddress = await oplStaking.troveManagerAddress();
       assert.equal(troveManagerAddress, recordedTroveManagerAddress);
     });
 
@@ -299,7 +299,7 @@ contract(
     it("Sets the correct BorrowerOperations address in OPLStaking", async () => {
       const borrowerOperationsAddress = borrowerOperations.address;
 
-      const recordedBorrowerOperationsAddress = await lqtyStaking.borrowerOperationsAddress();
+      const recordedBorrowerOperationsAddress = await oplStaking.borrowerOperationsAddress();
       assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress);
     });
 
@@ -309,23 +309,23 @@ contract(
     it("Sets the correct CommunityIssuance address in OPLToken", async () => {
       const communityIssuanceAddress = communityIssuance.address;
 
-      const recordedcommunityIssuanceAddress = await lqtyToken.communityIssuanceAddress();
+      const recordedcommunityIssuanceAddress = await oplToken.communityIssuanceAddress();
       assert.equal(communityIssuanceAddress, recordedcommunityIssuanceAddress);
     });
 
     // Sets OPLStaking in OPLToken
     it("Sets the correct OPLStaking address in OPLToken", async () => {
-      const lqtyStakingAddress = lqtyStaking.address;
+      const oplStakingAddress = oplStaking.address;
 
-      const recordedOPLStakingAddress = await lqtyToken.lqtyStakingAddress();
-      assert.equal(lqtyStakingAddress, recordedOPLStakingAddress);
+      const recordedOPLStakingAddress = await oplToken.oplStakingAddress();
+      assert.equal(oplStakingAddress, recordedOPLStakingAddress);
     });
 
     // Sets LCF in OPLToken
     it("Sets the correct LockupContractFactory address in OPLToken", async () => {
       const LCFAddress = lockupContractFactory.address;
 
-      const recordedLCFAddress = await lqtyToken.lockupContractFactory();
+      const recordedLCFAddress = await oplToken.lockupContractFactory();
       assert.equal(LCFAddress, recordedLCFAddress);
     });
 
@@ -333,20 +333,20 @@ contract(
 
     // Sets OPLToken in LockupContractFactory
     it("Sets the correct OPLToken address in LockupContractFactory", async () => {
-      const lqtyTokenAddress = lqtyToken.address;
+      const oplTokenAddress = oplToken.address;
 
-      const recordedOPLTokenAddress = await lockupContractFactory.lqtyTokenAddress();
-      assert.equal(lqtyTokenAddress, recordedOPLTokenAddress);
+      const recordedOPLTokenAddress = await lockupContractFactory.oplTokenAddress();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
     });
 
     // --- CI ---
 
     // Sets OPLToken in CommunityIssuance
     it("Sets the correct OPLToken address in CommunityIssuance", async () => {
-      const lqtyTokenAddress = lqtyToken.address;
+      const oplTokenAddress = oplToken.address;
 
-      const recordedOPLTokenAddress = await communityIssuance.lqtyToken();
-      assert.equal(lqtyTokenAddress, recordedOPLTokenAddress);
+      const recordedOPLTokenAddress = await communityIssuance.oplToken();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
     });
 
     it("Sets the correct StabilityPool address in CommunityIssuance", async () => {

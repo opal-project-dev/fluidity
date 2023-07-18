@@ -71,8 +71,8 @@ contract("TroveManager", async accounts => {
     borrowerOperations = contracts.borrowerOperations;
     hintHelpers = contracts.hintHelpers;
 
-    lqtyStaking = OPLContracts.lqtyStaking;
-    lqtyToken = OPLContracts.lqtyToken;
+    oplStaking = OPLContracts.oplStaking;
+    oplToken = OPLContracts.oplToken;
     communityIssuance = OPLContracts.communityIssuance;
     lockupContractFactory = OPLContracts.lockupContractFactory;
 

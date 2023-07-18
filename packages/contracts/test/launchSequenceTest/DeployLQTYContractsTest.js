@@ -28,8 +28,8 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
     );
     await deploymentHelper.connectOPLContracts(OPLContracts);
 
-    lqtyStaking = OPLContracts.lqtyStaking;
-    lqtyToken = OPLContracts.lqtyToken;
+    oplStaking = OPLContracts.oplStaking;
+    oplToken = OPLContracts.oplToken;
     communityIssuance = OPLContracts.communityIssuance;
     lockupContractFactory = OPLContracts.lockupContractFactory;
 
@@ -47,7 +47,7 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
 
   describe("OPLStaking deployment", async accounts => {
     it("Stores the deployer's address", async () => {
-      const storedDeployerAddress = await lqtyStaking.owner();
+      const storedDeployerAddress = await oplStaking.owner();
 
       assert.equal(liquityAG, storedDeployerAddress);
     });
@@ -55,25 +55,25 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
 
   describe("OPLToken deployment", async accounts => {
     it("Stores the multisig's address", async () => {
-      const storedMultisigAddress = await lqtyToken.multisigAddress();
+      const storedMultisigAddress = await oplToken.multisigAddress();
 
       assert.equal(multisig, storedMultisigAddress);
     });
 
     it("Stores the CommunityIssuance address", async () => {
-      const storedCIAddress = await lqtyToken.communityIssuanceAddress();
+      const storedCIAddress = await oplToken.communityIssuanceAddress();
 
       assert.equal(communityIssuance.address, storedCIAddress);
     });
 
     it("Stores the LockupContractFactory address", async () => {
-      const storedLCFAddress = await lqtyToken.lockupContractFactory();
+      const storedLCFAddress = await oplToken.lockupContractFactory();
 
       assert.equal(lockupContractFactory.address, storedLCFAddress);
     });
 
     it("Mints the correct OPL amount to the multisig's address: (64.66 million)", async () => {
-      const multisigOPLEntitlement = await lqtyToken.balanceOf(multisig);
+      const multisigOPLEntitlement = await oplToken.balanceOf(multisig);
 
       const twentyThreeSixes = "6".repeat(23);
       const expectedMultisigEntitlement = "64".concat(twentyThreeSixes).concat("7");
@@ -81,7 +81,7 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
     });
 
     it("Mints the correct OPL amount to the CommunityIssuance contract address: 32 million", async () => {
-      const communityOPLEntitlement = await lqtyToken.balanceOf(communityIssuance.address);
+      const communityOPLEntitlement = await oplToken.balanceOf(communityIssuance.address);
       // 32 million as 18-digit decimal
       const _32Million = dec(32, 24);
 
@@ -89,7 +89,7 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
     });
 
     it("Mints the correct OPL amount to the bountyAddress EOA: 2 million", async () => {
-      const bountyAddressBal = await lqtyToken.balanceOf(bountyAddress);
+      const bountyAddressBal = await oplToken.balanceOf(bountyAddress);
       // 2 million as 18-digit decimal
       const _2Million = dec(2, 24);
 
@@ -97,7 +97,7 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
     });
 
     it("Mints the correct OPL amount to the lpRewardsAddress EOA: 1.33 million", async () => {
-      const lpRewardsAddressBal = await lqtyToken.balanceOf(lpRewardsAddress);
+      const lpRewardsAddressBal = await oplToken.balanceOf(lpRewardsAddress);
       // 1.3 million as 18-digit decimal
       const _1pt33Million = "1".concat("3".repeat(24));
 
@@ -119,14 +119,14 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
     });
 
     it("Liquity AG can set addresses if CI's OPL balance is equal or greater than 32 million ", async () => {
-      const OPLBalance = await lqtyToken.balanceOf(communityIssuance.address);
+      const OPLBalance = await oplToken.balanceOf(communityIssuance.address);
       assert.isTrue(OPLBalance.eq(expectedCISupplyCap));
 
       // Deploy core contracts, just to get the Stability Pool address
       const coreContracts = await deploymentHelper.deployLiquityCore();
 
       const tx = await communityIssuance.setAddresses(
-        lqtyToken.address,
+        oplToken.address,
         coreContracts.stabilityPool.address,
         { from: liquityAG }
       );
@@ -136,17 +136,17 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
     it("Liquity AG can't set addresses if CI's OPL balance is < 32 million ", async () => {
       const newCI = await CommunityIssuance.new();
 
-      const OPLBalance = await lqtyToken.balanceOf(newCI.address);
+      const OPLBalance = await oplToken.balanceOf(newCI.address);
       assert.equal(OPLBalance, "0");
 
       // Deploy core contracts, just to get the Stability Pool address
       const coreContracts = await deploymentHelper.deployLiquityCore();
 
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-      await lqtyToken.transfer(newCI.address, "31999999999999999999999999", { from: multisig }); // 1e-18 less than CI expects (32 million)
+      await oplToken.transfer(newCI.address, "31999999999999999999999999", { from: multisig }); // 1e-18 less than CI expects (32 million)
 
       try {
-        const tx = await newCI.setAddresses(lqtyToken.address, coreContracts.stabilityPool.address, {
+        const tx = await newCI.setAddresses(oplToken.address, coreContracts.stabilityPool.address, {
           from: liquityAG
         });
 
@@ -163,17 +163,17 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
       const coreContracts = await deploymentHelper.deployLiquityCore();
       await deploymentHelper.connectOPLContractsToCore(OPLContracts, coreContracts);
 
-      const lqtyTokenAddress = lqtyToken.address;
+      const oplTokenAddress = oplToken.address;
 
-      const recordedOPLTokenAddress = await lqtyStaking.lqtyToken();
-      assert.equal(lqtyTokenAddress, recordedOPLTokenAddress);
+      const recordedOPLTokenAddress = await oplStaking.oplToken();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
     });
 
     it("sets the correct OPLToken address in LockupContractFactory", async () => {
-      const lqtyTokenAddress = lqtyToken.address;
+      const oplTokenAddress = oplToken.address;
 
-      const recordedOPLTokenAddress = await lockupContractFactory.lqtyTokenAddress();
-      assert.equal(lqtyTokenAddress, recordedOPLTokenAddress);
+      const recordedOPLTokenAddress = await lockupContractFactory.oplTokenAddress();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
     });
 
     it("sets the correct OPLToken address in CommunityIssuance", async () => {
@@ -181,10 +181,10 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
       const coreContracts = await deploymentHelper.deployLiquityCore();
       await deploymentHelper.connectOPLContractsToCore(OPLContracts, coreContracts);
 
-      const lqtyTokenAddress = lqtyToken.address;
+      const oplTokenAddress = oplToken.address;
 
-      const recordedOPLTokenAddress = await communityIssuance.lqtyToken();
-      assert.equal(lqtyTokenAddress, recordedOPLTokenAddress);
+      const recordedOPLTokenAddress = await communityIssuance.oplToken();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
     });
   });
 });

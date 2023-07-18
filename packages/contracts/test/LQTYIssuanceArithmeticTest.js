@@ -35,7 +35,7 @@ contract("OPL community issuance arithmetic tests", async accounts => {
   let contracts;
   let borrowerOperations;
   let communityIssuanceTester;
-  let lqtyToken;
+  let oplToken;
   let stabilityPool;
 
   const [owner, alice, frontEnd_1] = accounts;
@@ -57,7 +57,7 @@ contract("OPL community issuance arithmetic tests", async accounts => {
     stabilityPool = contracts.stabilityPool;
     borrowerOperations = contracts.borrowerOperations;
 
-    lqtyToken = OPLContracts.lqtyToken;
+    oplToken = OPLContracts.oplToken;
     communityIssuanceTester = OPLContracts.communityIssuance;
 
     await deploymentHelper.connectOPLContracts(OPLContracts);
@@ -787,7 +787,7 @@ contract("OPL community issuance arithmetic tests", async accounts => {
     // Depositor withdraws their deposit and accumulated OPL
     await stabilityPool.withdrawFromSP(dec(1, 18), { from: alice });
 
-    const OPLBalance_A = await lqtyToken.balanceOf(alice);
+    const OPLBalance_A = await oplToken.balanceOf(alice);
     const expectedOPLBalance_A = th.toBN("33333333302289200000000000");
     const diff = expectedOPLBalance_A.sub(OPLBalance_A);
 
@@ -824,7 +824,7 @@ contract("OPL community issuance arithmetic tests", async accounts => {
     // Depositor withdraws their deposit and accumulated OPL
     await stabilityPool.withdrawFromSP(dec(1, 18), { from: alice });
 
-    const OPLBalance_A = await lqtyToken.balanceOf(alice);
+    const OPLBalance_A = await oplToken.balanceOf(alice);
     const expectedOPLBalance_A = th.toBN("33333333302289200000000000");
     const diff = expectedOPLBalance_A.sub(OPLBalance_A);
 
@@ -861,7 +861,7 @@ contract("OPL community issuance arithmetic tests", async accounts => {
     // Depositor withdraws their deposit and accumulated OPL
     await stabilityPool.withdrawFromSP(dec(1, 18), { from: alice });
 
-    const OPLBalance_A = await lqtyToken.balanceOf(alice);
+    const OPLBalance_A = await oplToken.balanceOf(alice);
     const expectedOPLBalance_A = th.toBN("1845951269598880000000000");
     const diff = expectedOPLBalance_A.sub(OPLBalance_A);
 
@@ -899,7 +899,7 @@ contract("OPL community issuance arithmetic tests", async accounts => {
     // Depositor withdraws their deposit and accumulated OPL
     await stabilityPool.withdrawFromSP(dec(1, 18), { from: alice });
 
-    const OPLBalance_A = await lqtyToken.balanceOf(alice);
+    const OPLBalance_A = await oplToken.balanceOf(alice);
     const expectedOPLBalance_A = th.toBN("1845951269598880000000000");
     const diff = expectedOPLBalance_A.sub(OPLBalance_A);
 

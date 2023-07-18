@@ -33,8 +33,8 @@ contract(
     let functionCaller;
     let borrowerOperations;
 
-    let lqtyStaking;
-    let lqtyToken;
+    let oplStaking;
+    let oplToken;
     let communityIssuance;
     let lockupContractFactory;
 
@@ -59,8 +59,8 @@ contract(
       functionCaller = coreContracts.functionCaller;
       borrowerOperations = coreContracts.borrowerOperations;
 
-      lqtyStaking = OPLContracts.lqtyStaking;
-      lqtyToken = OPLContracts.lqtyToken;
+      oplStaking = OPLContracts.oplStaking;
+      oplToken = OPLContracts.oplToken;
       communityIssuance = OPLContracts.communityIssuance;
       lockupContractFactory = OPLContracts.lockupContractFactory;
 
@@ -79,7 +79,7 @@ contract(
       const expectedCISupplyCap = "32000000000000000000000000"; // 32mil
 
       // Check CI has been properly funded
-      const bal = await lqtyToken.balanceOf(communityIssuance.address);
+      const bal = await oplToken.balanceOf(communityIssuance.address);
       assert.equal(bal, expectedCISupplyCap);
     });
 
@@ -446,7 +446,7 @@ contract(
     describe("LockupContract", async accounts => {
       it("withdrawOPL(): reverts when caller is not beneficiary", async () => {
         // deploy new LC with Carol as beneficiary
-        const unlockTime = (await lqtyToken.getDeploymentStartTime()).add(
+        const unlockTime = (await oplToken.getDeploymentStartTime()).add(
           toBN(timeValues.SECONDS_IN_ONE_YEAR)
         );
         const deployedLCtx = await lockupContractFactory.deployLockupContract(carol, unlockTime, {
@@ -456,7 +456,7 @@ contract(
         const LC = await th.getLCFromDeploymentTx(deployedLCtx);
 
         // OPL Multisig funds the LC
-        await lqtyToken.transfer(LC.address, dec(100, 18), { from: multisig });
+        await oplToken.transfer(LC.address, dec(100, 18), { from: multisig });
 
         // Fast-forward one year, so that beneficiary can withdraw
         await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
@@ -477,7 +477,7 @@ contract(
     describe("OPLStaking", async accounts => {
       it("increaseF_ONEU(): reverts when caller is not TroveManager", async () => {
         try {
-          const txAlice = await lqtyStaking.increaseF_ONEU(dec(1, 18), { from: alice });
+          const txAlice = await oplStaking.increaseF_ONEU(dec(1, 18), { from: alice });
         } catch (err) {
           assert.include(err.message, "revert");
         }
@@ -487,11 +487,11 @@ contract(
     describe("OPLToken", async accounts => {
       it("sendToOPLStaking(): reverts when caller is not the OPLSstaking", async () => {
         // Check multisig has some OPL
-        assert.isTrue((await lqtyToken.balanceOf(multisig)).gt(toBN("0")));
+        assert.isTrue((await oplToken.balanceOf(multisig)).gt(toBN("0")));
 
         // multisig tries to call it
         try {
-          const tx = await lqtyToken.sendToOPLStaking(multisig, 1, { from: multisig });
+          const tx = await oplToken.sendToOPLStaking(multisig, 1, { from: multisig });
         } catch (err) {
           assert.include(err.message, "revert");
         }
@@ -500,12 +500,12 @@ contract(
         await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
         // Owner transfers 1 OPL to bob
-        await lqtyToken.transfer(bob, dec(1, 18), { from: multisig });
-        assert.equal(await lqtyToken.balanceOf(bob), dec(1, 18));
+        await oplToken.transfer(bob, dec(1, 18), { from: multisig });
+        assert.equal(await oplToken.balanceOf(bob), dec(1, 18));
 
         // Bob tries to call it
         try {
-          const tx = await lqtyToken.sendToOPLStaking(bob, dec(1, 18), { from: bob });
+          const tx = await oplToken.sendToOPLStaking(bob, dec(1, 18), { from: bob });
         } catch (err) {
           assert.include(err.message, "revert");
         }

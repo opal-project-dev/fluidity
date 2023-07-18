@@ -39,8 +39,8 @@ contract("OPLStaking revenue share tests", async accounts => {
   let stabilityPool;
   let defaultPool;
   let borrowerOperations;
-  let lqtyStaking;
-  let lqtyToken;
+  let oplStaking;
+  let oplToken;
 
   let contracts;
 
@@ -71,8 +71,8 @@ contract("OPLStaking revenue share tests", async accounts => {
     borrowerOperations = contracts.borrowerOperations;
     hintHelpers = contracts.hintHelpers;
 
-    lqtyToken = OPLContracts.lqtyToken;
-    lqtyStaking = OPLContracts.lqtyStaking;
+    oplToken = OPLContracts.oplToken;
+    oplStaking = OPLContracts.oplStaking;
   });
 
   it("stake(): reverts if amount is zero", async () => {
@@ -80,13 +80,13 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
 
-    // console.log(`A lqty bal: ${await lqtyToken.balanceOf(A)}`)
+    // console.log(`A opl bal: ${await oplToken.balanceOf(A)}`)
 
     // A makes stake
-    await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await assertRevert(lqtyStaking.stake(0, { from: A }), "OPLStaking: Amount must be non-zero");
+    await oplToken.approve(oplStaking.address, dec(100, 18), { from: A });
+    await assertRevert(oplStaking.stake(0, { from: A }), "OPLStaking: Amount must be non-zero");
   });
 
   it("AUT fee per OPL staked increases when a redemption fee is triggered and totalStakes > 0", async () => {
@@ -115,16 +115,16 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig, gasPrice: GAS_PRICE });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig, gasPrice: GAS_PRICE });
 
-    // console.log(`A lqty bal: ${await lqtyToken.balanceOf(A)}`)
+    // console.log(`A opl bal: ${await oplToken.balanceOf(A)}`)
 
     // A makes stake
-    await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await lqtyStaking.stake(dec(100, 18), { from: A });
+    await oplToken.approve(oplStaking.address, dec(100, 18), { from: A });
+    await oplStaking.stake(dec(100, 18), { from: A });
 
     // Check AUT fee per unit staked is zero
-    const F_AUT_Before = await lqtyStaking.F_AUT();
+    const F_AUT_Before = await oplStaking.F_AUT();
     assert.equal(F_AUT_Before, "0");
 
     const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
@@ -144,7 +144,7 @@ contract("OPLStaking revenue share tests", async accounts => {
     assert.isTrue(emittedAUTFee.gt(toBN("0")));
 
     // Check AUT fee per unit staked has increased by correct amount
-    const F_AUT_After = await lqtyStaking.F_AUT();
+    const F_AUT_After = await oplStaking.F_AUT();
 
     // Expect fee per unit staked = fee/100, since there is 100 ONEU totalStaked
     const expected_F_AUT_After = emittedAUTFee.div(toBN("100"));
@@ -183,10 +183,10 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig, gasPrice: GAS_PRICE });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig, gasPrice: GAS_PRICE });
 
     // Check AUT fee per unit staked is zero
-    const F_AUT_Before = await lqtyStaking.F_AUT();
+    const F_AUT_Before = await oplStaking.F_AUT();
     assert.equal(F_AUT_Before, "0");
 
     const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
@@ -206,7 +206,7 @@ contract("OPLStaking revenue share tests", async accounts => {
     assert.isTrue(emittedAUTFee.gt(toBN("0")));
 
     // Check AUT fee per unit staked has not increased
-    const F_AUT_After = await lqtyStaking.F_AUT();
+    const F_AUT_After = await oplStaking.F_AUT();
     assert.equal(F_AUT_After, "0");
   });
 
@@ -241,14 +241,14 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
-    await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await lqtyStaking.stake(dec(100, 18), { from: A });
+    await oplToken.approve(oplStaking.address, dec(100, 18), { from: A });
+    await oplStaking.stake(dec(100, 18), { from: A });
 
     // Check ONEU fee per unit staked is zero
-    const F_ONEU_Before = await lqtyStaking.F_AUT();
+    const F_ONEU_Before = await oplStaking.F_AUT();
     assert.equal(F_ONEU_Before, "0");
 
     const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
@@ -275,7 +275,7 @@ contract("OPLStaking revenue share tests", async accounts => {
     assert.isTrue(emittedONEUFee.gt(toBN("0")));
 
     // Check ONEU fee per unit staked has increased by correct amount
-    const F_ONEU_After = await lqtyStaking.F_ONEU();
+    const F_ONEU_After = await oplStaking.F_ONEU();
 
     // Expect fee per unit staked = fee/100, since there is 100 ONEU totalStaked
     const expected_F_ONEU_After = emittedONEUFee.div(toBN("100"));
@@ -314,10 +314,10 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
 
     // Check ONEU fee per unit staked is zero
-    const F_ONEU_Before = await lqtyStaking.F_AUT();
+    const F_ONEU_Before = await oplStaking.F_AUT();
     assert.equal(F_ONEU_Before, "0");
 
     const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
@@ -344,7 +344,7 @@ contract("OPLStaking revenue share tests", async accounts => {
     assert.isTrue(emittedONEUFee.gt(toBN("0")));
 
     // Check ONEU fee per unit staked did not increase, is still zero
-    const F_ONEU_After = await lqtyStaking.F_ONEU();
+    const F_ONEU_After = await oplStaking.F_ONEU();
     assert.equal(F_ONEU_After, "0");
   });
 
@@ -379,11 +379,11 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
-    await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await lqtyStaking.stake(dec(100, 18), { from: A });
+    await oplToken.approve(oplStaking.address, dec(100, 18), { from: A });
+    await oplStaking.stake(dec(100, 18), { from: A });
 
     const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
@@ -443,7 +443,7 @@ contract("OPLStaking revenue share tests", async accounts => {
 
     // A un-stakes
     const GAS_Used = th.gasUsed(
-      await lqtyStaking.unstake(dec(100, 18), { from: A, gasPrice: GAS_PRICE })
+      await oplStaking.unstake(dec(100, 18), { from: A, gasPrice: GAS_PRICE })
     );
 
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
@@ -487,11 +487,11 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
-    await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await lqtyStaking.stake(dec(50, 18), { from: A });
+    await oplToken.approve(oplStaking.address, dec(100, 18), { from: A });
+    await oplStaking.stake(dec(50, 18), { from: A });
 
     const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
@@ -551,7 +551,7 @@ contract("OPLStaking revenue share tests", async accounts => {
 
     // A tops up
     const GAS_Used = th.gasUsed(
-      await lqtyStaking.stake(dec(50, 18), { from: A, gasPrice: GAS_PRICE })
+      await oplStaking.stake(dec(50, 18), { from: A, gasPrice: GAS_PRICE })
     );
 
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
@@ -595,11 +595,11 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
-    await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await lqtyStaking.stake(dec(50, 18), { from: A });
+    await oplToken.approve(oplStaking.address, dec(100, 18), { from: A });
+    await oplStaking.stake(dec(50, 18), { from: A });
 
     const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
@@ -635,7 +635,7 @@ contract("OPLStaking revenue share tests", async accounts => {
 
     const expectedTotalAUTGain = emittedAUTFee_1.add(emittedAUTFee_2);
 
-    const A_AUTGain = await lqtyStaking.getPendingAUTGain(A);
+    const A_AUTGain = await oplStaking.getPendingAUTGain(A);
 
     assert.isAtMost(th.getDifference(expectedTotalAUTGain, A_AUTGain), 1000);
   });
@@ -671,11 +671,11 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
 
     // A makes stake
-    await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await lqtyStaking.stake(dec(50, 18), { from: A });
+    await oplToken.approve(oplStaking.address, dec(100, 18), { from: A });
+    await oplStaking.stake(dec(50, 18), { from: A });
 
     const B_BalBeforeREdemption = await oneuToken.balanceOf(B);
     // B redeems
@@ -728,7 +728,7 @@ contract("OPLStaking revenue share tests", async accounts => {
     assert.isTrue(emittedONEUFee_2.gt(toBN("0")));
 
     const expectedTotalONEUGain = emittedONEUFee_1.add(emittedONEUFee_2);
-    const A_ONEUGain = await lqtyStaking.getPendingONEUGain(A);
+    const A_ONEUGain = await oplStaking.getPendingONEUGain(A);
 
     assert.isAtMost(th.getDifference(expectedTotalONEUGain, A_ONEUGain), 1000);
   });
@@ -780,22 +780,22 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A, B, C
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
-    await lqtyToken.transfer(B, dec(200, 18), { from: multisig });
-    await lqtyToken.transfer(C, dec(300, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(B, dec(200, 18), { from: multisig });
+    await oplToken.transfer(C, dec(300, 18), { from: multisig });
 
     // A, B, C make stake
-    await lqtyToken.approve(lqtyStaking.address, dec(100, 18), { from: A });
-    await lqtyToken.approve(lqtyStaking.address, dec(200, 18), { from: B });
-    await lqtyToken.approve(lqtyStaking.address, dec(300, 18), { from: C });
-    await lqtyStaking.stake(dec(100, 18), { from: A });
-    await lqtyStaking.stake(dec(200, 18), { from: B });
-    await lqtyStaking.stake(dec(300, 18), { from: C });
+    await oplToken.approve(oplStaking.address, dec(100, 18), { from: A });
+    await oplToken.approve(oplStaking.address, dec(200, 18), { from: B });
+    await oplToken.approve(oplStaking.address, dec(300, 18), { from: C });
+    await oplStaking.stake(dec(100, 18), { from: A });
+    await oplStaking.stake(dec(200, 18), { from: B });
+    await oplStaking.stake(dec(300, 18), { from: C });
 
     // Confirm staking contract holds 600 OPL
-    // console.log(`lqty staking OPL bal: ${await lqtyToken.balanceOf(lqtyStaking.address)}`)
-    assert.equal(await lqtyToken.balanceOf(lqtyStaking.address), dec(600, 18));
-    assert.equal(await lqtyStaking.totalOPLStaked(), dec(600, 18));
+    // console.log(`opl staking OPL bal: ${await oplToken.balanceOf(oplStaking.address)}`)
+    assert.equal(await oplToken.balanceOf(oplStaking.address), dec(600, 18));
+    assert.equal(await oplStaking.totalOPLStaked(), dec(600, 18));
 
     // F redeems
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(
@@ -832,13 +832,13 @@ contract("OPLStaking revenue share tests", async accounts => {
     assert.isTrue(emittedONEUFee_2.gt(toBN("0")));
 
     // D obtains OPL from owner and makes a stake
-    await lqtyToken.transfer(D, dec(50, 18), { from: multisig });
-    await lqtyToken.approve(lqtyStaking.address, dec(50, 18), { from: D });
-    await lqtyStaking.stake(dec(50, 18), { from: D });
+    await oplToken.transfer(D, dec(50, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(50, 18), { from: D });
+    await oplStaking.stake(dec(50, 18), { from: D });
 
     // Confirm staking contract holds 650 OPL
-    assert.equal(await lqtyToken.balanceOf(lqtyStaking.address), dec(650, 18));
-    assert.equal(await lqtyStaking.totalOPLStaked(), dec(650, 18));
+    assert.equal(await oplToken.balanceOf(oplStaking.address), dec(650, 18));
+    assert.equal(await oplStaking.totalOPLStaked(), dec(650, 18));
 
     // G redeems
     const redemptionTx_3 = await th.redeemCollateralAndGetTxObject(
@@ -924,23 +924,23 @@ contract("OPLStaking revenue share tests", async accounts => {
 
     // A-D un-stake
     const A_GAS_Used = th.gasUsed(
-      await lqtyStaking.unstake(dec(100, 18), { from: A, gasPrice: GAS_PRICE })
+      await oplStaking.unstake(dec(100, 18), { from: A, gasPrice: GAS_PRICE })
     );
     const B_GAS_Used = th.gasUsed(
-      await lqtyStaking.unstake(dec(200, 18), { from: B, gasPrice: GAS_PRICE })
+      await oplStaking.unstake(dec(200, 18), { from: B, gasPrice: GAS_PRICE })
     );
     const C_GAS_Used = th.gasUsed(
-      await lqtyStaking.unstake(dec(400, 18), { from: C, gasPrice: GAS_PRICE })
+      await oplStaking.unstake(dec(400, 18), { from: C, gasPrice: GAS_PRICE })
     );
     const D_GAS_Used = th.gasUsed(
-      await lqtyStaking.unstake(dec(50, 18), { from: D, gasPrice: GAS_PRICE })
+      await oplStaking.unstake(dec(50, 18), { from: D, gasPrice: GAS_PRICE })
     );
 
     // Confirm all depositors could withdraw
 
     //Confirm pool Size is now 0
-    assert.equal(await lqtyToken.balanceOf(lqtyStaking.address), "0");
-    assert.equal(await lqtyStaking.totalOPLStaked(), "0");
+    assert.equal(await oplToken.balanceOf(oplStaking.address), "0");
+    assert.equal(await oplStaking.totalOPLStaked(), "0");
 
     // Get A-D AUT and ONEU balances
     const A_AUTBalance_After = toBN(await web3.eth.getBalance(A));
@@ -1003,16 +1003,16 @@ contract("OPLStaking revenue share tests", async accounts => {
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
 
     // multisig transfers OPL to staker A and the non-payable proxy
-    await lqtyToken.transfer(A, dec(100, 18), { from: multisig });
-    await lqtyToken.transfer(nonPayable.address, dec(100, 18), { from: multisig });
+    await oplToken.transfer(A, dec(100, 18), { from: multisig });
+    await oplToken.transfer(nonPayable.address, dec(100, 18), { from: multisig });
 
     //  A makes stake
-    const A_stakeTx = await lqtyStaking.stake(dec(100, 18), { from: A });
+    const A_stakeTx = await oplStaking.stake(dec(100, 18), { from: A });
     assert.isTrue(A_stakeTx.receipt.status);
 
     //  A tells proxy to make a stake
     const proxystakeTxData = await th.getTransactionData("stake(uint256)", ["0x56bc75e2d63100000"]); // proxy stakes 100 OPL
-    await nonPayable.forward(lqtyStaking.address, proxystakeTxData, { from: A });
+    await nonPayable.forward(oplStaking.address, proxystakeTxData, { from: A });
 
     // B makes a redemption, creating AUT gain for proxy
     const redemptionTx_1 = await th.redeemCollateralAndGetTxObject(
@@ -1022,7 +1022,7 @@ contract("OPLStaking revenue share tests", async accounts => {
       (gasPrice = GAS_PRICE)
     );
 
-    const proxy_AUTGain = await lqtyStaking.getPendingAUTGain(nonPayable.address);
+    const proxy_AUTGain = await oplStaking.getPendingAUTGain(nonPayable.address);
     assert.isTrue(proxy_AUTGain.gt(toBN("0")));
 
     // Expect this tx to revert: stake() tries to send nonPayable proxy's accumulated AUT gain (albeit 0),
@@ -1030,7 +1030,7 @@ contract("OPLStaking revenue share tests", async accounts => {
     const proxyUnStakeTxData = await th.getTransactionData("unstake(uint256)", [
       "0x56bc75e2d63100000"
     ]); // proxy stakes 100 OPL
-    const proxyUnstakeTxPromise = nonPayable.forward(lqtyStaking.address, proxyUnStakeTxData, {
+    const proxyUnstakeTxPromise = nonPayable.forward(oplStaking.address, proxyUnStakeTxData, {
       from: A
     });
 
@@ -1040,12 +1040,12 @@ contract("OPLStaking revenue share tests", async accounts => {
 
   it("receive(): reverts when it receives AUT from an address that is not the Active Pool", async () => {
     const ethSendTxPromise1 = web3.eth.sendTransaction({
-      to: lqtyStaking.address,
+      to: oplStaking.address,
       from: A,
       value: dec(1, "ether")
     });
     const ethSendTxPromise2 = web3.eth.sendTransaction({
-      to: lqtyStaking.address,
+      to: oplStaking.address,
       from: owner,
       value: dec(1, "ether")
     });
@@ -1055,17 +1055,17 @@ contract("OPLStaking revenue share tests", async accounts => {
   });
 
   it("unstake(): reverts if user has no stake", async () => {
-    const unstakeTxPromise1 = lqtyStaking.unstake(1, { from: A });
-    const unstakeTxPromise2 = lqtyStaking.unstake(1, { from: owner });
+    const unstakeTxPromise1 = oplStaking.unstake(1, { from: A });
+    const unstakeTxPromise2 = oplStaking.unstake(1, { from: owner });
 
     await assertRevert(unstakeTxPromise1);
     await assertRevert(unstakeTxPromise2);
   });
 
   it("Test requireCallerIsTroveManager", async () => {
-    const lqtyStakingTester = await OPLStakingTester.new();
+    const oplStakingTester = await OPLStakingTester.new();
     await assertRevert(
-      lqtyStakingTester.requireCallerIsTroveManager(),
+      oplStakingTester.requireCallerIsTroveManager(),
       "OPLStaking: caller is not TroveM"
     );
   });

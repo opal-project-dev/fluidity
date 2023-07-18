@@ -69,8 +69,8 @@ contract("During the initial lockup period", async accounts => {
       multisig
     );
 
-    lqtyStaking = OPLContracts.lqtyStaking;
-    lqtyToken = OPLContracts.lqtyToken;
+    oplStaking = OPLContracts.oplStaking;
+    oplToken = OPLContracts.oplToken;
     communityIssuance = OPLContracts.communityIssuance;
     lockupContractFactory = OPLContracts.lockupContractFactory;
 
@@ -79,13 +79,13 @@ contract("During the initial lockup period", async accounts => {
     await deploymentHelper.connectOPLContractsToCore(OPLContracts, coreContracts);
 
     oneYearFromSystemDeployment = await th.getTimeFromSystemDeployment(
-      lqtyToken,
+      oplToken,
       web3,
       timeValues.SECONDS_IN_ONE_YEAR
     );
     const secondsInTwoYears = toBN(timeValues.SECONDS_IN_ONE_YEAR).mul(toBN("2"));
     twoYearsFromSystemDeployment = await th.getTimeFromSystemDeployment(
-      lqtyToken,
+      oplToken,
       web3,
       secondsInTwoYears
     );
@@ -135,13 +135,13 @@ contract("During the initial lockup period", async accounts => {
     LC_I3 = await th.getLCFromDeploymentTx(deployedLCtx_I3);
 
     // Multisig transfers initial OPL entitlements to LCs
-    await lqtyToken.transfer(LC_T1.address, teamMemberInitialEntitlement_1, { from: multisig });
-    await lqtyToken.transfer(LC_T2.address, teamMemberInitialEntitlement_2, { from: multisig });
-    await lqtyToken.transfer(LC_T3.address, teamMemberInitialEntitlement_3, { from: multisig });
+    await oplToken.transfer(LC_T1.address, teamMemberInitialEntitlement_1, { from: multisig });
+    await oplToken.transfer(LC_T2.address, teamMemberInitialEntitlement_2, { from: multisig });
+    await oplToken.transfer(LC_T3.address, teamMemberInitialEntitlement_3, { from: multisig });
 
-    await lqtyToken.transfer(LC_I1.address, investorInitialEntitlement_1, { from: multisig });
-    await lqtyToken.transfer(LC_I2.address, investorInitialEntitlement_2, { from: multisig });
-    await lqtyToken.transfer(LC_I3.address, investorInitialEntitlement_3, { from: multisig });
+    await oplToken.transfer(LC_I1.address, investorInitialEntitlement_1, { from: multisig });
+    await oplToken.transfer(LC_I2.address, investorInitialEntitlement_2, { from: multisig });
+    await oplToken.transfer(LC_I3.address, investorInitialEntitlement_3, { from: multisig });
 
     // Fast forward time 364 days, so that still less than 1 year since launch has passed
     await th.fastForwardTime(SECONDS_IN_364_DAYS, web3.currentProvider);
@@ -151,23 +151,23 @@ contract("During the initial lockup period", async accounts => {
     // --- Liquity AG transfer restriction, 1st year ---
     it("Liquity multisig can not transfer OPL to a LC that was deployed directly", async () => {
       // Liquity multisig deploys LC_A
-      const LC_A = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_A = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: multisig
       });
 
       // Account F deploys LC_B
-      const LC_B = await LockupContract.new(lqtyToken.address, B, oneYearFromSystemDeployment, {
+      const LC_B = await LockupContract.new(oplToken.address, B, oneYearFromSystemDeployment, {
         from: F
       });
 
       // OPL deployer deploys LC_C
-      const LC_C = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_C = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: liquityAG
       });
 
       // Liquity multisig attempts OPL transfer to LC_A
       try {
-        const OPLtransferTx_A = await lqtyToken.transfer(LC_A.address, dec(1, 18), {
+        const OPLtransferTx_A = await oplToken.transfer(LC_A.address, dec(1, 18), {
           from: multisig
         });
         assert.isFalse(OPLtransferTx_A.receipt.status);
@@ -180,7 +180,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Liquity multisig attempts OPL transfer to LC_B
       try {
-        const OPLtransferTx_B = await lqtyToken.transfer(LC_B.address, dec(1, 18), {
+        const OPLtransferTx_B = await oplToken.transfer(LC_B.address, dec(1, 18), {
           from: multisig
         });
         assert.isFalse(OPLtransferTx_B.receipt.status);
@@ -192,7 +192,7 @@ contract("During the initial lockup period", async accounts => {
       }
 
       try {
-        const OPLtransferTx_C = await lqtyToken.transfer(LC_C.address, dec(1, 18), {
+        const OPLtransferTx_C = await oplToken.transfer(LC_C.address, dec(1, 18), {
           from: multisig
         });
         assert.isFalse(OPLtransferTx_C.receipt.status);
@@ -206,18 +206,16 @@ contract("During the initial lockup period", async accounts => {
 
     it("Liquity multisig can not transfer to an EOA or Liquity system contracts", async () => {
       // Multisig attempts OPL transfer to EOAs
-      const OPLtransferTxPromise_1 = lqtyToken.transfer(A, dec(1, 18), { from: multisig });
-      const OPLtransferTxPromise_2 = lqtyToken.transfer(B, dec(1, 18), { from: multisig });
+      const OPLtransferTxPromise_1 = oplToken.transfer(A, dec(1, 18), { from: multisig });
+      const OPLtransferTxPromise_2 = oplToken.transfer(B, dec(1, 18), { from: multisig });
       await assertRevert(OPLtransferTxPromise_1);
       await assertRevert(OPLtransferTxPromise_2);
 
       // Multisig attempts OPL transfer to core Liquity contracts
       for (const contract of Object.keys(coreContracts)) {
-        const OPLtransferTxPromise = lqtyToken.transfer(
-          coreContracts[contract].address,
-          dec(1, 18),
-          { from: multisig }
-        );
+        const OPLtransferTxPromise = oplToken.transfer(coreContracts[contract].address, dec(1, 18), {
+          from: multisig
+        });
         await assertRevert(
           OPLtransferTxPromise,
           "OPLToken: recipient must be a LockupContract registered in the Factory"
@@ -226,7 +224,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Multisig attempts OPL transfer to OPL contracts (excluding LCs)
       for (const contract of Object.keys(OPLContracts)) {
-        const OPLtransferTxPromise = lqtyToken.transfer(OPLContracts[contract].address, dec(1, 18), {
+        const OPLtransferTxPromise = oplToken.transfer(OPLContracts[contract].address, dec(1, 18), {
           from: multisig
         });
         await assertRevert(
@@ -239,14 +237,14 @@ contract("During the initial lockup period", async accounts => {
     // --- Liquity AG approval restriction, 1st year ---
     it("Liquity multisig can not approve any EOA or Liquity system contract to spend their OPL", async () => {
       // Multisig attempts to approve EOAs to spend OPL
-      const OPLApproveTxPromise_1 = lqtyToken.approve(A, dec(1, 18), { from: multisig });
-      const OPLApproveTxPromise_2 = lqtyToken.approve(B, dec(1, 18), { from: multisig });
+      const OPLApproveTxPromise_1 = oplToken.approve(A, dec(1, 18), { from: multisig });
+      const OPLApproveTxPromise_2 = oplToken.approve(B, dec(1, 18), { from: multisig });
       await assertRevert(OPLApproveTxPromise_1, "OPLToken: caller must not be the multisig");
       await assertRevert(OPLApproveTxPromise_2, "OPLToken: caller must not be the multisig");
 
       // Multisig attempts to approve Liquity contracts to spend OPL
       for (const contract of Object.keys(coreContracts)) {
-        const OPLApproveTxPromise = lqtyToken.approve(coreContracts[contract].address, dec(1, 18), {
+        const OPLApproveTxPromise = oplToken.approve(coreContracts[contract].address, dec(1, 18), {
           from: multisig
         });
         await assertRevert(OPLApproveTxPromise, "OPLToken: caller must not be the multisig");
@@ -254,7 +252,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Multisig attempts to approve OPL contracts to spend OPL (excluding LCs)
       for (const contract of Object.keys(OPLContracts)) {
-        const OPLApproveTxPromise = lqtyToken.approve(OPLContracts[contract].address, dec(1, 18), {
+        const OPLApproveTxPromise = oplToken.approve(OPLContracts[contract].address, dec(1, 18), {
           from: multisig
         });
         await assertRevert(OPLApproveTxPromise, "OPLToken: caller must not be the multisig");
@@ -264,10 +262,10 @@ contract("During the initial lockup period", async accounts => {
     // --- Liquity AG increaseAllowance restriction, 1st year ---
     it("Liquity multisig can not increaseAllowance for any EOA or Liquity contract", async () => {
       // Multisig attempts to approve EOAs to spend OPL
-      const OPLIncreaseAllowanceTxPromise_1 = lqtyToken.increaseAllowance(A, dec(1, 18), {
+      const OPLIncreaseAllowanceTxPromise_1 = oplToken.increaseAllowance(A, dec(1, 18), {
         from: multisig
       });
-      const OPLIncreaseAllowanceTxPromise_2 = lqtyToken.increaseAllowance(B, dec(1, 18), {
+      const OPLIncreaseAllowanceTxPromise_2 = oplToken.increaseAllowance(B, dec(1, 18), {
         from: multisig
       });
       await assertRevert(
@@ -281,7 +279,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Multisig attempts to approve Liquity contracts to spend OPL
       for (const contract of Object.keys(coreContracts)) {
-        const OPLIncreaseAllowanceTxPromise = lqtyToken.increaseAllowance(
+        const OPLIncreaseAllowanceTxPromise = oplToken.increaseAllowance(
           coreContracts[contract].address,
           dec(1, 18),
           { from: multisig }
@@ -294,7 +292,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Multisig attempts to approve OPL contracts to spend OPL (excluding LCs)
       for (const contract of Object.keys(OPLContracts)) {
-        const OPLIncreaseAllowanceTxPromise = lqtyToken.increaseAllowance(
+        const OPLIncreaseAllowanceTxPromise = oplToken.increaseAllowance(
           OPLContracts[contract].address,
           dec(1, 18),
           { from: multisig }
@@ -309,10 +307,10 @@ contract("During the initial lockup period", async accounts => {
     // --- Liquity AG decreaseAllowance restriction, 1st year ---
     it("Liquity multisig can not decreaseAllowance for any EOA or Liquity contract", async () => {
       // Multisig attempts to decreaseAllowance on EOAs
-      const OPLDecreaseAllowanceTxPromise_1 = lqtyToken.decreaseAllowance(A, dec(1, 18), {
+      const OPLDecreaseAllowanceTxPromise_1 = oplToken.decreaseAllowance(A, dec(1, 18), {
         from: multisig
       });
-      const OPLDecreaseAllowanceTxPromise_2 = lqtyToken.decreaseAllowance(B, dec(1, 18), {
+      const OPLDecreaseAllowanceTxPromise_2 = oplToken.decreaseAllowance(B, dec(1, 18), {
         from: multisig
       });
       await assertRevert(
@@ -326,7 +324,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Multisig attempts to decrease allowance on Liquity contracts
       for (const contract of Object.keys(coreContracts)) {
-        const OPLDecreaseAllowanceTxPromise = lqtyToken.decreaseAllowance(
+        const OPLDecreaseAllowanceTxPromise = oplToken.decreaseAllowance(
           coreContracts[contract].address,
           dec(1, 18),
           { from: multisig }
@@ -339,7 +337,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Multisig attempts to decrease allowance on OPL contracts (excluding LCs)
       for (const contract of Object.keys(OPLContracts)) {
-        const OPLDecreaseAllowanceTxPromise = lqtyToken.decreaseAllowance(
+        const OPLDecreaseAllowanceTxPromise = oplToken.decreaseAllowance(
           OPLContracts[contract].address,
           dec(1, 18),
           { from: multisig }
@@ -354,10 +352,10 @@ contract("During the initial lockup period", async accounts => {
     // --- Liquity multisig transferFrom restriction, 1st year ---
     it("Liquity multisig can not be the sender in a transferFrom() call", async () => {
       // EOAs attempt to use multisig as sender in a transferFrom()
-      const OPLtransferFromTxPromise_1 = lqtyToken.transferFrom(multisig, A, dec(1, 18), {
+      const OPLtransferFromTxPromise_1 = oplToken.transferFrom(multisig, A, dec(1, 18), {
         from: A
       });
-      const OPLtransferFromTxPromise_2 = lqtyToken.transferFrom(multisig, C, dec(1, 18), {
+      const OPLtransferFromTxPromise_2 = oplToken.transferFrom(multisig, C, dec(1, 18), {
         from: B
       });
       await assertRevert(OPLtransferFromTxPromise_1, "OPLToken: sender must not be the multisig");
@@ -366,7 +364,7 @@ contract("During the initial lockup period", async accounts => {
 
     //  --- staking, 1st year ---
     it("Liquity multisig can not stake their OPL in the staking contract", async () => {
-      const OPLStakingTxPromise_1 = lqtyStaking.stake(dec(1, 18), { from: multisig });
+      const OPLStakingTxPromise_1 = oplStaking.stake(dec(1, 18), { from: multisig });
       await assertRevert(OPLStakingTxPromise_1, "OPLToken: sender must not be the multisig");
     });
 
@@ -374,9 +372,9 @@ contract("During the initial lockup period", async accounts => {
 
     it("Anyone (other than Liquity multisig) can transfer OPL to LCs deployed by anyone through the Factory", async () => {
       // Start D, E, F with some OPL
-      await lqtyToken.unprotectedMint(D, dec(1, 24));
-      await lqtyToken.unprotectedMint(E, dec(2, 24));
-      await lqtyToken.unprotectedMint(F, dec(3, 24));
+      await oplToken.unprotectedMint(D, dec(1, 24));
+      await oplToken.unprotectedMint(E, dec(2, 24));
+      await oplToken.unprotectedMint(F, dec(3, 24));
 
       // H, I, and Liquity AG deploy lockup contracts with A, B, C as beneficiaries, respectively
       const deployedLCtx_A = await lockupContractFactory.deployLockupContract(
@@ -401,64 +399,64 @@ contract("During the initial lockup period", async accounts => {
       const LCAddress_C = await th.getLCAddressFromDeploymentTx(deployedLCtx_C);
 
       // Check balances of LCs are 0
-      assert.equal(await lqtyToken.balanceOf(LCAddress_A), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_B), "0");
-      assert.equal(await lqtyToken.balanceOf(LCAddress_C), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_A), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_B), "0");
+      assert.equal(await oplToken.balanceOf(LCAddress_C), "0");
 
       // D, E, F transfer OPL to LCs
-      await lqtyToken.transfer(LCAddress_A, dec(1, 24), { from: D });
-      await lqtyToken.transfer(LCAddress_B, dec(2, 24), { from: E });
-      await lqtyToken.transfer(LCAddress_C, dec(3, 24), { from: F });
+      await oplToken.transfer(LCAddress_A, dec(1, 24), { from: D });
+      await oplToken.transfer(LCAddress_B, dec(2, 24), { from: E });
+      await oplToken.transfer(LCAddress_C, dec(3, 24), { from: F });
 
       // Check balances of LCs has increased
-      assert.equal(await lqtyToken.balanceOf(LCAddress_A), dec(1, 24));
-      assert.equal(await lqtyToken.balanceOf(LCAddress_B), dec(2, 24));
-      assert.equal(await lqtyToken.balanceOf(LCAddress_C), dec(3, 24));
+      assert.equal(await oplToken.balanceOf(LCAddress_A), dec(1, 24));
+      assert.equal(await oplToken.balanceOf(LCAddress_B), dec(2, 24));
+      assert.equal(await oplToken.balanceOf(LCAddress_C), dec(3, 24));
     });
 
     it("Anyone (other than Liquity multisig) can transfer OPL to LCs deployed by anyone directly", async () => {
       // Start D, E, F with some OPL
-      await lqtyToken.unprotectedMint(D, dec(1, 24));
-      await lqtyToken.unprotectedMint(E, dec(2, 24));
-      await lqtyToken.unprotectedMint(F, dec(3, 24));
+      await oplToken.unprotectedMint(D, dec(1, 24));
+      await oplToken.unprotectedMint(E, dec(2, 24));
+      await oplToken.unprotectedMint(F, dec(3, 24));
 
       // H, I, LiqAG deploy lockup contracts with A, B, C as beneficiaries, respectively
-      const LC_A = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_A = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: H
       });
-      const LC_B = await LockupContract.new(lqtyToken.address, B, oneYearFromSystemDeployment, {
+      const LC_B = await LockupContract.new(oplToken.address, B, oneYearFromSystemDeployment, {
         from: I
       });
-      const LC_C = await LockupContract.new(lqtyToken.address, C, oneYearFromSystemDeployment, {
+      const LC_C = await LockupContract.new(oplToken.address, C, oneYearFromSystemDeployment, {
         from: multisig
       });
 
       // Check balances of LCs are 0
-      assert.equal(await lqtyToken.balanceOf(LC_A.address), "0");
-      assert.equal(await lqtyToken.balanceOf(LC_B.address), "0");
-      assert.equal(await lqtyToken.balanceOf(LC_C.address), "0");
+      assert.equal(await oplToken.balanceOf(LC_A.address), "0");
+      assert.equal(await oplToken.balanceOf(LC_B.address), "0");
+      assert.equal(await oplToken.balanceOf(LC_C.address), "0");
 
       // D, E, F transfer OPL to LCs
-      await lqtyToken.transfer(LC_A.address, dec(1, 24), { from: D });
-      await lqtyToken.transfer(LC_B.address, dec(2, 24), { from: E });
-      await lqtyToken.transfer(LC_C.address, dec(3, 24), { from: F });
+      await oplToken.transfer(LC_A.address, dec(1, 24), { from: D });
+      await oplToken.transfer(LC_B.address, dec(2, 24), { from: E });
+      await oplToken.transfer(LC_C.address, dec(3, 24), { from: F });
 
       // Check balances of LCs has increased
-      assert.equal(await lqtyToken.balanceOf(LC_A.address), dec(1, 24));
-      assert.equal(await lqtyToken.balanceOf(LC_B.address), dec(2, 24));
-      assert.equal(await lqtyToken.balanceOf(LC_C.address), dec(3, 24));
+      assert.equal(await oplToken.balanceOf(LC_A.address), dec(1, 24));
+      assert.equal(await oplToken.balanceOf(LC_B.address), dec(2, 24));
+      assert.equal(await oplToken.balanceOf(LC_C.address), dec(3, 24));
     });
 
     it("Anyone (other than liquity multisig) can transfer to an EOA", async () => {
       // Start D, E, F with some OPL
-      await lqtyToken.unprotectedMint(D, dec(1, 24));
-      await lqtyToken.unprotectedMint(E, dec(2, 24));
-      await lqtyToken.unprotectedMint(F, dec(3, 24));
+      await oplToken.unprotectedMint(D, dec(1, 24));
+      await oplToken.unprotectedMint(E, dec(2, 24));
+      await oplToken.unprotectedMint(F, dec(3, 24));
 
       // OPL holders transfer to other transfer to EOAs
-      const OPLtransferTx_1 = await lqtyToken.transfer(A, dec(1, 18), { from: D });
-      const OPLtransferTx_2 = await lqtyToken.transfer(B, dec(1, 18), { from: E });
-      const OPLtransferTx_3 = await lqtyToken.transfer(multisig, dec(1, 18), { from: F });
+      const OPLtransferTx_1 = await oplToken.transfer(A, dec(1, 18), { from: D });
+      const OPLtransferTx_2 = await oplToken.transfer(B, dec(1, 18), { from: E });
+      const OPLtransferTx_3 = await oplToken.transfer(multisig, dec(1, 18), { from: F });
 
       assert.isTrue(OPLtransferTx_1.receipt.status);
       assert.isTrue(OPLtransferTx_2.receipt.status);
@@ -467,22 +465,22 @@ contract("During the initial lockup period", async accounts => {
 
     it("Anyone (other than liquity multisig) can approve any EOA or to spend their OPL", async () => {
       // EOAs approve EOAs to spend OPL
-      const OPLapproveTx_1 = await lqtyToken.approve(A, dec(1, 18), { from: F });
-      const OPLapproveTx_2 = await lqtyToken.approve(B, dec(1, 18), { from: G });
+      const OPLapproveTx_1 = await oplToken.approve(A, dec(1, 18), { from: F });
+      const OPLapproveTx_2 = await oplToken.approve(B, dec(1, 18), { from: G });
       await assert.isTrue(OPLapproveTx_1.receipt.status);
       await assert.isTrue(OPLapproveTx_2.receipt.status);
     });
 
     it("Anyone (other than liquity multisig) can increaseAllowance for any EOA or Liquity contract", async () => {
       // Anyone can increaseAllowance of EOAs to spend OPL
-      const OPLIncreaseAllowanceTx_1 = await lqtyToken.increaseAllowance(A, dec(1, 18), { from: F });
-      const OPLIncreaseAllowanceTx_2 = await lqtyToken.increaseAllowance(B, dec(1, 18), { from: G });
+      const OPLIncreaseAllowanceTx_1 = await oplToken.increaseAllowance(A, dec(1, 18), { from: F });
+      const OPLIncreaseAllowanceTx_2 = await oplToken.increaseAllowance(B, dec(1, 18), { from: G });
       await assert.isTrue(OPLIncreaseAllowanceTx_1.receipt.status);
       await assert.isTrue(OPLIncreaseAllowanceTx_2.receipt.status);
 
       // Increase allowance of core Liquity contracts
       for (const contract of Object.keys(coreContracts)) {
-        const OPLIncreaseAllowanceTx = await lqtyToken.increaseAllowance(
+        const OPLIncreaseAllowanceTx = await oplToken.increaseAllowance(
           coreContracts[contract].address,
           dec(1, 18),
           { from: F }
@@ -492,7 +490,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Increase allowance of OPL contracts
       for (const contract of Object.keys(OPLContracts)) {
-        const OPLIncreaseAllowanceTx = await lqtyToken.increaseAllowance(
+        const OPLIncreaseAllowanceTx = await oplToken.increaseAllowance(
           OPLContracts[contract].address,
           dec(1, 18),
           { from: F }
@@ -503,13 +501,13 @@ contract("During the initial lockup period", async accounts => {
 
     it("Anyone (other than liquity multisig) can decreaseAllowance for any EOA or Liquity contract", async () => {
       //First, increase allowance of A, B and coreContracts and OPL contracts
-      const OPLIncreaseAllowanceTx_1 = await lqtyToken.increaseAllowance(A, dec(1, 18), { from: F });
-      const OPLIncreaseAllowanceTx_2 = await lqtyToken.increaseAllowance(B, dec(1, 18), { from: G });
+      const OPLIncreaseAllowanceTx_1 = await oplToken.increaseAllowance(A, dec(1, 18), { from: F });
+      const OPLIncreaseAllowanceTx_2 = await oplToken.increaseAllowance(B, dec(1, 18), { from: G });
       await assert.isTrue(OPLIncreaseAllowanceTx_1.receipt.status);
       await assert.isTrue(OPLIncreaseAllowanceTx_2.receipt.status);
 
       for (const contract of Object.keys(coreContracts)) {
-        const OPLtransferTx = await lqtyToken.increaseAllowance(
+        const OPLtransferTx = await oplToken.increaseAllowance(
           coreContracts[contract].address,
           dec(1, 18),
           { from: F }
@@ -518,7 +516,7 @@ contract("During the initial lockup period", async accounts => {
       }
 
       for (const contract of Object.keys(OPLContracts)) {
-        const OPLtransferTx = await lqtyToken.increaseAllowance(
+        const OPLtransferTx = await oplToken.increaseAllowance(
           OPLContracts[contract].address,
           dec(1, 18),
           { from: F }
@@ -527,14 +525,14 @@ contract("During the initial lockup period", async accounts => {
       }
 
       // Decrease allowance of A, B
-      const OPLDecreaseAllowanceTx_1 = await lqtyToken.decreaseAllowance(A, dec(1, 18), { from: F });
-      const OPLDecreaseAllowanceTx_2 = await lqtyToken.decreaseAllowance(B, dec(1, 18), { from: G });
+      const OPLDecreaseAllowanceTx_1 = await oplToken.decreaseAllowance(A, dec(1, 18), { from: F });
+      const OPLDecreaseAllowanceTx_2 = await oplToken.decreaseAllowance(B, dec(1, 18), { from: G });
       await assert.isTrue(OPLDecreaseAllowanceTx_1.receipt.status);
       await assert.isTrue(OPLDecreaseAllowanceTx_2.receipt.status);
 
       // Decrease allowance of core contracts
       for (const contract of Object.keys(coreContracts)) {
-        const OPLDecreaseAllowanceTx = await lqtyToken.decreaseAllowance(
+        const OPLDecreaseAllowanceTx = await oplToken.decreaseAllowance(
           coreContracts[contract].address,
           dec(1, 18),
           { from: F }
@@ -544,7 +542,7 @@ contract("During the initial lockup period", async accounts => {
 
       // Decrease allowance of OPL contracts
       for (const contract of Object.keys(OPLContracts)) {
-        const OPLDecreaseAllowanceTx = await lqtyToken.decreaseAllowance(
+        const OPLDecreaseAllowanceTx = await oplToken.decreaseAllowance(
           OPLContracts[contract].address,
           dec(1, 18),
           { from: F }
@@ -555,24 +553,24 @@ contract("During the initial lockup period", async accounts => {
 
     it("Anyone (other than liquity multisig) can be the sender in a transferFrom() call", async () => {
       // Fund A, B
-      await lqtyToken.unprotectedMint(A, dec(1, 18));
-      await lqtyToken.unprotectedMint(B, dec(1, 18));
+      await oplToken.unprotectedMint(A, dec(1, 18));
+      await oplToken.unprotectedMint(B, dec(1, 18));
 
       // A, B approve F, G
-      await lqtyToken.approve(F, dec(1, 18), { from: A });
-      await lqtyToken.approve(G, dec(1, 18), { from: B });
+      await oplToken.approve(F, dec(1, 18), { from: A });
+      await oplToken.approve(G, dec(1, 18), { from: B });
 
-      const OPLtransferFromTx_1 = await lqtyToken.transferFrom(A, F, dec(1, 18), { from: F });
-      const OPLtransferFromTx_2 = await lqtyToken.transferFrom(B, C, dec(1, 18), { from: G });
+      const OPLtransferFromTx_1 = await oplToken.transferFrom(A, F, dec(1, 18), { from: F });
+      const OPLtransferFromTx_2 = await oplToken.transferFrom(B, C, dec(1, 18), { from: G });
       await assert.isTrue(OPLtransferFromTx_1.receipt.status);
       await assert.isTrue(OPLtransferFromTx_2.receipt.status);
     });
 
     it("Anyone (other than liquity AG) can stake their OPL in the staking contract", async () => {
       // Fund F
-      await lqtyToken.unprotectedMint(F, dec(1, 18));
+      await oplToken.unprotectedMint(F, dec(1, 18));
 
-      const OPLStakingTx_1 = await lqtyStaking.stake(dec(1, 18), { from: F });
+      const OPLStakingTx_1 = await oplStaking.stake(dec(1, 18), { from: F });
       await assert.isTrue(OPLStakingTx_1.receipt.status);
     });
   });
@@ -581,13 +579,13 @@ contract("During the initial lockup period", async accounts => {
   describe("Lockup Contract Factory negative tests", async accounts => {
     it("deployLockupContract(): reverts when OPL token address is not set", async () => {
       // Fund F
-      await lqtyToken.unprotectedMint(F, dec(20, 24));
+      await oplToken.unprotectedMint(F, dec(20, 24));
 
       // deploy new LCF
       const LCFNew = await LockupContractFactory.new();
 
       // Check OPLToken address not registered
-      const registeredOPLTokenAddr = await LCFNew.lqtyTokenAddress();
+      const registeredOPLTokenAddr = await LCFNew.oplTokenAddress();
       assert.equal(registeredOPLTokenAddr, ZERO_ADDRESS);
 
       const tx = LCFNew.deployLockupContract(A, oneYearFromSystemDeployment, { from: F });
@@ -598,9 +596,9 @@ contract("During the initial lockup period", async accounts => {
   // --- LCs ---
   describe("Transferring OPL to LCs", async accounts => {
     it("Liquity multisig can transfer OPL (vesting) to lockup contracts they deployed", async () => {
-      const initialOPLBalanceOfLC_T1 = await lqtyToken.balanceOf(LC_T1.address);
-      const initialOPLBalanceOfLC_T2 = await lqtyToken.balanceOf(LC_T2.address);
-      const initialOPLBalanceOfLC_T3 = await lqtyToken.balanceOf(LC_T3.address);
+      const initialOPLBalanceOfLC_T1 = await oplToken.balanceOf(LC_T1.address);
+      const initialOPLBalanceOfLC_T2 = await oplToken.balanceOf(LC_T2.address);
+      const initialOPLBalanceOfLC_T3 = await oplToken.balanceOf(LC_T3.address);
 
       // Check initial LC balances == entitlements
       assert.equal(initialOPLBalanceOfLC_T1, teamMemberInitialEntitlement_1);
@@ -611,14 +609,14 @@ contract("During the initial lockup period", async accounts => {
       await th.fastForwardTime(SECONDS_IN_ONE_MONTH, web3.currentProvider);
 
       // Liquity multisig transfers vesting amount
-      await lqtyToken.transfer(LC_T1.address, dec(1, 24), { from: multisig });
-      await lqtyToken.transfer(LC_T2.address, dec(1, 24), { from: multisig });
-      await lqtyToken.transfer(LC_T3.address, dec(1, 24), { from: multisig });
+      await oplToken.transfer(LC_T1.address, dec(1, 24), { from: multisig });
+      await oplToken.transfer(LC_T2.address, dec(1, 24), { from: multisig });
+      await oplToken.transfer(LC_T3.address, dec(1, 24), { from: multisig });
 
       // Get new LC OPL balances
-      const OPLBalanceOfLC_T1_1 = await lqtyToken.balanceOf(LC_T1.address);
-      const OPLBalanceOfLC_T2_1 = await lqtyToken.balanceOf(LC_T2.address);
-      const OPLBalanceOfLC_T3_1 = await lqtyToken.balanceOf(LC_T3.address);
+      const OPLBalanceOfLC_T1_1 = await oplToken.balanceOf(LC_T1.address);
+      const OPLBalanceOfLC_T2_1 = await oplToken.balanceOf(LC_T2.address);
+      const OPLBalanceOfLC_T3_1 = await oplToken.balanceOf(LC_T3.address);
 
       // // Check team member LC balances have increased
       assert.isTrue(
@@ -635,14 +633,14 @@ contract("During the initial lockup period", async accounts => {
       await th.fastForwardTime(SECONDS_IN_ONE_MONTH, web3.currentProvider);
 
       // Liquity multisig transfers vesting amount
-      await lqtyToken.transfer(LC_T1.address, dec(1, 24), { from: multisig });
-      await lqtyToken.transfer(LC_T2.address, dec(1, 24), { from: multisig });
-      await lqtyToken.transfer(LC_T3.address, dec(1, 24), { from: multisig });
+      await oplToken.transfer(LC_T1.address, dec(1, 24), { from: multisig });
+      await oplToken.transfer(LC_T2.address, dec(1, 24), { from: multisig });
+      await oplToken.transfer(LC_T3.address, dec(1, 24), { from: multisig });
 
       // Get new LC OPL balances
-      const OPLBalanceOfLC_T1_2 = await lqtyToken.balanceOf(LC_T1.address);
-      const OPLBalanceOfLC_T2_2 = await lqtyToken.balanceOf(LC_T2.address);
-      const OPLBalanceOfLC_T3_2 = await lqtyToken.balanceOf(LC_T3.address);
+      const OPLBalanceOfLC_T1_2 = await oplToken.balanceOf(LC_T1.address);
+      const OPLBalanceOfLC_T2_2 = await oplToken.balanceOf(LC_T2.address);
+      const OPLBalanceOfLC_T3_2 = await oplToken.balanceOf(LC_T3.address);
 
       // Check team member LC balances have increased again
       assert.isTrue(OPLBalanceOfLC_T1_2.eq(OPLBalanceOfLC_T1_1.add(th.toBN(dec(1, 24)))));
@@ -674,22 +672,22 @@ contract("During the initial lockup period", async accounts => {
       const LC_C = await th.getLCFromDeploymentTx(deployedLCtx_C);
 
       // Check balances of LCs are 0
-      assert.equal(await lqtyToken.balanceOf(LC_A.address), "0");
-      assert.equal(await lqtyToken.balanceOf(LC_B.address), "0");
-      assert.equal(await lqtyToken.balanceOf(LC_C.address), "0");
+      assert.equal(await oplToken.balanceOf(LC_A.address), "0");
+      assert.equal(await oplToken.balanceOf(LC_B.address), "0");
+      assert.equal(await oplToken.balanceOf(LC_C.address), "0");
 
       // One month passes
       await th.fastForwardTime(SECONDS_IN_ONE_MONTH, web3.currentProvider);
 
       // Liquity multisig transfers OPL to LCs deployed by other accounts
-      await lqtyToken.transfer(LC_A.address, dec(1, 24), { from: multisig });
-      await lqtyToken.transfer(LC_B.address, dec(2, 24), { from: multisig });
-      await lqtyToken.transfer(LC_C.address, dec(3, 24), { from: multisig });
+      await oplToken.transfer(LC_A.address, dec(1, 24), { from: multisig });
+      await oplToken.transfer(LC_B.address, dec(2, 24), { from: multisig });
+      await oplToken.transfer(LC_C.address, dec(3, 24), { from: multisig });
 
       // Check balances of LCs have increased
-      assert.equal(await lqtyToken.balanceOf(LC_A.address), dec(1, 24));
-      assert.equal(await lqtyToken.balanceOf(LC_B.address), dec(2, 24));
-      assert.equal(await lqtyToken.balanceOf(LC_C.address), dec(3, 24));
+      assert.equal(await oplToken.balanceOf(LC_A.address), dec(1, 24));
+      assert.equal(await oplToken.balanceOf(LC_B.address), dec(2, 24));
+      assert.equal(await oplToken.balanceOf(LC_C.address), dec(3, 24));
     });
   });
 
@@ -771,17 +769,17 @@ contract("During the initial lockup period", async accounts => {
 
     it("OPL Deployer can deploy LCs directly", async () => {
       // OPL deployer deploys LCs
-      const LC_A = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_A = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: liquityAG
       });
       const LC_A_txReceipt = await web3.eth.getTransactionReceipt(LC_A.transactionHash);
 
-      const LC_B = await LockupContract.new(lqtyToken.address, B, twoYearsFromSystemDeployment, {
+      const LC_B = await LockupContract.new(oplToken.address, B, twoYearsFromSystemDeployment, {
         from: liquityAG
       });
       const LC_B_txReceipt = await web3.eth.getTransactionReceipt(LC_B.transactionHash);
 
-      const LC_C = await LockupContract.new(lqtyToken.address, C, twoYearsFromSystemDeployment, {
+      const LC_C = await LockupContract.new(oplToken.address, C, twoYearsFromSystemDeployment, {
         from: liquityAG
       });
       const LC_C_txReceipt = await web3.eth.getTransactionReceipt(LC_C.transactionHash);
@@ -794,17 +792,17 @@ contract("During the initial lockup period", async accounts => {
 
     it("Liquity multisig can deploy LCs directly", async () => {
       // OPL deployer deploys LCs
-      const LC_A = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_A = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: multisig
       });
       const LC_A_txReceipt = await web3.eth.getTransactionReceipt(LC_A.transactionHash);
 
-      const LC_B = await LockupContract.new(lqtyToken.address, B, twoYearsFromSystemDeployment, {
+      const LC_B = await LockupContract.new(oplToken.address, B, twoYearsFromSystemDeployment, {
         from: multisig
       });
       const LC_B_txReceipt = await web3.eth.getTransactionReceipt(LC_B.transactionHash);
 
-      const LC_C = await LockupContract.new(lqtyToken.address, C, twoYearsFromSystemDeployment, {
+      const LC_C = await LockupContract.new(oplToken.address, C, twoYearsFromSystemDeployment, {
         from: multisig
       });
       const LC_C_txReceipt = await web3.eth.getTransactionReceipt(LC_C.transactionHash);
@@ -817,17 +815,17 @@ contract("During the initial lockup period", async accounts => {
 
     it("Anyone can deploy LCs directly", async () => {
       // Various EOAs deploy LCs
-      const LC_A = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_A = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: D
       });
       const LC_A_txReceipt = await web3.eth.getTransactionReceipt(LC_A.transactionHash);
 
-      const LC_B = await LockupContract.new(lqtyToken.address, B, twoYearsFromSystemDeployment, {
+      const LC_B = await LockupContract.new(oplToken.address, B, twoYearsFromSystemDeployment, {
         from: E
       });
       const LC_B_txReceipt = await web3.eth.getTransactionReceipt(LC_B.transactionHash);
 
-      const LC_C = await LockupContract.new(lqtyToken.address, C, twoYearsFromSystemDeployment, {
+      const LC_C = await LockupContract.new(oplToken.address, C, twoYearsFromSystemDeployment, {
         from: F
       });
       const LC_C_txReceipt = await web3.eth.getTransactionReceipt(LC_C.transactionHash);
@@ -840,17 +838,17 @@ contract("During the initial lockup period", async accounts => {
 
     it("Anyone can deploy LCs with unlockTime = one year from deployment, directly and through factory", async () => {
       // Deploy directly
-      const LC_1 = await LockupContract.new(lqtyToken.address, A, oneYearFromSystemDeployment, {
+      const LC_1 = await LockupContract.new(oplToken.address, A, oneYearFromSystemDeployment, {
         from: D
       });
       const LCTxReceipt_1 = await web3.eth.getTransactionReceipt(LC_1.transactionHash);
 
-      const LC_2 = await LockupContract.new(lqtyToken.address, B, oneYearFromSystemDeployment, {
+      const LC_2 = await LockupContract.new(oplToken.address, B, oneYearFromSystemDeployment, {
         from: liquityAG
       });
       const LCTxReceipt_2 = await web3.eth.getTransactionReceipt(LC_2.transactionHash);
 
-      const LC_3 = await LockupContract.new(lqtyToken.address, C, oneYearFromSystemDeployment, {
+      const LC_3 = await LockupContract.new(oplToken.address, C, oneYearFromSystemDeployment, {
         from: multisig
       });
       const LCTxReceipt_3 = await web3.eth.getTransactionReceipt(LC_2.transactionHash);
@@ -888,17 +886,17 @@ contract("During the initial lockup period", async accounts => {
       );
 
       // Deploy directly
-      const LC_1 = await LockupContract.new(lqtyToken.address, A, twoYearsFromSystemDeployment, {
+      const LC_1 = await LockupContract.new(oplToken.address, A, twoYearsFromSystemDeployment, {
         from: D
       });
       const LCTxReceipt_1 = await web3.eth.getTransactionReceipt(LC_1.transactionHash);
 
-      const LC_2 = await LockupContract.new(lqtyToken.address, B, justOverOneYear, {
+      const LC_2 = await LockupContract.new(oplToken.address, B, justOverOneYear, {
         from: multisig
       });
       const LCTxReceipt_2 = await web3.eth.getTransactionReceipt(LC_2.transactionHash);
 
-      const LC_3 = await LockupContract.new(lqtyToken.address, E, _17YearsFromDeployment, {
+      const LC_3 = await LockupContract.new(oplToken.address, E, _17YearsFromDeployment, {
         from: E
       });
       const LCTxReceipt_3 = await web3.eth.getTransactionReceipt(LC_3.transactionHash);
@@ -933,16 +931,13 @@ contract("During the initial lockup period", async accounts => {
       const justUnderOneYear = oneYearFromSystemDeployment.sub(toBN("1"));
 
       // Attempt to deploy directly
-      const directDeploymentTxPromise_1 = LockupContract.new(
-        lqtyToken.address,
-        A,
-        justUnderOneYear,
-        { from: D }
-      );
-      const directDeploymentTxPromise_2 = LockupContract.new(lqtyToken.address, B, "43200", {
+      const directDeploymentTxPromise_1 = LockupContract.new(oplToken.address, A, justUnderOneYear, {
+        from: D
+      });
+      const directDeploymentTxPromise_2 = LockupContract.new(oplToken.address, B, "43200", {
         from: multisig
       });
-      const directDeploymentTxPromise_3 = LockupContract.new(lqtyToken.address, E, "354534", {
+      const directDeploymentTxPromise_3 = LockupContract.new(oplToken.address, E, "354534", {
         from: E
       });
 
@@ -1012,7 +1007,7 @@ contract("During the initial lockup period", async accounts => {
         const LC_B = await th.getLCFromDeploymentTx(deployedLCtx_B);
 
         //OPL multisig fund the newly deployed LCs
-        await lqtyToken.transfer(LC_B.address, dec(2, 18), { from: multisig });
+        await oplToken.transfer(LC_B.address, dec(2, 18), { from: multisig });
 
         // Check currentTime < unlockTime
         const currentTime = toBN(await th.getLatestBlockTimestamp(web3));
@@ -1038,7 +1033,7 @@ contract("During the initial lockup period", async accounts => {
         const LC_B = await th.getLCFromDeploymentTx(deployedLCtx_B);
 
         // Liquity multisig funds contracts
-        await lqtyToken.transfer(LC_B.address, dec(2, 18), { from: multisig });
+        await oplToken.transfer(LC_B.address, dec(2, 18), { from: multisig });
 
         // Check currentTime < unlockTime
         const currentTime = toBN(await th.getLatestBlockTimestamp(web3));
@@ -1070,7 +1065,7 @@ contract("During the initial lockup period", async accounts => {
         const LC_B = await th.getLCFromDeploymentTx(deployedLCtx_B);
 
         // Liquity multisig funds contract
-        await lqtyToken.transfer(LC_B.address, dec(2, 18), { from: multisig });
+        await oplToken.transfer(LC_B.address, dec(2, 18), { from: multisig });
 
         // Check currentTime < unlockTime
         const currentTime = toBN(await th.getLatestBlockTimestamp(web3));

@@ -18,9 +18,9 @@ contract("All Liquity functions with onlyOwner modifier", async accounts => {
   let defaultPool;
   let borrowerOperations;
 
-  let lqtyStaking;
+  let oplStaking;
   let communityIssuance;
-  let lqtyToken;
+  let oplToken;
   let lockupContractFactory;
 
   before(async () => {
@@ -41,9 +41,9 @@ contract("All Liquity functions with onlyOwner modifier", async accounts => {
     defaultPool = contracts.defaultPool;
     borrowerOperations = contracts.borrowerOperations;
 
-    lqtyStaking = OPLContracts.lqtyStaking;
+    oplStaking = OPLContracts.oplStaking;
     communityIssuance = OPLContracts.communityIssuance;
-    lqtyToken = OPLContracts.lqtyToken;
+    oplToken = OPLContracts.oplToken;
     lockupContractFactory = OPLContracts.lockupContractFactory;
   });
 
@@ -141,7 +141,7 @@ contract("All Liquity functions with onlyOwner modifier", async accounts => {
 
   describe("CommunityIssuance", async accounts => {
     it("setAddresses(): reverts when called by non-owner, with wrong addresses, or twice", async () => {
-      const params = [lqtyToken.address, stabilityPool.address];
+      const params = [oplToken.address, stabilityPool.address];
       await th.assertRevert(communityIssuance.setAddresses(...params, { from: alice }));
 
       // Attempt to use zero address
@@ -160,17 +160,17 @@ contract("All Liquity functions with onlyOwner modifier", async accounts => {
 
   describe("OPLStaking", async accounts => {
     it("setAddresses(): reverts when called by non-owner, with wrong addresses, or twice", async () => {
-      await testSetAddresses(lqtyStaking, 5);
+      await testSetAddresses(oplStaking, 5);
     });
   });
 
   describe("LockupContractFactory", async accounts => {
     it("setOPLAddress(): reverts when called by non-owner, with wrong address, or twice", async () => {
       await th.assertRevert(
-        lockupContractFactory.setOPLTokenAddress(lqtyToken.address, { from: alice })
+        lockupContractFactory.setOPLTokenAddress(oplToken.address, { from: alice })
       );
 
-      const params = [lqtyToken.address];
+      const params = [oplToken.address];
 
       // Attempt to use zero address
       await testZeroAddress(lockupContractFactory, params, "setOPLTokenAddress");
@@ -178,14 +178,14 @@ contract("All Liquity functions with onlyOwner modifier", async accounts => {
       await testNonContractAddress(lockupContractFactory, params, "setOPLTokenAddress");
 
       // Owner can successfully set any address
-      const txOwner = await lockupContractFactory.setOPLTokenAddress(lqtyToken.address, {
+      const txOwner = await lockupContractFactory.setOPLTokenAddress(oplToken.address, {
         from: owner
       });
 
       assert.isTrue(txOwner.receipt.status);
       // fails if called twice
       await th.assertRevert(
-        lockupContractFactory.setOPLTokenAddress(lqtyToken.address, { from: owner })
+        lockupContractFactory.setOPLTokenAddress(oplToken.address, { from: owner })
       );
     });
   });

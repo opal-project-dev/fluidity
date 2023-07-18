@@ -95,8 +95,8 @@ contract("TroveManager", async accounts => {
     borrowerOperations = contracts.borrowerOperations;
     hintHelpers = contracts.hintHelpers;
 
-    lqtyStaking = OPLContracts.lqtyStaking;
-    lqtyToken = OPLContracts.lqtyToken;
+    oplStaking = OPLContracts.oplStaking;
+    oplToken = OPLContracts.oplToken;
     communityIssuance = OPLContracts.communityIssuance;
     lockupContractFactory = OPLContracts.lockupContractFactory;
 
@@ -4558,8 +4558,8 @@ contract("TroveManager", async accounts => {
   it("redeemCollateral(): a redemption made when base rate is non-zero increases the base rate, for negligible time passed", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-    await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
-    await lqtyStaking.stake(dec(1, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(1, 18), { from: multisig });
+    await oplStaking.stake(dec(1, 18), { from: multisig });
 
     await openTrove({ ICR: toBN(dec(20, 18)), extraParams: { from: whale } });
 
@@ -4690,8 +4690,8 @@ contract("TroveManager", async accounts => {
   it("redeemCollateral(): a redemption made at zero base rate send a non-zero AUTFee to OPL staking contract", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-    await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
-    await lqtyStaking.stake(dec(1, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(1, 18), { from: multisig });
+    await oplStaking.stake(dec(1, 18), { from: multisig });
 
     await openTrove({ ICR: toBN(dec(20, 18)), extraParams: { from: whale } });
 
@@ -4715,8 +4715,8 @@ contract("TroveManager", async accounts => {
     assert.equal(await troveManager.baseRate(), "0");
 
     // Check OPL Staking contract balance before is zero
-    const lqtyStakingBalance_Before = await web3.eth.getBalance(lqtyStaking.address);
-    assert.equal(lqtyStakingBalance_Before, "0");
+    const oplStakingBalance_Before = await web3.eth.getBalance(oplStaking.address);
+    assert.equal(oplStakingBalance_Before, "0");
 
     const A_balanceBefore = await oneuToken.balanceOf(A);
 
@@ -4731,15 +4731,15 @@ contract("TroveManager", async accounts => {
     assert.isTrue(baseRate_1.gt(toBN("0")));
 
     // Check OPL Staking contract balance after is non-zero
-    const lqtyStakingBalance_After = toBN(await web3.eth.getBalance(lqtyStaking.address));
-    assert.isTrue(lqtyStakingBalance_After.gt(toBN("0")));
+    const oplStakingBalance_After = toBN(await web3.eth.getBalance(oplStaking.address));
+    assert.isTrue(oplStakingBalance_After.gt(toBN("0")));
   });
 
   it("redeemCollateral(): a redemption made at zero base increases the AUT-fees-per-OPL-staked in OPL Staking contract", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-    await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
-    await lqtyStaking.stake(dec(1, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(1, 18), { from: multisig });
+    await oplStaking.stake(dec(1, 18), { from: multisig });
 
     await openTrove({ ICR: toBN(dec(20, 18)), extraParams: { from: whale } });
 
@@ -4763,7 +4763,7 @@ contract("TroveManager", async accounts => {
     assert.equal(await troveManager.baseRate(), "0");
 
     // Check OPL Staking AUT-fees-per-OPL-staked before is zero
-    const F_AUT_Before = await lqtyStaking.F_AUT();
+    const F_AUT_Before = await oplStaking.F_AUT();
     assert.equal(F_AUT_Before, "0");
 
     const A_balanceBefore = await oneuToken.balanceOf(A);
@@ -4779,15 +4779,15 @@ contract("TroveManager", async accounts => {
     assert.isTrue(baseRate_1.gt(toBN("0")));
 
     // Check OPL Staking AUT-fees-per-OPL-staked after is non-zero
-    const F_AUT_After = await lqtyStaking.F_AUT();
+    const F_AUT_After = await oplStaking.F_AUT();
     assert.isTrue(F_AUT_After.gt("0"));
   });
 
   it("redeemCollateral(): a redemption made at a non-zero base rate send a non-zero AUTFee to OPL staking contract", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-    await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
-    await lqtyStaking.stake(dec(1, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(1, 18), { from: multisig });
+    await oplStaking.stake(dec(1, 18), { from: multisig });
 
     await openTrove({ ICR: toBN(dec(20, 18)), extraParams: { from: whale } });
 
@@ -4823,7 +4823,7 @@ contract("TroveManager", async accounts => {
     const baseRate_1 = await troveManager.baseRate();
     assert.isTrue(baseRate_1.gt(toBN("0")));
 
-    const lqtyStakingBalance_Before = toBN(await web3.eth.getBalance(lqtyStaking.address));
+    const oplStakingBalance_Before = toBN(await web3.eth.getBalance(oplStaking.address));
 
     // B redeems 10 ONEU
     await th.redeemCollateral(B, contracts, dec(10, 18), GAS_PRICE);
@@ -4831,17 +4831,17 @@ contract("TroveManager", async accounts => {
     // Check B's balance has decreased by 10 ONEU
     assert.equal(await oneuToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
-    const lqtyStakingBalance_After = toBN(await web3.eth.getBalance(lqtyStaking.address));
+    const oplStakingBalance_After = toBN(await web3.eth.getBalance(oplStaking.address));
 
     // check OPL Staking balance has increased
-    assert.isTrue(lqtyStakingBalance_After.gt(lqtyStakingBalance_Before));
+    assert.isTrue(oplStakingBalance_After.gt(oplStakingBalance_Before));
   });
 
   it("redeemCollateral(): a redemption made at a non-zero base rate increases AUT-per-OPL-staked in the staking contract", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-    await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
-    await lqtyStaking.stake(dec(1, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(1, 18), { from: multisig });
+    await oplStaking.stake(dec(1, 18), { from: multisig });
 
     await openTrove({ ICR: toBN(dec(20, 18)), extraParams: { from: whale } });
 
@@ -4878,7 +4878,7 @@ contract("TroveManager", async accounts => {
     assert.isTrue(baseRate_1.gt(toBN("0")));
 
     // Check OPL Staking AUT-fees-per-OPL-staked before is zero
-    const F_AUT_Before = await lqtyStaking.F_AUT();
+    const F_AUT_Before = await oplStaking.F_AUT();
 
     // B redeems 10 ONEU
     await th.redeemCollateral(B, contracts, dec(10, 18), GAS_PRICE);
@@ -4886,7 +4886,7 @@ contract("TroveManager", async accounts => {
     // Check B's balance has decreased by 10 ONEU
     assert.equal(await oneuToken.balanceOf(B), B_balanceBefore.sub(toBN(dec(10, 18))).toString());
 
-    const F_AUT_After = await lqtyStaking.F_AUT();
+    const F_AUT_After = await oplStaking.F_AUT();
 
     // check OPL Staking balance has increased
     assert.isTrue(F_AUT_After.gt(F_AUT_Before));
@@ -4895,8 +4895,8 @@ contract("TroveManager", async accounts => {
   it("redeemCollateral(): a redemption sends the AUT remainder (AUTDrawn - AUTFee) to the redeemer", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-    await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
-    await lqtyStaking.stake(dec(1, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(1, 18), { from: multisig });
+    await oplStaking.stake(dec(1, 18), { from: multisig });
 
     const { totalDebt: W_totalDebt } = await openTrove({
       ICR: toBN(dec(20, 18)),
@@ -4964,8 +4964,8 @@ contract("TroveManager", async accounts => {
   it("redeemCollateral(): a full redemption (leaving trove with 0 debt), closes the trove", async () => {
     // time fast-forwards 1 year, and multisig stakes 1 OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-    await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
-    await lqtyStaking.stake(dec(1, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(1, 18), { from: multisig });
+    await oplStaking.stake(dec(1, 18), { from: multisig });
 
     const { netDebt: W_netDebt } = await openTrove({
       ICR: toBN(dec(20, 18)),
@@ -5016,8 +5016,8 @@ contract("TroveManager", async accounts => {
   const redeemCollateral3Full1Partial = async () => {
     // time fast-forwards 1 year, and multisig stakes 1 OPL
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_YEAR, web3.currentProvider);
-    await lqtyToken.approve(lqtyStaking.address, dec(1, 18), { from: multisig });
-    await lqtyStaking.stake(dec(1, 18), { from: multisig });
+    await oplToken.approve(oplStaking.address, dec(1, 18), { from: multisig });
+    await oplStaking.stake(dec(1, 18), { from: multisig });
 
     const { netDebt: W_netDebt } = await openTrove({
       ICR: toBN(dec(20, 18)),

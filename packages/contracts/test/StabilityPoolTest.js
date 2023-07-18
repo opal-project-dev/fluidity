@@ -56,7 +56,7 @@ contract("StabilityPool", async accounts => {
   let stabilityPool;
   let defaultPool;
   let borrowerOperations;
-  let lqtyToken;
+  let oplToken;
   let communityIssuance;
 
   let gasPriceInWei;
@@ -94,7 +94,7 @@ contract("StabilityPool", async accounts => {
       borrowerOperations = contracts.borrowerOperations;
       hintHelpers = contracts.hintHelpers;
 
-      lqtyToken = OPLContracts.lqtyToken;
+      oplToken = OPLContracts.oplToken;
       communityIssuance = OPLContracts.communityIssuance;
 
       await deploymentHelper.connectOPLContracts(OPLContracts);
@@ -1029,8 +1029,8 @@ contract("StabilityPool", async accounts => {
       });
 
       // Get A, B, C OPL balances before and confirm they're zero
-      const A_OPLBalance_Before = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_Before = await lqtyToken.balanceOf(B);
+      const A_OPLBalance_Before = await oplToken.balanceOf(A);
+      const B_OPLBalance_Before = await oplToken.balanceOf(B);
 
       assert.equal(A_OPLBalance_Before, "0");
       assert.equal(B_OPLBalance_Before, "0");
@@ -1042,8 +1042,8 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.provideToSP(dec(2000, 18), ZERO_ADDRESS, { from: B });
 
       // Get A, B, C OPL balances after, and confirm they're still zero
-      const A_OPLBalance_After = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_After = await lqtyToken.balanceOf(B);
+      const A_OPLBalance_After = await oplToken.balanceOf(A);
+      const B_OPLBalance_After = await oplToken.balanceOf(B);
 
       assert.equal(A_OPLBalance_After, "0");
       assert.equal(B_OPLBalance_After, "0");
@@ -1110,8 +1110,8 @@ contract("StabilityPool", async accounts => {
       // --- TEST ---
 
       // Get A, B, C OPL balances before and confirm they're non-zero
-      const A_OPLBalance_Before = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_Before = await lqtyToken.balanceOf(B);
+      const A_OPLBalance_Before = await oplToken.balanceOf(A);
+      const B_OPLBalance_Before = await oplToken.balanceOf(B);
       assert.isTrue(A_OPLBalance_Before.gt(toBN("0")));
       assert.isTrue(B_OPLBalance_Before.gt(toBN("0")));
 
@@ -1122,8 +1122,8 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.provideToSP(dec(200, 18), ZERO_ADDRESS, { from: B });
 
       // Get A, B, C OPL balances after, and confirm they have not changed
-      const A_OPLBalance_After = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_After = await lqtyToken.balanceOf(B);
+      const A_OPLBalance_After = await oplToken.balanceOf(A);
+      const B_OPLBalance_After = await oplToken.balanceOf(B);
 
       assert.isTrue(A_OPLBalance_After.eq(A_OPLBalance_Before));
       assert.isTrue(B_OPLBalance_After.eq(B_OPLBalance_Before));
@@ -1174,9 +1174,9 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.provideToSP(dec(3000, 18), frontEnd_3, { from: F });
 
       // Get F1, F2, F3 OPL balances before, and confirm they're zero
-      const frontEnd_1_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_1);
-      const frontEnd_2_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_2);
-      const frontEnd_3_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_3);
+      const frontEnd_1_OPLBalance_Before = await oplToken.balanceOf(frontEnd_1);
+      const frontEnd_2_OPLBalance_Before = await oplToken.balanceOf(frontEnd_2);
+      const frontEnd_3_OPLBalance_Before = await oplToken.balanceOf(frontEnd_3);
 
       assert.equal(frontEnd_1_OPLBalance_Before, "0");
       assert.equal(frontEnd_2_OPLBalance_Before, "0");
@@ -1186,7 +1186,7 @@ contract("StabilityPool", async accounts => {
 
       // console.log(`OPLSupplyCap before: ${await communityIssuance.OPLSupplyCap()}`)
       // console.log(`totalOPLIssued before: ${await communityIssuance.totalOPLIssued()}`)
-      // console.log(`OPL balance of CI before: ${await lqtyToken.balanceOf(communityIssuance.address)}`)
+      // console.log(`OPL balance of CI before: ${await oplToken.balanceOf(communityIssuance.address)}`)
 
       // A, B, C provide to SP
       await stabilityPool.provideToSP(dec(1000, 18), frontEnd_1, { from: A });
@@ -1195,12 +1195,12 @@ contract("StabilityPool", async accounts => {
 
       // console.log(`OPLSupplyCap after: ${await communityIssuance.OPLSupplyCap()}`)
       // console.log(`totalOPLIssued after: ${await communityIssuance.totalOPLIssued()}`)
-      // console.log(`OPL balance of CI after: ${await lqtyToken.balanceOf(communityIssuance.address)}`)
+      // console.log(`OPL balance of CI after: ${await oplToken.balanceOf(communityIssuance.address)}`)
 
       // Get F1, F2, F3 OPL balances after, and confirm they have increased
-      const frontEnd_1_OPLBalance_After = await lqtyToken.balanceOf(frontEnd_1);
-      const frontEnd_2_OPLBalance_After = await lqtyToken.balanceOf(frontEnd_2);
-      const frontEnd_3_OPLBalance_After = await lqtyToken.balanceOf(frontEnd_3);
+      const frontEnd_1_OPLBalance_After = await oplToken.balanceOf(frontEnd_1);
+      const frontEnd_2_OPLBalance_After = await oplToken.balanceOf(frontEnd_2);
+      const frontEnd_3_OPLBalance_After = await oplToken.balanceOf(frontEnd_3);
 
       assert.isTrue(frontEnd_1_OPLBalance_After.gt(frontEnd_1_OPLBalance_Before));
       assert.isTrue(frontEnd_2_OPLBalance_After.gt(frontEnd_2_OPLBalance_Before));
@@ -1674,9 +1674,9 @@ contract("StabilityPool", async accounts => {
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider);
 
       // Get A, B, C OPL balance before
-      const A_OPLBalance_Before = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_Before = await lqtyToken.balanceOf(B);
-      const C_OPLBalance_Before = await lqtyToken.balanceOf(C);
+      const A_OPLBalance_Before = await oplToken.balanceOf(A);
+      const B_OPLBalance_Before = await oplToken.balanceOf(B);
+      const C_OPLBalance_Before = await oplToken.balanceOf(C);
 
       // A, B, C top up
       await stabilityPool.provideToSP(dec(10, 18), frontEnd_1, { from: A });
@@ -1684,9 +1684,9 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.provideToSP(dec(30, 18), ZERO_ADDRESS, { from: C });
 
       // Get OPL balance after
-      const A_OPLBalance_After = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_After = await lqtyToken.balanceOf(B);
-      const C_OPLBalance_After = await lqtyToken.balanceOf(C);
+      const A_OPLBalance_After = await oplToken.balanceOf(A);
+      const B_OPLBalance_After = await oplToken.balanceOf(B);
+      const C_OPLBalance_After = await oplToken.balanceOf(C);
 
       // Check OPL Balance of A, B, C has increased
       assert.isTrue(A_OPLBalance_After.gt(A_OPLBalance_Before));
@@ -1726,9 +1726,9 @@ contract("StabilityPool", async accounts => {
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider);
 
       // Get front ends' OPL balance before
-      const F1_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_1);
-      const F2_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_2);
-      const F3_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_3);
+      const F1_OPLBalance_Before = await oplToken.balanceOf(frontEnd_1);
+      const F2_OPLBalance_Before = await oplToken.balanceOf(frontEnd_2);
+      const F3_OPLBalance_Before = await oplToken.balanceOf(frontEnd_3);
 
       // A, B, C top up  (front end param passed here is irrelevant)
       await stabilityPool.provideToSP(dec(10, 18), ZERO_ADDRESS, { from: A }); // provides no front end param
@@ -1736,9 +1736,9 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.provideToSP(dec(30, 18), frontEnd_3, { from: C }); // provides front end that matches his tag
 
       // Get front ends' OPL balance after
-      const F1_OPLBalance_After = await lqtyToken.balanceOf(A);
-      const F2_OPLBalance_After = await lqtyToken.balanceOf(B);
-      const F3_OPLBalance_After = await lqtyToken.balanceOf(C);
+      const F1_OPLBalance_After = await oplToken.balanceOf(A);
+      const F2_OPLBalance_After = await oplToken.balanceOf(B);
+      const F3_OPLBalance_After = await oplToken.balanceOf(C);
 
       // Check OPL Balance of front ends has increased
       assert.isTrue(F1_OPLBalance_After.gt(F1_OPLBalance_Before));
@@ -2821,7 +2821,7 @@ contract("StabilityPool", async accounts => {
       assert.isTrue(await sortedTroves.contains(defaulter_2));
 
       const A_AUTBalBefore = toBN(await web3.eth.getBalance(A));
-      const A_OPLBalBefore = await lqtyToken.balanceOf(A);
+      const A_OPLBalBefore = await oplToken.balanceOf(A);
 
       // Check Alice has gains to withdraw
       const A_pendingAUTGain = await stabilityPool.getDepositorAUTGain(A);
@@ -2837,7 +2837,7 @@ contract("StabilityPool", async accounts => {
 
       const A_AUTBalAfter = toBN(await web3.eth.getBalance(A));
 
-      const A_OPLBalAfter = await lqtyToken.balanceOf(A);
+      const A_OPLBalAfter = await oplToken.balanceOf(A);
       const A_OPLBalDiff = A_OPLBalAfter.sub(A_OPLBalBefore);
 
       // Check A's AUT and OPL balances have increased correctly
@@ -3490,9 +3490,9 @@ contract("StabilityPool", async accounts => {
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider);
 
       // Get A, B, C OPL balance before
-      const A_OPLBalance_Before = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_Before = await lqtyToken.balanceOf(B);
-      const C_OPLBalance_Before = await lqtyToken.balanceOf(C);
+      const A_OPLBalance_Before = await oplToken.balanceOf(A);
+      const B_OPLBalance_Before = await oplToken.balanceOf(B);
+      const C_OPLBalance_Before = await oplToken.balanceOf(C);
 
       // A, B, C withdraw
       await stabilityPool.withdrawFromSP(dec(1, 18), { from: A });
@@ -3500,9 +3500,9 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.withdrawFromSP(dec(3, 18), { from: C });
 
       // Get OPL balance after
-      const A_OPLBalance_After = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_After = await lqtyToken.balanceOf(B);
-      const C_OPLBalance_After = await lqtyToken.balanceOf(C);
+      const A_OPLBalance_After = await oplToken.balanceOf(A);
+      const B_OPLBalance_After = await oplToken.balanceOf(B);
+      const C_OPLBalance_After = await oplToken.balanceOf(C);
 
       // Check OPL Balance of A, B, C has increased
       assert.isTrue(A_OPLBalance_After.gt(A_OPLBalance_Before));
@@ -3542,9 +3542,9 @@ contract("StabilityPool", async accounts => {
       await th.fastForwardTime(timeValues.SECONDS_IN_ONE_HOUR, web3.currentProvider);
 
       // Get front ends' OPL balance before
-      const F1_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_1);
-      const F2_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_2);
-      const F3_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_3);
+      const F1_OPLBalance_Before = await oplToken.balanceOf(frontEnd_1);
+      const F2_OPLBalance_Before = await oplToken.balanceOf(frontEnd_2);
+      const F3_OPLBalance_Before = await oplToken.balanceOf(frontEnd_3);
 
       // A, B, C withdraw
       await stabilityPool.withdrawFromSP(dec(1, 18), { from: A });
@@ -3552,9 +3552,9 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.withdrawFromSP(dec(3, 18), { from: C });
 
       // Get front ends' OPL balance after
-      const F1_OPLBalance_After = await lqtyToken.balanceOf(A);
-      const F2_OPLBalance_After = await lqtyToken.balanceOf(B);
-      const F3_OPLBalance_After = await lqtyToken.balanceOf(C);
+      const F1_OPLBalance_After = await oplToken.balanceOf(A);
+      const F2_OPLBalance_After = await oplToken.balanceOf(B);
+      const F3_OPLBalance_After = await oplToken.balanceOf(C);
 
       // Check OPL Balance of front ends has increased
       assert.isTrue(F1_OPLBalance_After.gt(F1_OPLBalance_Before));
@@ -4708,9 +4708,9 @@ contract("StabilityPool", async accounts => {
       assert.isFalse(await sortedTroves.contains(defaulter_1));
 
       // Get A, B, C OPL balance before
-      const A_OPLBalance_Before = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_Before = await lqtyToken.balanceOf(B);
-      const C_OPLBalance_Before = await lqtyToken.balanceOf(C);
+      const A_OPLBalance_Before = await oplToken.balanceOf(A);
+      const B_OPLBalance_Before = await oplToken.balanceOf(B);
+      const C_OPLBalance_Before = await oplToken.balanceOf(C);
 
       // Check A, B, C have non-zero AUT gain
       assert.isTrue((await stabilityPool.getDepositorAUTGain(A)).gt(ZERO));
@@ -4725,9 +4725,9 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.withdrawAUTGainToTrove(C, C, { from: C });
 
       // Get OPL balance after
-      const A_OPLBalance_After = await lqtyToken.balanceOf(A);
-      const B_OPLBalance_After = await lqtyToken.balanceOf(B);
-      const C_OPLBalance_After = await lqtyToken.balanceOf(C);
+      const A_OPLBalance_After = await oplToken.balanceOf(A);
+      const B_OPLBalance_After = await oplToken.balanceOf(B);
+      const C_OPLBalance_After = await oplToken.balanceOf(C);
 
       // Check OPL Balance of A, B, C has increased
       assert.isTrue(A_OPLBalance_After.gt(A_OPLBalance_Before));
@@ -4774,9 +4774,9 @@ contract("StabilityPool", async accounts => {
       assert.isFalse(await sortedTroves.contains(defaulter_1));
 
       // Get front ends' OPL balance before
-      const F1_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_1);
-      const F2_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_2);
-      const F3_OPLBalance_Before = await lqtyToken.balanceOf(frontEnd_3);
+      const F1_OPLBalance_Before = await oplToken.balanceOf(frontEnd_1);
+      const F2_OPLBalance_Before = await oplToken.balanceOf(frontEnd_2);
+      const F3_OPLBalance_Before = await oplToken.balanceOf(frontEnd_3);
 
       await priceFeed.setPrice(dec(200, 18));
 
@@ -4791,9 +4791,9 @@ contract("StabilityPool", async accounts => {
       await stabilityPool.withdrawAUTGainToTrove(C, C, { from: C });
 
       // Get front ends' OPL balance after
-      const F1_OPLBalance_After = await lqtyToken.balanceOf(frontEnd_1);
-      const F2_OPLBalance_After = await lqtyToken.balanceOf(frontEnd_2);
-      const F3_OPLBalance_After = await lqtyToken.balanceOf(frontEnd_3);
+      const F1_OPLBalance_After = await oplToken.balanceOf(frontEnd_1);
+      const F2_OPLBalance_After = await oplToken.balanceOf(frontEnd_2);
+      const F3_OPLBalance_After = await oplToken.balanceOf(frontEnd_3);
 
       // Check OPL Balance of front ends has increased
       assert.isTrue(F1_OPLBalance_After.gt(F1_OPLBalance_Before));
