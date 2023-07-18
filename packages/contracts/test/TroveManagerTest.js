@@ -169,8 +169,8 @@ contract("TroveManager", async accounts => {
     // Confirm system is not in Recovery Mode
     assert.isFalse(await th.checkRecoveryMode(contracts));
 
-    /* close Bob's Trove. Should liquidate his ether and LUSD, 
-    leaving Alice’s ether and LUSD debt in the ActivePool. */
+    /* close Bob's Trove. Should liquidate his aut and LUSD, 
+    leaving Alice’s aut and LUSD debt in the ActivePool. */
     await troveManager.liquidate(bob, { from: owner });
 
     // check ActivePool AUT and LUSD debt
@@ -346,13 +346,13 @@ contract("TroveManager", async accounts => {
     // Confirm system is not in Recovery Mode
     assert.isFalse(await th.checkRecoveryMode(contracts));
 
-    // close Bob's Trove.  His ether*0.995 and LUSD should be added to the DefaultPool.
+    // close Bob's Trove.  His aut*0.995 and LUSD should be added to the DefaultPool.
     await troveManager.liquidate(bob, { from: owner });
 
     /* check snapshots after. Total stakes should be equal to the  remaining stake then the system: 
-    10 ether, Alice's stake.
+    10 aut, Alice's stake.
      
-    Total collateral should be equal to Alice's collateral plus her pending AUT reward (Bob’s collaterale*0.995 ether), earned
+    Total collateral should be equal to Alice's collateral plus her pending AUT reward (Bob’s collaterale*0.995 aut), earned
     from the liquidation of Bob's Trove */
     const totalStakesSnapshot_After = (await troveManager.totalStakesSnapshot()).toString();
     const totalCollateralSnapshot_After = (await troveManager.totalCollateralSnapshot()).toString();
@@ -392,7 +392,7 @@ contract("TroveManager", async accounts => {
     await troveManager.liquidate(carol, { from: owner });
     assert.isFalse(await sortedTroves.contains(carol));
 
-    // Carol's ether*0.995 and LUSD should be added to the DefaultPool.
+    // Carol's aut*0.995 and LUSD should be added to the DefaultPool.
     const L_AUT_AfterCarolLiquidated = await troveManager.L_AUT();
     const L_LUSDDebt_AfterCarolLiquidated = await troveManager.L_LUSDDebt();
 
@@ -422,7 +422,7 @@ contract("TroveManager", async accounts => {
     await troveManager.liquidate(bob, { from: owner });
     assert.isFalse(await sortedTroves.contains(bob));
 
-    /* Alice now has all the active stake. totalStakes in the system is now 10 ether.
+    /* Alice now has all the active stake. totalStakes in the system is now 10 aut.
    
    Bob's pending collateral reward and debt reward are applied to his Trove
    before his liquidation.

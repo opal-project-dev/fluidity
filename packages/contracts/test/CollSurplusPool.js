@@ -67,7 +67,7 @@ contract("CollSurplusPool", async accounts => {
     // skip bootstrapping phase
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider);
 
-    // At AUT:USD = 100, this redemption should leave 1 ether of coll surplus
+    // At AUT:USD = 100, this redemption should leave 1 aut of coll surplus
     await th.redeemCollateralAndGetTxObject(A, contracts, B_netDebt);
 
     const AUT_2 = await collSurplusPool.getAUT();
@@ -113,7 +113,7 @@ contract("CollSurplusPool", async accounts => {
     // skip bootstrapping phase
     await th.fastForwardTime(timeValues.SECONDS_IN_ONE_WEEK * 2, web3.currentProvider);
 
-    // At AUT:USD = 100, this redemption should leave 1 ether of coll surplus for B
+    // At AUT:USD = 100, this redemption should leave 1 aut of coll surplus for B
     await th.redeemCollateralAndGetTxObject(A, contracts, B_netDebt);
 
     const AUT_2 = await collSurplusPool.getAUT();

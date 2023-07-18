@@ -1570,7 +1570,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
     // A deposits 10000
     // L1, L2, L3 liquidated with 10000 LUSD each
     // A withdraws all
-    // Expect A to withdraw 0 deposit and ether only from reward L1
+    // Expect A to withdraw 0 deposit and aut only from reward L1
     it("withdrawFromSP(): single deposit fully offset. After subsequent liquidations, depositor withdraws 0 deposit and *only* the AUT Gain from one liquidation", async () => {
       // Whale opens Trove with 100k AUT
       await borrowerOperations.openTrove(

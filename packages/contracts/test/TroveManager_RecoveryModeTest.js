@@ -469,10 +469,10 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     const B_reward = th.applyLiquidationFee(D_coll).mul(B_coll).div(A_coll.add(B_coll));
 
     /*
-    Prior to Dennis liquidation, total stakes and total collateral were each 27 ether. 
+    Prior to Dennis liquidation, total stakes and total collateral were each 27 aut. 
   
     Check snapshots. Dennis' liquidated collateral is distributed and remains in the system. His 
-    stake is removed, leaving 24+3*0.995 ether total collateral, and 24 ether total stakes. */
+    stake is removed, leaving 24+3*0.995 aut total collateral, and 24 aut total stakes. */
 
     const totalStakesSnaphot_2 = (await troveManager.totalStakesSnapshot()).toString();
     const totalCollateralSnapshot_2 = (await troveManager.totalCollateralSnapshot()).toString();
@@ -491,7 +491,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     // Liquidate Bob
     await troveManager.liquidate(bob, { from: owner });
 
-    /* After Bob's liquidation, Bob's stake (21 ether) should be removed from total stakes, 
+    /* After Bob's liquidation, Bob's stake (21 aut) should be removed from total stakes, 
     but his collateral should remain in the system (*0.995). */
     const totalStakesSnaphot_3 = await troveManager.totalStakesSnapshot();
     const totalCollateralSnapshot_3 = await troveManager.totalCollateralSnapshot();
@@ -591,15 +591,15 @@ contract("TroveManager - in Recovery Mode", async accounts => {
 
     assert.equal(P_Before, "1000000000000000000");
 
-    /* Now, liquidate Bob. Liquidated coll is 21 ether, and liquidated debt is 2000 LUSD.
+    /* Now, liquidate Bob. Liquidated coll is 21 aut, and liquidated debt is 2000 LUSD.
     
     With 390 LUSD in the StabilityPool, 390 LUSD should be offset with the pool, leaving 0 in the pool.
   
     Stability Pool rewards for alice should be:
     LUSDLoss: 390LUSD
-    AUTGain: (390 / 2000) * 21*0.995 = 4.074525 ether
+    AUTGain: (390 / 2000) * 21*0.995 = 4.074525 aut
 
-    After offsetting 390 LUSD and 4.074525 ether, the remainders - 1610 LUSD and 16.820475 ether - should be redistributed to all active Troves.
+    After offsetting 390 LUSD and 4.074525 aut, the remainders - 1610 LUSD and 16.820475 aut - should be redistributed to all active Troves.
    */
     // Liquidate Bob
     await troveManager.liquidate(bob, { from: owner });
@@ -611,14 +611,14 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     assert.equal(aliceDeposit.toString(), 0);
     assert.equal(aliceAUTGain.toString(), aliceExpectedAUTGain);
 
-    /* Now, check redistribution to active Troves. Remainders of 1610 LUSD and 16.82 ether are distributed.
+    /* Now, check redistribution to active Troves. Remainders of 1610 LUSD and 16.82 aut are distributed.
     
-    Now, only Alice and Dennis have a stake in the system - 3 ether each, thus total stakes is 6 ether.
+    Now, only Alice and Dennis have a stake in the system - 3 aut each, thus total stakes is 6 aut.
   
     Rewards-per-unit-staked from the redistribution should be:
   
     L_LUSDDebt = 1610 / 6 = 268.333 LUSD
-    L_AUT = 16.820475 /6 =  2.8034125 ether
+    L_AUT = 16.820475 /6 =  2.8034125 aut
     */
     const L_LUSDDebt = (await troveManager.L_LUSDDebt()).toString();
     const L_AUT = (await troveManager.L_AUT()).toString();
@@ -758,7 +758,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     As liquidated debt (250 LUSD) was completely offset
 
     Alice's expected compounded deposit: (1490 - 250) = 1240LUSD
-    Alice's expected AUT gain:  Bob's liquidated capped coll (minus gas comp), 2.75*0.995 ether
+    Alice's expected AUT gain:  Bob's liquidated capped coll (minus gas comp), 2.75*0.995 aut
   
     */
     const aliceExpectedDeposit = await stabilityPool.getCompoundedLUSDDeposit(alice);
@@ -836,7 +836,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     As liquidated debt (250 LUSD) was completely offset
 
     Alice's expected compounded deposit: (1490 - 250) = 1240LUSD
-    Alice's expected AUT gain:  Bob's liquidated capped coll (minus gas comp), 2.75*0.995 ether
+    Alice's expected AUT gain:  Bob's liquidated capped coll (minus gas comp), 2.75*0.995 aut
 
     */
     const aliceExpectedDeposit = await stabilityPool.getCompoundedLUSDDeposit(alice);
@@ -974,7 +974,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     const totalStakesSnaphot_After = await troveManager.totalStakesSnapshot();
     const totalCollateralSnapshot_After = await troveManager.totalCollateralSnapshot();
 
-    // totalStakesSnapshot should have reduced to 22 ether - the sum of Alice's coll( 20 ether) and Dennis' coll (2 ether )
+    // totalStakesSnapshot should have reduced to 22 aut - the sum of Alice's coll( 20 aut) and Dennis' coll (2 aut )
     assert.equal(totalStakesSnaphot_After.toString(), A_coll.add(D_coll));
     // Total collateral should also reduce, since all liquidated coll has been moved to a reward for Stability Pool depositors
     assert.equal(totalCollateralSnapshot_After.toString(), A_coll.add(D_coll));
@@ -1337,11 +1337,11 @@ contract("TroveManager - in Recovery Mode", async accounts => {
 
     /*  Since Bob's debt (250 LUSD) is larger than all LUSD in the Stability Pool, Liquidation won’t happen
 
-    After liquidation, totalStakes snapshot should equal Alice's stake (20 ether) + Dennis stake (2 ether) = 22 ether.
+    After liquidation, totalStakes snapshot should equal Alice's stake (20 aut) + Dennis stake (2 aut) = 22 aut.
 
-    Since there has been no redistribution, the totalCollateral snapshot should equal the totalStakes snapshot: 22 ether.
+    Since there has been no redistribution, the totalCollateral snapshot should equal the totalStakes snapshot: 22 aut.
 
-    Bob's new coll and stake should remain the same, and the updated totalStakes should still equal 25 ether.
+    Bob's new coll and stake should remain the same, and the updated totalStakes should still equal 25 aut.
     */
     const bob_Trove = await troveManager.Troves(bob);
     const bob_DebtAfter = bob_Trove[0].toString();
@@ -1399,9 +1399,9 @@ contract("TroveManager - in Recovery Mode", async accounts => {
       "TroveManager: nothing to liquidate"
     );
 
-    /* After liquidation, totalStakes snapshot should still equal the total stake: 25 ether
+    /* After liquidation, totalStakes snapshot should still equal the total stake: 25 aut
 
-    Since there has been no redistribution, the totalCollateral snapshot should equal the totalStakes snapshot: 25 ether.*/
+    Since there has been no redistribution, the totalCollateral snapshot should equal the totalStakes snapshot: 25 aut.*/
 
     const totalStakesSnaphot_After = (await troveManager.totalStakesSnapshot()).toString();
     const totalCollateralSnapshot_After = (await troveManager.totalCollateralSnapshot()).toString();
@@ -3200,24 +3200,20 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     });
     await stabilityPool.provideToSP(W_lusdAmount, ZERO_ADDRESS, { from: whale });
 
-    const {
-      lusdAmount: A_lusdAmount,
-      totalDebt: A_totalDebt,
-      collateral: A_coll
-    } = await openTrove({
-      ICR: toBN(dec(191, 16)),
-      extraLUSDAmount: dec(40, 18),
-      extraParams: { from: alice }
-    });
-    const {
-      lusdAmount: B_lusdAmount,
-      totalDebt: B_totalDebt,
-      collateral: B_coll
-    } = await openTrove({
-      ICR: toBN(dec(200, 16)),
-      extraLUSDAmount: dec(240, 18),
-      extraParams: { from: bob }
-    });
+    const { lusdAmount: A_lusdAmount, totalDebt: A_totalDebt, collateral: A_coll } = await openTrove(
+      {
+        ICR: toBN(dec(191, 16)),
+        extraLUSDAmount: dec(40, 18),
+        extraParams: { from: alice }
+      }
+    );
+    const { lusdAmount: B_lusdAmount, totalDebt: B_totalDebt, collateral: B_coll } = await openTrove(
+      {
+        ICR: toBN(dec(200, 16)),
+        extraLUSDAmount: dec(240, 18),
+        extraParams: { from: bob }
+      }
+    );
     const { totalDebt: C_totalDebt, collateral: C_coll } = await openTrove({
       ICR: toBN(dec(209, 16)),
       extraParams: { from: carol }

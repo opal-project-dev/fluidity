@@ -1157,7 +1157,7 @@ contract("TroveManager", async accounts => {
 
   // --- Applied rewards, large coll and debt ---
 
-  it("11 accounts with random large coll, magnitude ~1e8 ether. 1 liquidation. 10 accounts do Trove operations (apply rewards)", async () => {
+  it("11 accounts with random large coll, magnitude ~1e8 aut. 1 liquidation. 10 accounts do Trove operations (apply rewards)", async () => {
     await borrowerOperations.openTrove(0, 0, accounts[99], {
       from: accounts[99],
       value: dec(100, "ether")
@@ -1167,7 +1167,7 @@ contract("TroveManager", async accounts => {
       value: dec(1, "ether")
     });
 
-    // Troves open with 100-200 million ether
+    // Troves open with 100-200 million aut
     await th.openTrove_allAccounts_randomAUT(
       100000000,
       200000000,
@@ -1206,7 +1206,7 @@ contract("TroveManager", async accounts => {
   LUSDDebt left in Default Pool is: 535042995
 */
 
-  it("101 accounts with random large coll, magnitude ~1e8 ether. 1 liquidation. 500 accounts do a Trove operation (apply rewards)", async () => {
+  it("101 accounts with random large coll, magnitude ~1e8 aut. 1 liquidation. 500 accounts do a Trove operation (apply rewards)", async () => {
     await borrowerOperations.openTrove(0, 0, accounts[999], {
       from: accounts[999],
       value: dec(1000, "ether")
@@ -1216,7 +1216,7 @@ contract("TroveManager", async accounts => {
       value: dec(1, "ether")
     });
 
-    // Troves open with 100-200 million ether
+    // Troves open with 100-200 million aut
     await th.openTrove_allAccounts_randomAUT(
       100000000,
       200000000,
@@ -1263,7 +1263,7 @@ contract("TroveManager", async accounts => {
       value: dec(1, 27)
     });
 
-    // Troves open with 100-200 million ether and proportional LUSD Debt
+    // Troves open with 100-200 million aut and proportional LUSD Debt
     await th.openTrove_allAccounts_randomAUT_ProportionalLUSD(
       100000000,
       200000000,
@@ -1319,7 +1319,7 @@ contract("TroveManager", async accounts => {
       value: dec(1, 28)
     });
 
-    // Troves open with 100-200 million ether and proportional LUSD Debt
+    // Troves open with 100-200 million aut and proportional LUSD Debt
     await th.openTrove_allAccounts_randomAUT_ProportionalLUSD(
       100000000,
       200000000,

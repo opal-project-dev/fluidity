@@ -66,15 +66,15 @@ const ABDKOperations = async () => {
   const storedPrice = "20012345678";
   // convert price to 64.64dec fraction
   const price = await functionCaller.abdkMath_divu_view(storedPrice, "100000000");
-  const etherVal = await functionCaller.abdkMath_divu_view("6123456700909123456789123456789", price);
-  console.log(`ether val is ${etherVal}`);
+  const autVal = await functionCaller.abdkMath_divu_view("6123456700909123456789123456789", price);
+  console.log(`aut val is ${autVal}`);
 
   // returns 30598395607571232843814242587
 
   // expected: 30598395607.571232843807983401100033706903271291774255... Ether
   //  actual:   30598395607.571232843814242587 Ether
 
-  // accurate to 22 digits.  So with 99 billion ether, it's accurate to 1 gwei.
+  // accurate to 22 digits.  So with 99 billion aut, it's accurate to 1 gwei.
 
   // Example computation: Stake computation
 

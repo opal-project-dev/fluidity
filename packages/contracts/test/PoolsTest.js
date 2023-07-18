@@ -100,12 +100,12 @@ contract("ActivePool", async accounts => {
     assert.equal(recordedLUSD_balanceAfter, 0);
   });
 
-  // send raw ether
+  // send raw aut
   it("sendAUT(): decreases the recorded AUT balance by the correct amount", async () => {
-    // setup: give pool 2 ether
+    // setup: give pool 2 aut
     const activePool_initialBalance = web3.utils.toBN(await web3.eth.getBalance(activePool.address));
     assert.equal(activePool_initialBalance, 0);
-    // start pool with 2 ether
+    // start pool with 2 aut
     //await web3.eth.sendTransaction({ from: mockBorrowerOperationsAddress, to: activePool.address, value: dec(2, 'ether') })
     const tx1 = await mockBorrowerOperations.forward(activePool.address, "0x", {
       from: owner,
@@ -120,7 +120,7 @@ contract("ActivePool", async accounts => {
 
     assert.equal(activePool_BalanceBeforeTx, dec(2, "ether"));
 
-    // send ether from pool to alice
+    // send aut from pool to alice
     //await activePool.sendAUT(alice, dec(1, 'ether'), { from: mockBorrowerOperationsAddress })
     const sendAUTData = th.getTransactionData("sendAUT(address,uint256)", [
       alice,
@@ -194,15 +194,15 @@ contract("DefaultPool", async accounts => {
     assert.equal(recordedLUSD_balanceAfter, 0);
   });
 
-  // send raw ether
+  // send raw aut
   it("sendAUTToActivePool(): decreases the recorded AUT balance by the correct amount", async () => {
-    // setup: give pool 2 ether
+    // setup: give pool 2 aut
     const defaultPool_initialBalance = web3.utils.toBN(
       await web3.eth.getBalance(defaultPool.address)
     );
     assert.equal(defaultPool_initialBalance, 0);
 
-    // start pool with 2 ether
+    // start pool with 2 aut
     //await web3.eth.sendTransaction({ from: mockActivePool.address, to: defaultPool.address, value: dec(2, 'ether') })
     const tx1 = await mockActivePool.forward(defaultPool.address, "0x", {
       from: owner,
@@ -219,7 +219,7 @@ contract("DefaultPool", async accounts => {
 
     assert.equal(defaultPool_BalanceBeforeTx, dec(2, "ether"));
 
-    // send ether from pool to alice
+    // send aut from pool to alice
     //await defaultPool.sendAUTToActivePool(dec(1, 'ether'), { from: mockTroveManagerAddress })
     const sendAUTData = th.getTransactionData("sendAUTToActivePool(uint256)", [
       web3.utils.toHex(dec(1, "ether"))

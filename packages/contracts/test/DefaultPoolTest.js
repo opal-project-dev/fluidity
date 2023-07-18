@@ -32,7 +32,7 @@ contract("DefaultPool", async accounts => {
     });
     assert.isTrue(tx.receipt.status);
 
-    // try to send ether from pool to non-payable
+    // try to send aut from pool to non-payable
     //await th.assertRevert(defaultPool.sendAUTToActivePool(amount, { from: owner }), 'DefaultPool: sending AUT failed')
     const sendAUTData = th.getTransactionData("sendAUTToActivePool(uint256)", [
       web3.utils.toHex(amount)
