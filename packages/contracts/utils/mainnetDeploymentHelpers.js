@@ -225,19 +225,6 @@ class MainnetDeploymentHelper {
     return OPLContracts;
   }
 
-  async deployUnipoolMainnet(deploymentState) {
-    const unipoolFactory = await this.getFactory("Unipool");
-    const unipool = await this.loadOrDeploy(unipoolFactory, "unipool", deploymentState);
-
-    if (!this.configParams.ETHERSCAN_BASE_URL) {
-      console.log("No Etherscan Url defined, skipping verification");
-    } else {
-      await this.verifyContract("unipool", deploymentState);
-    }
-
-    return unipool;
-  }
-
   async deployMultiTroveGetterMainnet(liquityCore, deploymentState) {
     const multiTroveGetterFactory = await this.getFactory("MultiTroveGetter");
     const multiTroveGetterParams = [
@@ -412,14 +399,6 @@ class MainnetDeploymentHelper {
           coreContracts.stabilityPool.address,
           { gasPrice }
         )
-      ));
-  }
-
-  async connectUnipoolMainnet(uniPool, OPLContracts, ONEUWETHPairAddr, duration) {
-    const gasPrice = this.configParams.GAS_PRICE;
-    (await this.isOwnershipRenounced(uniPool)) ||
-      (await this.sendAndWaitForTransaction(
-        uniPool.setParams(OPLContracts.oplToken.address, ONEUWETHPairAddr, duration, { gasPrice })
       ));
   }
 

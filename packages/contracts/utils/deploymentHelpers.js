@@ -16,8 +16,6 @@ const OPLToken = artifacts.require("./OPLToken.sol");
 const LockupContractFactory = artifacts.require("./LockupContractFactory.sol");
 const CommunityIssuance = artifacts.require("./CommunityIssuance.sol");
 
-const Unipool = artifacts.require("./Unipool.sol");
-
 const OPLTokenTester = artifacts.require("./OPLTokenTester.sol");
 const CommunityIssuanceTester = artifacts.require("./CommunityIssuanceTester.sol");
 const StabilityPoolTester = artifacts.require("./StabilityPoolTester.sol");
@@ -455,10 +453,6 @@ class DeploymentHelper {
       OPLContracts.oplToken.address,
       coreContracts.stabilityPool.address
     );
-  }
-
-  static async connectUnipool(uniPool, OPLContracts, uniswapPairAddr, duration) {
-    await uniPool.setParams(OPLContracts.oplToken.address, uniswapPairAddr, duration);
   }
 }
 module.exports = DeploymentHelper;
