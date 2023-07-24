@@ -55,7 +55,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     I
   ] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let priceFeed;
   let oneuToken;
@@ -85,7 +85,7 @@ contract("TroveManager - in Recovery Mode", async accounts => {
     );
     const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
 

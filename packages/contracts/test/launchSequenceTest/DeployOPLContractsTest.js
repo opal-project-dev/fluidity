@@ -10,7 +10,7 @@ const dec = th.dec;
 
 contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", async accounts => {
   const [liquityAG, A, B] = accounts;
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let OPLContracts;
 
@@ -23,7 +23,7 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
     // Deploy all contracts from the first account
     OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
     await deploymentHelper.connectOPLContracts(OPLContracts);
@@ -72,12 +72,11 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
       assert.equal(lockupContractFactory.address, storedLCFAddress);
     });
 
-    it("Mints the correct OPL amount to the multisig's address: (64.66 million)", async () => {
+    it("Mints the correct OPL amount to the multisig's address: (64 million)", async () => {
       const multisigOPLEntitlement = await oplToken.balanceOf(multisig);
 
-      const twentyThreeSixes = "6".repeat(23);
-      const expectedMultisigEntitlement = "64".concat(twentyThreeSixes).concat("7");
-      assert.equal(multisigOPLEntitlement, expectedMultisigEntitlement);
+      const sixtysixMillion = dec(66, 24);
+      assert.equal(multisigOPLEntitlement.toString(), sixtysixMillion);
     });
 
     it("Mints the correct OPL amount to the CommunityIssuance contract address: 32 million", async () => {
@@ -94,14 +93,6 @@ contract("Deploying the OPL contracts: LCF, CI, OPLStaking, and OPLToken ", asyn
       const _2Million = dec(2, 24);
 
       assert.equal(bountyAddressBal, _2Million);
-    });
-
-    it("Mints the correct OPL amount to the lpRewardsAddress EOA: 1.33 million", async () => {
-      const lpRewardsAddressBal = await oplToken.balanceOf(lpRewardsAddress);
-      // 1.3 million as 18-digit decimal
-      const _1pt33Million = "1".concat("3".repeat(24));
-
-      assert.equal(lpRewardsAddressBal, _1pt33Million);
     });
   });
 

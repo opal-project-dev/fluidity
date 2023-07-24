@@ -7,7 +7,7 @@ const BorrowerOperationsTester = artifacts.require("./BorrowerOperationsTester.s
 contract("All Liquity functions with onlyOwner modifier", async accounts => {
   const [owner, alice, bob] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let contracts;
   let oneuToken;
@@ -29,7 +29,7 @@ contract("All Liquity functions with onlyOwner modifier", async accounts => {
     contracts = await deploymentHelper.deployONEUToken(contracts);
     const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
 

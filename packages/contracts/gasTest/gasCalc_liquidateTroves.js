@@ -19,7 +19,7 @@ const _100pct = th._100pct;
 contract("Gas cost tests", async accounts => {
   const [owner] = accounts;
   const bountyAddress = accounts[998];
-  const lpRewardsAddress = accounts[999];
+
   const multisig = accounts[1000];
 
   let priceFeed;
@@ -36,11 +36,7 @@ contract("Gas cost tests", async accounts => {
 
   beforeEach(async () => {
     contracts = await deploymentHelper.deployTesterContractsHardhat();
-    const OPLContracts = await deploymentHelper.deployOPLContracts(
-      bountyAddress,
-      lpRewardsAddress,
-      multisig
-    );
+    const OPLContracts = await deploymentHelper.deployOPLContracts(bountyAddress, multisig);
 
     priceFeed = contracts.priceFeedTestnet;
     oneuToken = contracts.oneuToken;

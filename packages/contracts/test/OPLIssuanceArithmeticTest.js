@@ -40,7 +40,7 @@ contract("OPL community issuance arithmetic tests", async accounts => {
 
   const [owner, alice, frontEnd_1] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   before(async () => {});
 
@@ -48,7 +48,7 @@ contract("OPL community issuance arithmetic tests", async accounts => {
     contracts = await deploymentHelper.deployLiquityCore();
     const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
     contracts.stabilityPool = await StabilityPool.new();

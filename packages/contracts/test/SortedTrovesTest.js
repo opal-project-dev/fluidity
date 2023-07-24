@@ -69,7 +69,7 @@ contract("SortedTroves", async accounts => {
   let borrowerOperations;
   let oneuToken;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let contracts;
 
@@ -87,7 +87,7 @@ contract("SortedTroves", async accounts => {
       );
       const OPLContracts = await deploymentHelper.deployOPLContracts(
         bountyAddress,
-        lpRewardsAddress,
+
         multisig
       );
 

@@ -23,7 +23,7 @@ const assertRevert = th.assertRevert;
 contract("OPL Token", async accounts => {
   const [owner, A, B, C, D] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   // Create the approval tx data, for use in permit()
   const approve = {
@@ -145,7 +145,7 @@ contract("OPL Token", async accounts => {
     contracts = await deploymentHelper.deployLiquityCore();
     const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
 

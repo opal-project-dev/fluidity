@@ -73,7 +73,7 @@ const getPermitDigest = (
 contract("ONEUToken", async accounts => {
   const [owner, alice, bob, carol, dennis] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   // the second account our hardhatenv creates (for Alice)
   // from https://github.com/goldmandao/fluidity/blob/main/packages/contracts/hardhatAccountsList2k.js#L3
@@ -95,7 +95,7 @@ contract("ONEUToken", async accounts => {
 
       const OPLContracts = await deploymentHelper.deployOPLContracts(
         bountyAddress,
-        lpRewardsAddress,
+
         multisig
       );
 

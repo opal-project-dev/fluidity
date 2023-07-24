@@ -18,7 +18,7 @@ contract(
   "Access Control: Liquity functions with the caller restricted to Liquity contract(s)",
   async accounts => {
     const [owner, alice, bob, carol] = accounts;
-    const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+    const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
     let coreContracts;
 
@@ -44,7 +44,7 @@ contract(
       coreContracts = await deploymentHelper.deployONEUTokenTester(coreContracts);
       const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
         bountyAddress,
-        lpRewardsAddress,
+
         multisig
       );
 

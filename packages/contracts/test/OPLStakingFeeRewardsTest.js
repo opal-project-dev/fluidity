@@ -27,7 +27,7 @@ const GAS_PRICE = 10000000;
  */
 
 contract("OPLStaking revenue share tests", async accounts => {
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   const [owner, A, B, C, D, E, F, G, whale] = accounts;
 
@@ -52,7 +52,7 @@ contract("OPLStaking revenue share tests", async accounts => {
     contracts = await deploymentHelper.deployONEUTokenTester(contracts);
     const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
 

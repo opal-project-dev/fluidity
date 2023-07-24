@@ -32,7 +32,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
     F
   ] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let contracts;
 
@@ -60,7 +60,7 @@ contract("StabilityPool - Withdrawal of stability deposit - Reward calculations"
       contracts = await deploymentHelper.deployLiquityCore();
       const OPLContracts = await deploymentHelper.deployOPLContracts(
         bountyAddress,
-        lpRewardsAddress,
+
         multisig
       );
       contracts.troveManager = await TroveManagerTester.new();

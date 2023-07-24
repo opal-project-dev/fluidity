@@ -34,7 +34,7 @@ contract("TroveManager - Redistribution reward calculations", async accounts => 
     defaulter_4
   ] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let priceFeed;
   let oneuToken;
@@ -64,7 +64,7 @@ contract("TroveManager - Redistribution reward calculations", async accounts => 
     );
     const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
 

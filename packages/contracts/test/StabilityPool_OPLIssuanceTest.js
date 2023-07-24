@@ -35,7 +35,7 @@ contract("StabilityPool - OPL Rewards", async accounts => {
     frontEnd_3
   ] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let contracts;
 
@@ -72,7 +72,7 @@ contract("StabilityPool - OPL Rewards", async accounts => {
       );
       const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
         bountyAddress,
-        lpRewardsAddress,
+
         multisig
       );
 

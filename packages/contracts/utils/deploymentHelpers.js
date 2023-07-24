@@ -70,15 +70,15 @@ class DeploymentHelper {
     }
   }
 
-  static async deployOPLContracts(bountyAddress, lpRewardsAddress, multisigAddress) {
+  static async deployOPLContracts(bountyAddress, multisigAddress) {
     const cmdLineArgs = process.argv;
     const frameworkPath = cmdLineArgs[1];
     // console.log(`Framework used:  ${frameworkPath}`)
 
     if (frameworkPath.includes("hardhat")) {
-      return this.deployOPLContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress);
+      return this.deployOPLContractsHardhat(bountyAddress, multisigAddress);
     } else if (frameworkPath.includes("truffle")) {
-      return this.deployOPLContractsTruffle(bountyAddress, lpRewardsAddress, multisigAddress);
+      return this.deployOPLContractsTruffle(bountyAddress, multisigAddress);
     }
   }
 
@@ -155,7 +155,7 @@ class DeploymentHelper {
     return testerContracts;
   }
 
-  static async deployOPLContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress) {
+  static async deployOPLContractsHardhat(bountyAddress, multisigAddress) {
     const oplStaking = await OPLStaking.new();
     const lockupContractFactory = await LockupContractFactory.new();
     const communityIssuance = await CommunityIssuance.new();
@@ -170,7 +170,6 @@ class DeploymentHelper {
       oplStaking.address,
       lockupContractFactory.address,
       bountyAddress,
-      lpRewardsAddress,
       multisigAddress
     );
     OPLToken.setAsDeployed(oplToken);
@@ -184,7 +183,7 @@ class DeploymentHelper {
     return OPLContracts;
   }
 
-  static async deployOPLTesterContractsHardhat(bountyAddress, lpRewardsAddress, multisigAddress) {
+  static async deployOPLTesterContractsHardhat(bountyAddress, multisigAddress) {
     const oplStaking = await OPLStaking.new();
     const lockupContractFactory = await LockupContractFactory.new();
     const communityIssuance = await CommunityIssuanceTester.new();
@@ -199,7 +198,6 @@ class DeploymentHelper {
       oplStaking.address,
       lockupContractFactory.address,
       bountyAddress,
-      lpRewardsAddress,
       multisigAddress
     );
     OPLTokenTester.setAsDeployed(oplToken);
@@ -247,7 +245,7 @@ class DeploymentHelper {
     return coreContracts;
   }
 
-  static async deployOPLContractsTruffle(bountyAddress, lpRewardsAddress, multisigAddress) {
+  static async deployOPLContractsTruffle(bountyAddress, multisigAddress) {
     const oplStaking = await oplStaking.new();
     const lockupContractFactory = await LockupContractFactory.new();
     const communityIssuance = await CommunityIssuance.new();
@@ -259,7 +257,6 @@ class DeploymentHelper {
       oplStaking.address,
       lockupContractFactory.address,
       bountyAddress,
-      lpRewardsAddress,
       multisigAddress
     );
 

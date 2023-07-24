@@ -6,7 +6,7 @@ const TroveManagerTester = artifacts.require("./TroveManagerTester");
 const ONEUToken = artifacts.require("./ONEUToken.sol");
 
 contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async accounts => {
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
   const [
     owner,
     alice,
@@ -52,7 +52,7 @@ contract("TroveManager - in Recovery Mode - back to normal mode in 1 tx", async 
     );
     const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
 

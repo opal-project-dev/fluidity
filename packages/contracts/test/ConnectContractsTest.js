@@ -5,7 +5,7 @@ contract(
   async accounts => {
     const [owner] = accounts;
 
-    const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+    const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
     let priceFeed;
     let oneuToken;
@@ -25,7 +25,7 @@ contract(
       const coreContracts = await deploymentHelper.deployLiquityCore();
       const OPLContracts = await deploymentHelper.deployOPLContracts(
         bountyAddress,
-        lpRewardsAddress,
+
         multisig
       );
 

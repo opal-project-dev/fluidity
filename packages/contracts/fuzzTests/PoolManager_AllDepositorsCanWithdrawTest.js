@@ -21,7 +21,6 @@ contract(
   async accounts => {
     const whale = accounts[accounts.length - 1];
     const bountyAddress = accounts[998];
-    const lpRewardsAddress = accounts[999];
 
     let priceFeed;
     let oneuToken;
@@ -245,10 +244,7 @@ contract(
 
       beforeEach(async () => {
         contracts = await deploymentHelper.deployLiquityCore();
-        const OPLContracts = await deploymentHelper.deployOPLContracts(
-          bountyAddress,
-          lpRewardsAddress
-        );
+        const OPLContracts = await deploymentHelper.deployOPLContracts(bountyAddress);
 
         stabilityPool = contracts.stabilityPool;
         priceFeed = contracts.priceFeedTestnet;

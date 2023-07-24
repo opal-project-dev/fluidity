@@ -14,7 +14,7 @@ const ONEUToken = artifacts.require("ONEUToken");
 contract("CollSurplusPool", async accounts => {
   const [owner, A, B, C, D, E] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let borrowerOperations;
   let priceFeed;
@@ -35,7 +35,7 @@ contract("CollSurplusPool", async accounts => {
     );
     const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
 

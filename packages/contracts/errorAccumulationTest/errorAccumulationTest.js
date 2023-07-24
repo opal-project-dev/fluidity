@@ -10,7 +10,6 @@ const ZERO_ADDRESS = th.ZERO_ADDRESS;
 
 contract("TroveManager", async accounts => {
   const bountyAddress = accounts[998];
-  const lpRewardsAddress = accounts[999];
 
   let contracts;
   let priceFeed;
@@ -22,7 +21,7 @@ contract("TroveManager", async accounts => {
 
   beforeEach(async () => {
     contracts = await deploymentHelper.deployLiquityCore();
-    const OPLContracts = await deploymentHelper.deployOPLContracts(bountyAddress, lpRewardsAddress);
+    const OPLContracts = await deploymentHelper.deployOPLContracts(bountyAddress);
 
     oneuToken = contracts.oneuToken;
     priceFeed = contracts.priceFeedTestnet;

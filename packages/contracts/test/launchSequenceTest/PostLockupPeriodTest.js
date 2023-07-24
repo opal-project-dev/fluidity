@@ -27,7 +27,7 @@ contract("After the initial lockup period has passed", async accounts => {
     K
   ] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   const SECONDS_IN_ONE_DAY = timeValues.SECONDS_IN_ONE_DAY;
   const SECONDS_IN_ONE_MONTH = timeValues.SECONDS_IN_ONE_MONTH;
@@ -75,7 +75,7 @@ contract("After the initial lockup period has passed", async accounts => {
     // Deploy all contracts from the first account
     OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
     coreContracts = await deploymentHelper.deployLiquityCore();
