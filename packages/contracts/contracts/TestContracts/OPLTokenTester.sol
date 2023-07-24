@@ -10,7 +10,6 @@ contract OPLTokenTester is OPLToken {
         address _oplStakingAddress,
         address _lockupFactoryAddress,
         address _bountyAddress,
-        address _lpRewardsAddress,
         address _multisigAddress
     )
         public
@@ -19,7 +18,6 @@ contract OPLTokenTester is OPLToken {
             _oplStakingAddress,
             _lockupFactoryAddress,
             _bountyAddress,
-            _lpRewardsAddress,
             _multisigAddress
         )
     {}

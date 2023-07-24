@@ -93,8 +93,6 @@ contract OPLToken is CheckContract, IOPLToken {
     address public immutable communityIssuanceAddress;
     address public immutable oplStakingAddress;
 
-    uint internal immutable lpRewardsEntitlement;
-
     ILockupContractFactory public immutable lockupContractFactory;
 
     // --- Events ---
@@ -110,7 +108,6 @@ contract OPLToken is CheckContract, IOPLToken {
         address _oplStakingAddress,
         address _lockupFactoryAddress,
         address _bountyAddress,
-        address _lpRewardsAddress,
         address _multisigAddress
     ) public {
         checkContract(_communityIssuanceAddress);
@@ -140,16 +137,10 @@ contract OPLToken is CheckContract, IOPLToken {
         uint depositorsAndFrontEndsEntitlement = _1_MILLION.mul(32); // Allocate 32 million to the algorithmic issuance schedule
         _mint(_communityIssuanceAddress, depositorsAndFrontEndsEntitlement);
 
-        uint _lpRewardsEntitlement = _1_MILLION.mul(4).div(3); // Allocate 1.33 million for LP rewards
-        lpRewardsEntitlement = _lpRewardsEntitlement;
-        _mint(_lpRewardsAddress, _lpRewardsEntitlement);
-
-        // Allocate the remainder to the OPL Multisig: (100 - 2 - 32 - 1.33) million = 64.66 million
-        uint multisigEntitlement = _1_MILLION
-            .mul(100)
-            .sub(bountyEntitlement)
-            .sub(depositorsAndFrontEndsEntitlement)
-            .sub(_lpRewardsEntitlement);
+        // Allocate the remainder to the OPL Multisig: (100 - 2 - 32) million = 66 million
+        uint multisigEntitlement = _1_MILLION.mul(100).sub(bountyEntitlement).sub(
+            depositorsAndFrontEndsEntitlement
+        );
 
         _mint(_multisigAddress, multisigEntitlement);
     }
@@ -166,10 +157,6 @@ contract OPLToken is CheckContract, IOPLToken {
 
     function getDeploymentStartTime() external view override returns (uint256) {
         return deploymentStartTime;
-    }
-
-    function getLpRewardsEntitlement() external view override returns (uint256) {
-        return lpRewardsEntitlement;
     }
 
     function transfer(address recipient, uint256 amount) external override returns (bool) {
