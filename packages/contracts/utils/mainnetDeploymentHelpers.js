@@ -37,23 +37,22 @@ class MainnetDeploymentHelper {
       tx.hash,
       this.configParams.TX_CONFIRMATIONS
     );
-
     return minedTx;
   }
 
   async loadOrDeploy(factory, name, deploymentState, params = []) {
-    if (deploymentState[name] && deploymentState[name].address) {
-      console.log(
-        `Using previously deployed ${name} contract at address ${deploymentState[name].address}`
-      );
-      return new ethers.Contract(
-        deploymentState[name].address,
-        factory.interface,
-        this.deployerWallet
-      );
-    }
+    // if (deploymentState[name] && deploymentState[name].address) {
+    //   console.log(
+    //     `Using previously deployed ${name} contract at address ${deploymentState[name].address}`
+    //   );
+    //   return new ethers.Contract(
+    //     deploymentState[name].address,
+    //     factory.interface,
+    //     this.deployerWallet
+    //   );
+    // }
 
-    const contract = await factory.deploy(...params, { gasPrice: this.configParams.GAS_PRICE });
+    const contract = await factory.deploy(...params);
     await this.deployerWallet.provider.waitForTransaction(
       contract.deployTransaction.hash,
       this.configParams.TX_CONFIRMATIONS
@@ -69,7 +68,7 @@ class MainnetDeploymentHelper {
     return contract;
   }
 
-  async deployLiquityCoreMainnet(tellorMasterAddr, deploymentState) {
+  async deployOpalCoreMainnet(deploymentState) {
     // Get contract factories
     const priceFeedFactory = await this.getFactory("PriceFeed");
     const sortedTrovesFactory = await this.getFactory("SortedTroves");
@@ -82,7 +81,6 @@ class MainnetDeploymentHelper {
     const borrowerOperationsFactory = await this.getFactory("BorrowerOperations");
     const hintHelpersFactory = await this.getFactory("HintHelpers");
     const oneuTokenFactory = await this.getFactory("ONEUToken");
-    const tellorCallerFactory = await this.getFactory("TellorCaller");
 
     // Deploy txs
     const priceFeed = await this.loadOrDeploy(priceFeedFactory, "priceFeed", deploymentState);
@@ -115,12 +113,6 @@ class MainnetDeploymentHelper {
       deploymentState
     );
     const hintHelpers = await this.loadOrDeploy(hintHelpersFactory, "hintHelpers", deploymentState);
-    const tellorCaller = await this.loadOrDeploy(
-      tellorCallerFactory,
-      "tellorCaller",
-      deploymentState,
-      [tellorMasterAddr]
-    );
 
     const oneuTokenParams = [
       troveManager.address,
@@ -134,7 +126,7 @@ class MainnetDeploymentHelper {
       oneuTokenParams
     );
 
-    if (!this.configParams.ETHERSCAN_BASE_URL) {
+    if (!this.configParams.AUTERSCAN_BASE_URL) {
       console.log("No Etherscan Url defined, skipping verification");
     } else {
       await this.verifyContract("priceFeed", deploymentState);
@@ -147,7 +139,6 @@ class MainnetDeploymentHelper {
       await this.verifyContract("collSurplusPool", deploymentState);
       await this.verifyContract("borrowerOperations", deploymentState);
       await this.verifyContract("hintHelpers", deploymentState);
-      await this.verifyContract("tellorCaller", deploymentState, [tellorMasterAddr]);
       await this.verifyContract("oneuToken", deploymentState, oneuTokenParams);
     }
 
@@ -162,18 +153,12 @@ class MainnetDeploymentHelper {
       defaultPool,
       collSurplusPool,
       borrowerOperations,
-      hintHelpers,
-      tellorCaller
+      hintHelpers
     };
     return coreContracts;
   }
 
-  async deployOPLContractsMainnet(
-    bountyAddress,
-    lpRewardsAddress,
-    multisigAddress,
-    deploymentState
-  ) {
+  async deployOPLContractsMainnet(bountyAddress, multisigAddress, deploymentState) {
     const oplStakingFactory = await this.getFactory("OPLStaking");
     const lockupContractFactory_Factory = await this.getFactory("LockupContractFactory");
     const communityIssuanceFactory = await this.getFactory("CommunityIssuance");
@@ -197,7 +182,6 @@ class MainnetDeploymentHelper {
       oplStaking.address,
       lockupContractFactory.address,
       bountyAddress,
-      lpRewardsAddress,
       multisigAddress
     ];
     const oplToken = await this.loadOrDeploy(
@@ -207,7 +191,7 @@ class MainnetDeploymentHelper {
       oplTokenParams
     );
 
-    if (!this.configParams.ETHERSCAN_BASE_URL) {
+    if (!this.configParams.AUTERSCAN_BASE_URL) {
       console.log("No Etherscan Url defined, skipping verification");
     } else {
       await this.verifyContract("oplStaking", deploymentState);
@@ -238,7 +222,7 @@ class MainnetDeploymentHelper {
       multiTroveGetterParams
     );
 
-    if (!this.configParams.ETHERSCAN_BASE_URL) {
+    if (!this.configParams.AUTERSCAN_BASE_URL) {
       console.log("No Etherscan Url defined, skipping verification");
     } else {
       await this.verifyContract("multiTroveGetter", deploymentState, multiTroveGetterParams);
@@ -250,30 +234,33 @@ class MainnetDeploymentHelper {
 
   async isOwnershipRenounced(contract) {
     const owner = await contract.owner();
-    return owner == ZERO_ADDRESS;
+    let res = owner == ZERO_ADDRESS;
+    console.log("isOwnershipRenounced", res);
+    return res;
   }
   // Connect contracts to their dependencies
   async connectCoreContractsMainnet(contracts, OPLContracts, chainlinkProxyAddress) {
+    console.log("Connecting contracts...");
     const gasPrice = this.configParams.GAS_PRICE;
-    // Set ChainlinkAggregatorProxy and TellorCaller in the PriceFeed
+    // Set ChainlinkAggregatorProxy in the PriceFeed
+    console.log("setting chainlink address:", chainlinkProxyAddress);
     (await this.isOwnershipRenounced(contracts.priceFeed)) ||
       (await this.sendAndWaitForTransaction(
-        contracts.priceFeed.setAddresses(chainlinkProxyAddress, contracts.tellorCaller.address, {
-          gasPrice
-        })
+        contracts.priceFeed.setAddresses(chainlinkProxyAddress)
       ));
 
+    console.log("Here");
     // set TroveManager addr in SortedTroves
     (await this.isOwnershipRenounced(contracts.sortedTroves)) ||
       (await this.sendAndWaitForTransaction(
         contracts.sortedTroves.setParams(
           maxBytes32,
           contracts.troveManager.address,
-          contracts.borrowerOperations.address,
-          { gasPrice }
+          contracts.borrowerOperations.address
         )
       ));
 
+    console.log("Here");
     // set contracts in the Trove Manager
     (await this.isOwnershipRenounced(contracts.troveManager)) ||
       (await this.sendAndWaitForTransaction(
@@ -288,8 +275,7 @@ class MainnetDeploymentHelper {
           contracts.oneuToken.address,
           contracts.sortedTroves.address,
           OPLContracts.oplToken.address,
-          OPLContracts.oplStaking.address,
-          { gasPrice }
+          OPLContracts.oplStaking.address
         )
       ));
 
@@ -306,8 +292,7 @@ class MainnetDeploymentHelper {
           contracts.priceFeed.address,
           contracts.sortedTroves.address,
           contracts.oneuToken.address,
-          OPLContracts.oplStaking.address,
-          { gasPrice }
+          OPLContracts.oplStaking.address
         )
       ));
 
@@ -321,8 +306,7 @@ class MainnetDeploymentHelper {
           contracts.oneuToken.address,
           contracts.sortedTroves.address,
           contracts.priceFeed.address,
-          OPLContracts.communityIssuance.address,
-          { gasPrice }
+          OPLContracts.communityIssuance.address
         )
       ));
 
@@ -332,8 +316,7 @@ class MainnetDeploymentHelper {
           contracts.borrowerOperations.address,
           contracts.troveManager.address,
           contracts.stabilityPool.address,
-          contracts.defaultPool.address,
-          { gasPrice }
+          contracts.defaultPool.address
         )
       ));
 
@@ -341,8 +324,7 @@ class MainnetDeploymentHelper {
       (await this.sendAndWaitForTransaction(
         contracts.defaultPool.setAddresses(
           contracts.troveManager.address,
-          contracts.activePool.address,
-          { gasPrice }
+          contracts.activePool.address
         )
       ));
 
@@ -351,8 +333,7 @@ class MainnetDeploymentHelper {
         contracts.collSurplusPool.setAddresses(
           contracts.borrowerOperations.address,
           contracts.troveManager.address,
-          contracts.activePool.address,
-          { gasPrice }
+          contracts.activePool.address
         )
       ));
 
@@ -361,8 +342,7 @@ class MainnetDeploymentHelper {
       (await this.sendAndWaitForTransaction(
         contracts.hintHelpers.setAddresses(
           contracts.sortedTroves.address,
-          contracts.troveManager.address,
-          { gasPrice }
+          contracts.troveManager.address
         )
       ));
   }
@@ -372,9 +352,7 @@ class MainnetDeploymentHelper {
     // Set OPLToken address in LCF
     (await this.isOwnershipRenounced(OPLContracts.oplStaking)) ||
       (await this.sendAndWaitForTransaction(
-        OPLContracts.lockupContractFactory.setOPLTokenAddress(OPLContracts.oplToken.address, {
-          gasPrice
-        })
+        OPLContracts.lockupContractFactory.setOPLTokenAddress(OPLContracts.oplToken.address)
       ));
   }
 
@@ -387,8 +365,7 @@ class MainnetDeploymentHelper {
           coreContracts.oneuToken.address,
           coreContracts.troveManager.address,
           coreContracts.borrowerOperations.address,
-          coreContracts.activePool.address,
-          { gasPrice }
+          coreContracts.activePool.address
         )
       ));
 
@@ -396,8 +373,7 @@ class MainnetDeploymentHelper {
       (await this.sendAndWaitForTransaction(
         OPLContracts.communityIssuance.setAddresses(
           OPLContracts.oplToken.address,
-          coreContracts.stabilityPool.address,
-          { gasPrice }
+          coreContracts.stabilityPool.address
         )
       ));
   }
@@ -429,7 +405,7 @@ class MainnetDeploymentHelper {
 
     deploymentState[
       name
-    ].verification = `${this.configParams.ETHERSCAN_BASE_URL}/${deploymentState[name].address}#code`;
+    ].verification = `${this.configParams.AUTERSCAN_BASE_URL}/${deploymentState[name].address}#code`;
 
     this.saveDeployment(deploymentState);
   }
