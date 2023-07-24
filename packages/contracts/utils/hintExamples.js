@@ -36,7 +36,7 @@ async function main() {
   await priceFeedTestnet.setPrice(toBN(toWei("2500")));
 
   const ONEUAmount = toBN(toWei("2500")); // borrower wants to withdraw 2500 ONEU
-  const ETHColl = toBN(toWei("5")); // borrower wants to lock 5 ETH collateral
+  const AUTColl = toBN(toWei("5")); // borrower wants to lock 5 AUT collateral
 
   // Call deployed TroveManager contract to read the liquidation reserve and latest borrowing fee
   const liquidationReserve = await troveManager.ONEU_GAS_COMPENSATION();
@@ -47,7 +47,7 @@ async function main() {
 
   // Get the nominal NICR of the new trove
   const _1e20 = toBN(toWei("100"));
-  let NICR = ETHColl.mul(_1e20).div(expectedDebt);
+  let NICR = AUTColl.mul(_1e20).div(expectedDebt);
 
   // Get an approximate address hint from the deployed HintHelper contract. Use (15 * number of troves) trials
   // to get an approx. hint that is close to the right position.
@@ -64,11 +64,11 @@ async function main() {
 
   // Finally, call openTrove with the exact upperHint and lowerHint
   const maxFee = "5".concat("0".repeat(16)); // Slippage protection: 5%
-  await borrowerOperations.openTrove(maxFee, ONEUAmount, upperHint, lowerHint, { value: ETHColl });
+  await borrowerOperations.openTrove(maxFee, ONEUAmount, upperHint, lowerHint, { value: AUTColl });
 
   // --- adjust trove ---
 
-  const collIncrease = toBN(toWei("1")); // borrower wants to add 1 ETH
+  const collIncrease = toBN(toWei("1")); // borrower wants to add 1 AUT
   const ONEURepayment = toBN(toWei("230")); // borrower wants to repay 230 ONEU
 
   // Get trove's current debt and coll
