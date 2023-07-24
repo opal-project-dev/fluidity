@@ -169,14 +169,14 @@ export interface SendableLiquity<R = unknown, S = unknown>
     amount: Decimalish
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, TroveAdjustmentDetails>>>;
 
-  /** {@inheritDoc TransactableLiquity.borrowLUSD} */
-  borrowLUSD(
+  /** {@inheritDoc TransactableLiquity.borrowONEU} */
+  borrowONEU(
     amount: Decimalish,
     maxBorrowingRate?: Decimalish
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, TroveAdjustmentDetails>>>;
 
-  /** {@inheritDoc TransactableLiquity.repayLUSD} */
-  repayLUSD(
+  /** {@inheritDoc TransactableLiquity.repayONEU} */
+  repayONEU(
     amount: Decimalish
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, TroveAdjustmentDetails>>>;
 
@@ -193,14 +193,14 @@ export interface SendableLiquity<R = unknown, S = unknown>
     maximumNumberOfTrovesToLiquidate: number
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, LiquidationDetails>>>;
 
-  /** {@inheritDoc TransactableLiquity.depositLUSDInStabilityPool} */
-  depositLUSDInStabilityPool(
+  /** {@inheritDoc TransactableLiquity.depositONEUInStabilityPool} */
+  depositONEUInStabilityPool(
     amount: Decimalish,
     frontendTag?: string
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, StabilityDepositChangeDetails>>>;
 
-  /** {@inheritDoc TransactableLiquity.withdrawLUSDFromStabilityPool} */
-  withdrawLUSDFromStabilityPool(
+  /** {@inheritDoc TransactableLiquity.withdrawONEUFromStabilityPool} */
+  withdrawONEUFromStabilityPool(
     amount: Decimalish
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, StabilityDepositChangeDetails>>>;
 
@@ -214,20 +214,20 @@ export interface SendableLiquity<R = unknown, S = unknown>
     SentLiquityTransaction<S, LiquityReceipt<R, CollateralGainTransferDetails>>
   >;
 
-  /** {@inheritDoc TransactableLiquity.sendLUSD} */
-  sendLUSD(
+  /** {@inheritDoc TransactableLiquity.sendONEU} */
+  sendONEU(
     toAddress: string,
     amount: Decimalish
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableLiquity.sendLQTY} */
-  sendLQTY(
+  /** {@inheritDoc TransactableLiquity.sendOPL} */
+  sendOPL(
     toAddress: string,
     amount: Decimalish
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableLiquity.redeemLUSD} */
-  redeemLUSD(
+  /** {@inheritDoc TransactableLiquity.redeemONEU} */
+  redeemONEU(
     amount: Decimalish,
     maxRedemptionRate?: Decimalish
   ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, RedemptionDetails>>>;
@@ -235,33 +235,33 @@ export interface SendableLiquity<R = unknown, S = unknown>
   /** {@inheritDoc TransactableLiquity.claimCollateralSurplus} */
   claimCollateralSurplus(): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableLiquity.stakeLQTY} */
-  stakeLQTY(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
+  /** {@inheritDoc TransactableLiquity.stakeOPL} */
+  stakeOPL(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableLiquity.unstakeLQTY} */
-  unstakeLQTY(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
+  /** {@inheritDoc TransactableLiquity.unstakeOPL} */
+  unstakeOPL(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableLiquity.withdrawGainsFromStaking} */
   withdrawGainsFromStaking(): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableLiquity.approveUniTokens} */
-  approveUniTokens(
-    allowance?: Decimalish
-  ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
+  // /** {@inheritDoc TransactableLiquity.approveUniTokens} */
+  // approveUniTokens(
+  //   allowance?: Decimalish
+  // ): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableLiquity.stakeUniTokens} */
-  stakeUniTokens(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
+  // /** {@inheritDoc TransactableLiquity.stakeUniTokens} */
+  // stakeUniTokens(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableLiquity.unstakeUniTokens} */
-  unstakeUniTokens(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
+  // /** {@inheritDoc TransactableLiquity.unstakeUniTokens} */
+  // unstakeUniTokens(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
-  /** {@inheritDoc TransactableLiquity.withdrawLQTYRewardFromLiquidityMining} */
-  withdrawLQTYRewardFromLiquidityMining(): Promise<
-    SentLiquityTransaction<S, LiquityReceipt<R, void>>
-  >;
+  // /** {@inheritDoc TransactableLiquity.withdrawOPLRewardFromLiquidityMining} */
+  // withdrawOPLRewardFromLiquidityMining(): Promise<
+  //   SentLiquityTransaction<S, LiquityReceipt<R, void>>
+  // >;
 
-  /** {@inheritDoc TransactableLiquity.exitLiquidityMining} */
-  exitLiquidityMining(): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
+  // /** {@inheritDoc TransactableLiquity.exitLiquidityMining} */
+  // exitLiquidityMining(): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
 
   /** {@inheritDoc TransactableLiquity.registerFrontend} */
   registerFrontend(

@@ -55,19 +55,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_lqtyStakingAddress",
-        "type": "address"
-      }
-    ],
-    "name": "LQTYStakingAddressChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "_borrower",
@@ -76,11 +63,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_LUSDFee",
+        "name": "_ONEUFee",
         "type": "uint256"
       }
     ],
-    "name": "LUSDBorrowingFeePaid",
+    "name": "ONEUBorrowingFeePaid",
     "type": "event"
   },
   {
@@ -89,11 +76,24 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_lusdTokenAddress",
+        "name": "_oneuTokenAddress",
         "type": "address"
       }
     ],
-    "name": "LUSDTokenAddressChanged",
+    "name": "ONEUTokenAddressChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_oplStakingAddress",
+        "type": "address"
+      }
+    ],
+    "name": "OPLStakingAddressChanged",
     "type": "event"
   },
   {
@@ -264,19 +264,6 @@
   },
   {
     "inputs": [],
-    "name": "LUSD_GAS_COMPENSATION",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "MCR",
     "outputs": [
       {
@@ -309,6 +296,19 @@
         "internalType": "string",
         "name": "",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ONEU_GAS_COMPENSATION",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -385,7 +385,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_LUSDChange",
+        "name": "_ONEUChange",
         "type": "uint256"
       },
       {
@@ -495,45 +495,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "lqtyStaking",
-    "outputs": [
-      {
-        "internalType": "contract ILQTYStaking",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "lqtyStakingAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "lusdToken",
-    "outputs": [
-      {
-        "internalType": "contract ILUSDToken",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -551,9 +512,22 @@
         "type": "address"
       }
     ],
-    "name": "moveETHGainToTrove",
+    "name": "moveAUTGainToTrove",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "oneuToken",
+    "outputs": [
+      {
+        "internalType": "contract IONEUToken",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -565,7 +539,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_LUSDAmount",
+        "name": "_ONEUAmount",
         "type": "uint256"
       },
       {
@@ -582,6 +556,32 @@
     "name": "openTrove",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "oplStaking",
+    "outputs": [
+      {
+        "internalType": "contract IOPLStaking",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "oplStakingAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -614,7 +614,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_LUSDAmount",
+        "name": "_ONEUAmount",
         "type": "uint256"
       },
       {
@@ -628,7 +628,7 @@
         "type": "address"
       }
     ],
-    "name": "repayLUSD",
+    "name": "repayONEU",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -677,12 +677,12 @@
       },
       {
         "internalType": "address",
-        "name": "_lusdTokenAddress",
+        "name": "_oneuTokenAddress",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_lqtyStakingAddress",
+        "name": "_oplStakingAddress",
         "type": "address"
       }
     ],
@@ -749,7 +749,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_LUSDAmount",
+        "name": "_ONEUAmount",
         "type": "uint256"
       },
       {
@@ -763,7 +763,7 @@
         "type": "address"
       }
     ],
-    "name": "withdrawLUSD",
+    "name": "withdrawONEU",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

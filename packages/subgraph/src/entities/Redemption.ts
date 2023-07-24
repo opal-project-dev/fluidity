@@ -40,15 +40,15 @@ export function finishCurrentRedemption(
   event: ethereum.Event,
   _attemptedLUSDAmount: BigInt,
   _actualLUSDAmount: BigInt,
-  _ETHSent: BigInt,
-  _ETHFee: BigInt
+  _AUTSent: BigInt,
+  _AUTFee: BigInt
 ): void {
-  let fee = decimalize(_ETHFee);
+  let fee = decimalize(_AUTFee);
 
   let currentRedemption = getCurrentRedemption(event);
   currentRedemption.tokensAttemptedToRedeem = decimalize(_attemptedLUSDAmount);
   currentRedemption.tokensActuallyRedeemed = decimalize(_actualLUSDAmount);
-  currentRedemption.collateralRedeemed = decimalize(_ETHSent);
+  currentRedemption.collateralRedeemed = decimalize(_AUTSent);
   currentRedemption.partial = _actualLUSDAmount < _attemptedLUSDAmount;
   currentRedemption.fee = fee;
   currentRedemption.save();

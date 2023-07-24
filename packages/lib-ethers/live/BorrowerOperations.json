@@ -65,7 +65,7 @@
           "type": "address"
         }
       ],
-      "name": "LQTYStakingAddressChanged",
+      "name": "OPLStakingAddressChanged",
       "type": "event"
     },
     {
@@ -80,11 +80,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDFee",
+          "name": "_ONEUFee",
           "type": "uint256"
         }
       ],
-      "name": "LUSDBorrowingFeePaid",
+      "name": "ONEUBorrowingFeePaid",
       "type": "event"
     },
     {
@@ -97,7 +97,7 @@
           "type": "address"
         }
       ],
-      "name": "LUSDTokenAddressChanged",
+      "name": "ONEUTokenAddressChanged",
       "type": "event"
     },
     {
@@ -268,7 +268,7 @@
     },
     {
       "inputs": [],
-      "name": "LUSD_GAS_COMPENSATION",
+      "name": "ONEU_GAS_COMPENSATION",
       "outputs": [
         {
           "internalType": "uint256",
@@ -389,7 +389,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDChange",
+          "name": "_ONEUChange",
           "type": "uint256"
         },
         {
@@ -503,7 +503,7 @@
       "name": "lqtyStaking",
       "outputs": [
         {
-          "internalType": "contract ILQTYStaking",
+          "internalType": "contract IOPLStaking",
           "name": "",
           "type": "address"
         }
@@ -529,7 +529,7 @@
       "name": "lusdToken",
       "outputs": [
         {
-          "internalType": "contract ILUSDToken",
+          "internalType": "contract IONEUToken",
           "name": "",
           "type": "address"
         }
@@ -555,7 +555,7 @@
           "type": "address"
         }
       ],
-      "name": "moveETHGainToTrove",
+      "name": "moveAUTGainToTrove",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -569,7 +569,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         },
         {
@@ -618,7 +618,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         },
         {
@@ -632,7 +632,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSD",
+      "name": "repayONEU",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -753,7 +753,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         },
         {
@@ -767,7 +767,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawLUSD",
+      "name": "withdrawONEU",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

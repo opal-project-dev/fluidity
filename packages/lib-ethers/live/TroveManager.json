@@ -91,7 +91,7 @@
           "type": "address"
         }
       ],
-      "name": "LQTYStakingAddressChanged",
+      "name": "OPLStakingAddressChanged",
       "type": "event"
     },
     {
@@ -104,7 +104,7 @@
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressChanged",
+      "name": "OPLTokenAddressChanged",
       "type": "event"
     },
     {
@@ -113,13 +113,13 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_L_ETH",
+          "name": "_L_AUT",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_L_LUSDDebt",
+          "name": "_L_ONEUDebt",
           "type": "uint256"
         }
       ],
@@ -132,11 +132,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newLUSDTokenAddress",
+          "name": "_newONEUTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LUSDTokenAddressChanged",
+      "name": "ONEUTokenAddressChanged",
       "type": "event"
     },
     {
@@ -176,7 +176,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDGasCompensation",
+          "name": "_ONEUGasCompensation",
           "type": "uint256"
         }
       ],
@@ -221,25 +221,25 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_attemptedLUSDAmount",
+          "name": "_attemptedONEUAmount",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_actualLUSDAmount",
+          "name": "_actualONEUAmount",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_ETHSent",
+          "name": "_AUTSent",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_ETHFee",
+          "name": "_AUTFee",
           "type": "uint256"
         }
       ],
@@ -360,13 +360,13 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_L_ETH",
+          "name": "_L_AUT",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_L_LUSDDebt",
+          "name": "_L_ONEUDebt",
           "type": "uint256"
         }
       ],
@@ -477,7 +477,7 @@
     },
     {
       "inputs": [],
-      "name": "LUSD_GAS_COMPENSATION",
+      "name": "ONEU_GAS_COMPENSATION",
       "outputs": [
         {
           "internalType": "uint256",
@@ -490,7 +490,7 @@
     },
     {
       "inputs": [],
-      "name": "L_ETH",
+      "name": "L_AUT",
       "outputs": [
         {
           "internalType": "uint256",
@@ -503,7 +503,7 @@
     },
     {
       "inputs": [],
-      "name": "L_LUSDDebt",
+      "name": "L_ONEUDebt",
       "outputs": [
         {
           "internalType": "uint256",
@@ -877,7 +877,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LUSDDebt",
+          "name": "_ONEUDebt",
           "type": "uint256"
         }
       ],
@@ -896,7 +896,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LUSDDebt",
+          "name": "_ONEUDebt",
           "type": "uint256"
         }
       ],
@@ -983,12 +983,12 @@
         },
         {
           "internalType": "uint256",
-          "name": "pendingLUSDDebtReward",
+          "name": "pendingONEUDebtReward",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "pendingETHReward",
+          "name": "pendingAUTReward",
           "type": "uint256"
         }
       ],
@@ -1048,7 +1048,7 @@
           "type": "address"
         }
       ],
-      "name": "getPendingETHReward",
+      "name": "getPendingAUTReward",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1067,7 +1067,7 @@
           "type": "address"
         }
       ],
-      "name": "getPendingLUSDDebtReward",
+      "name": "getPendingONEUDebtReward",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1082,7 +1082,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_ETHDrawn",
+          "name": "_AUTDrawn",
           "type": "uint256"
         }
       ],
@@ -1332,7 +1332,7 @@
     },
     {
       "inputs": [],
-      "name": "lastETHError_Redistribution",
+      "name": "lastAUTError_Redistribution",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1358,7 +1358,7 @@
     },
     {
       "inputs": [],
-      "name": "lastLUSDDebtError_Redistribution",
+      "name": "lastONEUDebtError_Redistribution",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1400,7 +1400,7 @@
       "name": "lqtyStaking",
       "outputs": [
         {
-          "internalType": "contract ILQTYStaking",
+          "internalType": "contract IOPLStaking",
           "name": "",
           "type": "address"
         }
@@ -1413,7 +1413,7 @@
       "name": "lqtyToken",
       "outputs": [
         {
-          "internalType": "contract ILQTYToken",
+          "internalType": "contract IOPLToken",
           "name": "",
           "type": "address"
         }
@@ -1426,7 +1426,7 @@
       "name": "lusdToken",
       "outputs": [
         {
-          "internalType": "contract ILUSDToken",
+          "internalType": "contract IONEUToken",
           "name": "",
           "type": "address"
         }
@@ -1464,7 +1464,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LUSDamount",
+          "name": "_ONEUamount",
           "type": "uint256"
         },
         {
@@ -1528,12 +1528,12 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "ETH",
+          "name": "AUT",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "LUSDDebt",
+          "name": "ONEUDebt",
           "type": "uint256"
         }
       ],

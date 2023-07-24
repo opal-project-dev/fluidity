@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "LQTYStakingTester",
-  "sourceName": "contracts/TestContracts/LQTYStakingTester.sol",
+  "contractName": "OPLStakingTester",
+  "sourceName": "contracts/TestContracts/OPLStakingTester.sol",
   "abi": [
     {
       "anonymous": false,
@@ -54,11 +54,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_F_ETH",
+          "name": "_F_AUT",
           "type": "uint256"
         }
       ],
-      "name": "F_ETHUpdated",
+      "name": "F_AUTUpdated",
       "type": "event"
     },
     {
@@ -67,11 +67,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_F_LUSD",
+          "name": "_F_ONEU",
           "type": "uint256"
         }
       ],
-      "name": "F_LUSDUpdated",
+      "name": "F_ONEUUpdated",
       "type": "event"
     },
     {
@@ -84,7 +84,7 @@
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressSet",
+      "name": "OPLTokenAddressSet",
       "type": "event"
     },
     {
@@ -97,7 +97,7 @@
           "type": "address"
         }
       ],
-      "name": "LUSDTokenAddressSet",
+      "name": "ONEUTokenAddressSet",
       "type": "event"
     },
     {
@@ -150,13 +150,13 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_F_ETH",
+          "name": "_F_AUT",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_F_LUSD",
+          "name": "_F_ONEU",
           "type": "uint256"
         }
       ],
@@ -175,13 +175,13 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "LUSDGain",
+          "name": "ONEUGain",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "ETHGain",
+          "name": "AUTGain",
           "type": "uint256"
         }
       ],
@@ -194,11 +194,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_totalLQTYStaked",
+          "name": "_totalOPLStaked",
           "type": "uint256"
         }
       ],
-      "name": "TotalLQTYStakedUpdated",
+      "name": "TotalOPLStakedUpdated",
       "type": "event"
     },
     {
@@ -229,7 +229,7 @@
     },
     {
       "inputs": [],
-      "name": "F_ETH",
+      "name": "F_AUT",
       "outputs": [
         {
           "internalType": "uint256",
@@ -242,7 +242,7 @@
     },
     {
       "inputs": [],
-      "name": "F_LUSD",
+      "name": "F_ONEU",
       "outputs": [
         {
           "internalType": "uint256",
@@ -300,7 +300,7 @@
           "type": "address"
         }
       ],
-      "name": "getPendingETHGain",
+      "name": "getPendingAUTGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -319,7 +319,7 @@
           "type": "address"
         }
       ],
-      "name": "getPendingLUSDGain",
+      "name": "getPendingONEUGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -334,11 +334,11 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_ETHFee",
+          "name": "_AUTFee",
           "type": "uint256"
         }
       ],
-      "name": "increaseF_ETH",
+      "name": "increaseF_AUT",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -347,11 +347,11 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LUSDFee",
+          "name": "_ONEUFee",
           "type": "uint256"
         }
       ],
-      "name": "increaseF_LUSD",
+      "name": "increaseF_ONEU",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -374,7 +374,7 @@
       "name": "lqtyToken",
       "outputs": [
         {
-          "internalType": "contract ILQTYToken",
+          "internalType": "contract IOPLToken",
           "name": "",
           "type": "address"
         }
@@ -387,7 +387,7 @@
       "name": "lusdToken",
       "outputs": [
         {
-          "internalType": "contract ILUSDToken",
+          "internalType": "contract IONEUToken",
           "name": "",
           "type": "address"
         }
@@ -460,12 +460,12 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "F_ETH_Snapshot",
+          "name": "F_AUT_Snapshot",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "F_LUSD_Snapshot",
+          "name": "F_ONEU_Snapshot",
           "type": "uint256"
         }
       ],
@@ -476,7 +476,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LQTYamount",
+          "name": "_OPLamount",
           "type": "uint256"
         }
       ],
@@ -506,7 +506,7 @@
     },
     {
       "inputs": [],
-      "name": "totalLQTYStaked",
+      "name": "totalOPLStaked",
       "outputs": [
         {
           "internalType": "uint256",
@@ -534,7 +534,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LQTYamount",
+          "name": "_OPLamount",
           "type": "uint256"
         }
       ],

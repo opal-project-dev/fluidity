@@ -5,19 +5,6 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_lqtyTokenAddress",
-        "type": "address"
-      }
-    ],
-    "name": "LQTYTokenAddressSet",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
         "name": "_lockupContractAddress",
         "type": "address"
       },
@@ -41,6 +28,19 @@
       }
     ],
     "name": "LockupContractDeployedThroughFactory",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_oplTokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "OPLTokenAddressSet",
     "type": "event"
   },
   {
@@ -159,7 +159,7 @@
   },
   {
     "inputs": [],
-    "name": "lqtyTokenAddress",
+    "name": "oplTokenAddress",
     "outputs": [
       {
         "internalType": "address",
@@ -187,11 +187,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_lqtyTokenAddress",
+        "name": "_oplTokenAddress",
         "type": "address"
       }
     ],
-    "name": "setLQTYTokenAddress",
+    "name": "setOPLTokenAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

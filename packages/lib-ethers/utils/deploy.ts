@@ -87,7 +87,7 @@ const deployContracts = async (
       "LockupContractFactory",
       { ...overrides }
     ),
-    lqtyStaking: await deployContract(deployer, getContractFactory, "LQTYStaking", { ...overrides }),
+    lqtyStaking: await deployContract(deployer, getContractFactory, "OPLStaking", { ...overrides }),
     priceFeed: await deployContract(
       deployer,
       getContractFactory,
@@ -112,7 +112,7 @@ const deployContracts = async (
       lusdToken: await deployContract(
         deployer,
         getContractFactory,
-        "LUSDToken",
+        "ONEUToken",
         addresses.troveManager,
         addresses.stabilityPool,
         addresses.borrowerOperations,
@@ -122,7 +122,7 @@ const deployContracts = async (
       lqtyToken: await deployContract(
         deployer,
         getContractFactory,
-        "LQTYToken",
+        "OPLToken",
         addresses.communityIssuance,
         addresses.lqtyStaking,
         addresses.lockupContractFactory,
@@ -159,14 +159,14 @@ const connectContracts = async (
     activePool,
     borrowerOperations,
     troveManager,
-    lusdToken,
+    oneuToken: lusdToken,
     collSurplusPool,
     communityIssuance,
     defaultPool,
-    lqtyToken,
+    oplToken: lqtyToken,
     hintHelpers,
     lockupContractFactory,
-    lqtyStaking,
+    oplStaking: lqtyStaking,
     priceFeed,
     sortedTroves,
     stabilityPool,
@@ -273,7 +273,7 @@ const connectContracts = async (
       ),
 
     nonce =>
-      lockupContractFactory.setLQTYTokenAddress(lqtyToken.address, {
+      lockupContractFactory.setOPLTokenAddress(lqtyToken.address, {
         ...overrides,
         nonce
       }),
@@ -333,10 +333,9 @@ export const deployAndSetupContracts = async (
     version: "unknown",
     deploymentDate: new Date().getTime(),
     bootstrapPeriod: 0,
-    totalStabilityPoolLQTYReward: "0",
-    liquidityMiningLQTYRewardRate: "0",
+    totalStabilityPoolOPLReward: "0",
+    liquidityMiningOPLRewardRate: "0",
     _priceFeedIsTestnet,
-    _uniTokenIsMock: !wethAddress,
     _isDev,
 
     ...(await deployContracts(deployer, getContractFactory, _priceFeedIsTestnet, overrides).then(
@@ -347,7 +346,7 @@ export const deployAndSetupContracts = async (
           ...addresses,
 
           uniToken: await (wethAddress
-            ? createUniswapV2Pair(deployer, wethAddress, addresses.lusdToken, overrides)
+            ? createUniswapV2Pair(deployer, wethAddress, addresses.oneuToken, overrides)
             : deployMockUniToken(deployer, getContractFactory, overrides))
         }
       })
@@ -359,20 +358,20 @@ export const deployAndSetupContracts = async (
   log("Connecting contracts...");
   await connectContracts(contracts, deployer, overrides);
 
-  const lqtyTokenDeploymentTime = await contracts.lqtyToken.getDeploymentStartTime();
+  const lqtyTokenDeploymentTime = await contracts.oplToken.getDeploymentStartTime();
   const bootstrapPeriod = await contracts.troveManager.BOOTSTRAP_PERIOD();
-  const totalStabilityPoolLQTYReward = await contracts.communityIssuance.LQTYSupplyCap();
-  const liquidityMiningLQTYRewardRate = await contracts.unipool.rewardRate();
+  const totalStabilityPoolOPLReward = await contracts.communityIssuance.OPLSupplyCap();
+  //const liquidityMiningOPLRewardRate = await contracts.unipool.rewardRate();
 
   return {
     ...deployment,
     deploymentDate: lqtyTokenDeploymentTime.toNumber() * 1000,
     bootstrapPeriod: bootstrapPeriod.toNumber(),
-    totalStabilityPoolLQTYReward: `${Decimal.fromBigNumberString(
-      totalStabilityPoolLQTYReward.toHexString()
-    )}`,
-    liquidityMiningLQTYRewardRate: `${Decimal.fromBigNumberString(
-      liquidityMiningLQTYRewardRate.toHexString()
+    totalStabilityPoolOPLReward: `${Decimal.fromBigNumberString(
+      totalStabilityPoolOPLReward.toHexString()
     )}`
+    // liquidityMiningOPLRewardRate: `${Decimal.fromBigNumberString(
+    //   liquidityMiningOPLRewardRate.toHexString()
+    // )}`
   };
 };

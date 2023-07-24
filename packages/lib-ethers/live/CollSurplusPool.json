@@ -190,7 +190,7 @@
     },
     {
       "inputs": [],
-      "name": "getETH",
+      "name": "getAUT",
       "outputs": [
         {
           "internalType": "uint256",

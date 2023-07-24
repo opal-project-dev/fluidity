@@ -6,8 +6,8 @@ import { Decimal, Decimalish } from "./Decimal";
  * @public
  */
 export type StabilityDepositChange<T> =
-  | { depositLUSD: T; withdrawLUSD?: undefined }
-  | { depositLUSD?: undefined; withdrawLUSD: T; withdrawAllLUSD: boolean };
+  | { depositONEU: T; withdrawONEU?: undefined }
+  | { depositONEU?: undefined; withdrawONEU: T; withdrawAllONEU: boolean };
 
 /**
  * A Stability Deposit and its accrued gains.
@@ -15,16 +15,16 @@ export type StabilityDepositChange<T> =
  * @public
  */
 export class StabilityDeposit {
-  /** Amount of LUSD in the Stability Deposit at the time of the last direct modification. */
-  readonly initialLUSD: Decimal;
+  /** Amount of ONEU in the Stability Deposit at the time of the last direct modification. */
+  readonly initialONEU: Decimal;
 
-  /** Amount of LUSD left in the Stability Deposit. */
-  readonly currentLUSD: Decimal;
+  /** Amount of ONEU left in the Stability Deposit. */
+  readonly currentONEU: Decimal;
 
-  /** Amount of native currency (e.g. Ether) received in exchange for the used-up LUSD. */
+  /** Amount of native currency (e.g. Ether) received in exchange for the used-up ONEU. */
   readonly collateralGain: Decimal;
 
-  /** Amount of LQTY rewarded since the last modification of the Stability Deposit. */
+  /** Amount of OPL rewarded since the last modification of the Stability Deposit. */
   readonly lqtyReward: Decimal;
 
   /**
@@ -38,27 +38,27 @@ export class StabilityDeposit {
 
   /** @internal */
   constructor(
-    initialLUSD: Decimal,
-    currentLUSD: Decimal,
+    initialONEU: Decimal,
+    currentONEU: Decimal,
     collateralGain: Decimal,
     lqtyReward: Decimal,
     frontendTag: string
   ) {
-    this.initialLUSD = initialLUSD;
-    this.currentLUSD = currentLUSD;
+    this.initialONEU = initialONEU;
+    this.currentONEU = currentONEU;
     this.collateralGain = collateralGain;
     this.lqtyReward = lqtyReward;
     this.frontendTag = frontendTag;
 
-    if (this.currentLUSD.gt(this.initialLUSD)) {
-      throw new Error("currentLUSD can't be greater than initialLUSD");
+    if (this.currentONEU.gt(this.initialONEU)) {
+      throw new Error("currentONEU can't be greater than initialONEU");
     }
   }
 
   get isEmpty(): boolean {
     return (
-      this.initialLUSD.isZero &&
-      this.currentLUSD.isZero &&
+      this.initialONEU.isZero &&
+      this.currentONEU.isZero &&
       this.collateralGain.isZero &&
       this.lqtyReward.isZero
     );
@@ -67,8 +67,8 @@ export class StabilityDeposit {
   /** @internal */
   toString(): string {
     return (
-      `{ initialLUSD: ${this.initialLUSD}` +
-      `, currentLUSD: ${this.currentLUSD}` +
+      `{ initialONEU: ${this.initialONEU}` +
+      `, currentONEU: ${this.currentONEU}` +
       `, collateralGain: ${this.collateralGain}` +
       `, lqtyReward: ${this.lqtyReward}` +
       `, frontendTag: "${this.frontendTag}" }`
@@ -80,8 +80,8 @@ export class StabilityDeposit {
    */
   equals(that: StabilityDeposit): boolean {
     return (
-      this.initialLUSD.eq(that.initialLUSD) &&
-      this.currentLUSD.eq(that.currentLUSD) &&
+      this.initialONEU.eq(that.initialONEU) &&
+      this.currentONEU.eq(that.currentONEU) &&
       this.collateralGain.eq(that.collateralGain) &&
       this.lqtyReward.eq(that.lqtyReward) &&
       this.frontendTag === that.frontendTag
@@ -89,38 +89,38 @@ export class StabilityDeposit {
   }
 
   /**
-   * Calculate the difference between the `currentLUSD` in this Stability Deposit and `thatLUSD`.
+   * Calculate the difference between the `currentONEU` in this Stability Deposit and `thatONEU`.
    *
    * @returns An object representing the change, or `undefined` if the deposited amounts are equal.
    */
-  whatChanged(thatLUSD: Decimalish): StabilityDepositChange<Decimal> | undefined {
-    thatLUSD = Decimal.from(thatLUSD);
+  whatChanged(thatONEU: Decimalish): StabilityDepositChange<Decimal> | undefined {
+    thatONEU = Decimal.from(thatONEU);
 
-    if (thatLUSD.lt(this.currentLUSD)) {
-      return { withdrawLUSD: this.currentLUSD.sub(thatLUSD), withdrawAllLUSD: thatLUSD.isZero };
+    if (thatONEU.lt(this.currentONEU)) {
+      return { withdrawONEU: this.currentONEU.sub(thatONEU), withdrawAllONEU: thatONEU.isZero };
     }
 
-    if (thatLUSD.gt(this.currentLUSD)) {
-      return { depositLUSD: thatLUSD.sub(this.currentLUSD) };
+    if (thatONEU.gt(this.currentONEU)) {
+      return { depositONEU: thatONEU.sub(this.currentONEU) };
     }
   }
 
   /**
    * Apply a {@link StabilityDepositChange} to this Stability Deposit.
    *
-   * @returns The new deposited LUSD amount.
+   * @returns The new deposited ONEU amount.
    */
   apply(change: StabilityDepositChange<Decimalish> | undefined): Decimal {
     if (!change) {
-      return this.currentLUSD;
+      return this.currentONEU;
     }
 
-    if (change.withdrawLUSD !== undefined) {
-      return change.withdrawAllLUSD || this.currentLUSD.lte(change.withdrawLUSD)
+    if (change.withdrawONEU !== undefined) {
+      return change.withdrawAllONEU || this.currentONEU.lte(change.withdrawONEU)
         ? Decimal.ZERO
-        : this.currentLUSD.sub(change.withdrawLUSD);
+        : this.currentONEU.sub(change.withdrawONEU);
     } else {
-      return this.currentLUSD.add(change.depositLUSD);
+      return this.currentONEU.add(change.depositONEU);
     }
   }
 }

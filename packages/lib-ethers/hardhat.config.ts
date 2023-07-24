@@ -91,7 +91,7 @@ const wethAddresses = {
   kovan: "0xd0A1E359811322d97991E03f863a0C30C2cF029C"
 };
 
-const hasWETH = (network: string): network is keyof typeof wethAddresses => network in wethAddresses;
+const hasWAUT = (network: string): network is keyof typeof wethAddresses => network in wethAddresses;
 
 const config: HardhatUserConfig = {
   networks: {
@@ -113,8 +113,8 @@ const config: HardhatUserConfig = {
     },
 
     bakerloo: {
-        url: "https://rpc2.bakerloo.autonity.network:8545",
-        accounts: [deployerAccount]
+      url: "https://rpc2.bakerloo.autonity.network:8545",
+      accounts: [deployerAccount]
     },
 
     ...infuraNetwork("ropsten"),
@@ -198,7 +198,7 @@ task("deploy", "Deploys the contracts to the network")
   )
   .addOptionalParam(
     "createUniswapPair",
-    "Create a real Uniswap v2 WETH-LUSD pair instead of a mock ERC20 token",
+    "Create a real Uniswap v2 WAUT-ONEU pair instead of a mock ERC20 token",
     undefined,
     types.boolean
   )
@@ -215,8 +215,8 @@ task("deploy", "Deploys the contracts to the network")
 
       let wethAddress: string | undefined = undefined;
       if (createUniswapPair) {
-        if (!hasWETH(env.network.name)) {
-          throw new Error(`WETH not deployed on ${env.network.name}`);
+        if (!hasWAUT(env.network.name)) {
+          throw new Error(`WAUT not deployed on ${env.network.name}`);
         }
         wethAddress = wethAddresses[env.network.name];
       }

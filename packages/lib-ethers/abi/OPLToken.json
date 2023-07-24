@@ -3,17 +3,27 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_troveManagerAddress",
+        "name": "_communityIssuanceAddress",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_stabilityPoolAddress",
+        "name": "_oplStakingAddress",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_borrowerOperationsAddress",
+        "name": "_lockupFactoryAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_bountyAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_multisigAddress",
         "type": "address"
       }
     ],
@@ -51,11 +61,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_newBorrowerOperationsAddress",
+        "name": "_communityIssuanceAddress",
         "type": "address"
       }
     ],
-    "name": "BorrowerOperationsAddressChanged",
+    "name": "CommunityIssuanceAddressSet",
     "type": "event"
   },
   {
@@ -64,17 +74,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_user",
+        "name": "_lockupContractFactoryAddress",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
       }
     ],
-    "name": "LUSDTokenBalanceUpdated",
+    "name": "LockupContractFactoryAddressSet",
     "type": "event"
   },
   {
@@ -83,11 +87,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_newStabilityPoolAddress",
+        "name": "_oplStakingAddress",
         "type": "address"
       }
     ],
-    "name": "StabilityPoolAddressChanged",
+    "name": "OPLStakingAddressSet",
     "type": "event"
   },
   {
@@ -116,17 +120,17 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "inputs": [],
+    "name": "ONE_YEAR_IN_SECONDS",
+    "outputs": [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_troveManagerAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "TroveManagerAddressChanged",
-    "type": "event"
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -197,7 +201,7 @@
   },
   {
     "inputs": [],
-    "name": "borrowerOperationsAddress",
+    "name": "communityIssuanceAddress",
     "outputs": [
       {
         "internalType": "address",
@@ -206,24 +210,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "burn",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -277,6 +263,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getDeploymentStartTime",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -301,21 +300,29 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "lockupContractFactory",
+    "outputs": [
       {
-        "internalType": "address",
-        "name": "_account",
+        "internalType": "contract ILockupContractFactory",
+        "name": "",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
       }
     ],
-    "name": "mint",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "multisigAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -345,6 +352,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "oplStakingAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -410,59 +430,18 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_poolAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_receiver",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "returnFromPool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "_poolAddress",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
       }
     ],
-    "name": "sendToPool",
+    "name": "sendToOPLStaking",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "stabilityPoolAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -542,19 +521,6 @@
       }
     ],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "troveManagerAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {

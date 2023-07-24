@@ -2,7 +2,7 @@ import { BigInt } from "@graphprotocol/graph-ts";
 
 import {
   UserDepositChanged,
-  ETHGainWithdrawn,
+  AUTGainWithdrawn,
   FrontEndRegistered,
   FrontEndTagSet
 } from "../../generated/StabilityPool/StabilityPool";
@@ -40,15 +40,15 @@ export function handleUserDepositChanged(event: UserDepositChanged): void {
   }
 }
 
-export function handleETHGainWithdrawn(event: ETHGainWithdrawn): void {
+export function handleAUTGainWithdrawn(event: AUTGainWithdrawn): void {
   // Leave a non-null dummy value to signal to handleUserDepositChanged()
-  // that ETH gains have been withdrawn
+  // that AUT gains have been withdrawn
   let depositUpdate = swapTmpDepositUpdate(BIGINT_ZERO);
 
   withdrawCollateralGainFromStabilityDeposit(
     event,
     event.params._depositor,
-    event.params._ETH,
+    event.params._AUT,
     event.params._LUSDLoss
   );
 

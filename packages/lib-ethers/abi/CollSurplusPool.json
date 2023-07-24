@@ -166,14 +166,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      }
-    ],
-    "name": "getCollateral",
+    "inputs": [],
+    "name": "getAUT",
     "outputs": [
       {
         "internalType": "uint256",
@@ -185,8 +179,14 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getETH",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "getCollateral",
     "outputs": [
       {
         "internalType": "uint256",

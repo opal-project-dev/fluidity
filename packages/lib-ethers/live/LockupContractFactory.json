@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "LockupContractFactory",
-  "sourceName": "contracts/LQTY/LockupContractFactory.sol",
+  "sourceName": "contracts/OPL/LockupContractFactory.sol",
   "abi": [
     {
       "anonymous": false,
@@ -13,7 +13,7 @@
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressSet",
+      "name": "OPLTokenAddressSet",
       "type": "event"
     },
     {
@@ -195,7 +195,7 @@
           "type": "address"
         }
       ],
-      "name": "setLQTYTokenAddress",
+      "name": "setOPLTokenAddress",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
