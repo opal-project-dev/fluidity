@@ -47,7 +47,7 @@ contract("BorrowerOperations", async accounts => {
     frontEnd_3
   ] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   // const frontEnds = [frontEnd_1, frontEnd_2, frontEnd_3]
 
@@ -88,7 +88,7 @@ contract("BorrowerOperations", async accounts => {
       contracts = await deploymentHelper.deployONEUTokenTester(contracts);
       const OPLContracts = await deploymentHelper.deployOPLTesterContractsHardhat(
         bountyAddress,
-        lpRewardsAddress,
+
         multisig
       );
 

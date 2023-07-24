@@ -32,7 +32,7 @@ contract("Gas compensation tests", async accounts => {
     whale
   ] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000);
+  const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
   let priceFeed;
   let oneuToken;
@@ -74,7 +74,7 @@ contract("Gas compensation tests", async accounts => {
     );
     const OPLContracts = await deploymentHelper.deployOPLContracts(
       bountyAddress,
-      lpRewardsAddress,
+
       multisig
     );
 
