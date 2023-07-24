@@ -9,6 +9,7 @@ import "./Dependencies/Ownable.sol";
 import "./Dependencies/CheckContract.sol";
 import "./Dependencies/BaseMath.sol";
 import "./Dependencies/LiquityMath.sol";
+
 import "./Dependencies/console.sol";
 
 /*
@@ -19,7 +20,6 @@ import "./Dependencies/console.sol";
  */
 contract PriceFeed is Ownable, CheckContract, BaseMath, IPriceFeed {
     using SafeMath for uint256;
-
     string public constant NAME = "PriceFeed";
 
     AggregatorV3Interface public priceAggregator; // Mainnet Chainlink aggregator
@@ -77,6 +77,22 @@ contract PriceFeed is Ownable, CheckContract, BaseMath, IPriceFeed {
             chainlinkResponse.roundId,
             chainlinkResponse.decimals
         );
+
+        console.log("chainliinkResponse");
+        console.logInt(chainlinkResponse.answer);
+        console.log(chainlinkResponse.decimals);
+        console.log(chainlinkResponse.roundId);
+        console.log(chainlinkResponse.timestamp);
+        console.log(chainlinkResponse.success);
+        console.log(_badChainlinkResponse(chainlinkResponse));
+
+        console.log("prevChainlinkResponse");
+        console.logInt(prevChainlinkResponse.answer);
+        console.log(prevChainlinkResponse.decimals);
+        console.log(prevChainlinkResponse.roundId);
+        console.log(prevChainlinkResponse.timestamp);
+        console.log(prevChainlinkResponse.success);
+        console.log(_badChainlinkResponse(prevChainlinkResponse));
 
         require(
             !_chainlinkIsBroken(chainlinkResponse, prevChainlinkResponse) &&
@@ -291,7 +307,7 @@ contract PriceFeed is Ownable, CheckContract, BaseMath, IPriceFeed {
          */
 
         // Try to get the price data from the previous round:
-        try priceAggregator.getRoundData(_currentRoundId - 1) returns (
+        try priceAggregator.getRoundData(_currentRoundId) returns (
             uint80 roundId,
             int256 answer,
             uint256 /* startedAt */,
