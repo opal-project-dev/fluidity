@@ -4,7 +4,7 @@
 
 ## SendableEthersLiquity.withdrawGainsFromStaking() method
 
-Withdraw [collateral gain](./lib-base.lqtystake.collateralgain.md) and [LUSD gain](./lib-base.lqtystake.lusdgain.md) from LQTY stake.
+Withdraw [collateral gain](./lib-base.oplstake.collateralgain.md) and [ONEU gain](./lib-base.oplstake.lusdgain.md) from OPL stake.
 
 <b>Signature:</b>
 

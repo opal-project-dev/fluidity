@@ -1,11 +1,11 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 
-import { Decimal, LUSD_MINIMUM_NET_DEBT, Trove } from "@fluidity/lib-base";
+import { Decimal, ONEU_MINIMUM_NET_DEBT, Trove } from "@fluidity/lib-base";
 
 import App from "./App";
 
-const params = { depositCollateral: Decimal.from(20), borrowLUSD: LUSD_MINIMUM_NET_DEBT };
+const params = { depositCollateral: Decimal.from(20), borrowONEU: ONEU_MINIMUM_NET_DEBT };
 const trove = Trove.create(params);
 
 console.log(`${trove}`);

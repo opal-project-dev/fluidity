@@ -76,7 +76,7 @@ const App = () => {
       }}
     >
       <Warning>
-        Opal is not yet deployed to this network. Please switch to Bakerloo.
+        Opal is not yet deployed to this network. Please switch to Autonity.
       </Warning>      
     </Flex>
   );

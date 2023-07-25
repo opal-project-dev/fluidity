@@ -17,7 +17,7 @@ import {
 
 import { MultiTroveGetter } from "../types";
 
-import { decimalify, numberify, panic } from "./_utils";
+import { decimalify, panic } from "./_utils";
 import { EthersCallOverrides, EthersProvider, EthersSigner } from "./types";
 
 import {

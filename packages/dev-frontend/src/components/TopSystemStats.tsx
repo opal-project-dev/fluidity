@@ -29,7 +29,7 @@ const select = ({
     lusdInStabilityPool,
     borrowingRate,
     redemptionRate,
-    totalStakedLQTY,
+    totalStakedOPL,
     accountBalance,
     lusdBalance,
     lqtyBalance
@@ -40,7 +40,7 @@ const select = ({
     lusdInStabilityPool,
     borrowingRate,
     redemptionRate,
-    totalStakedLQTY,
+    totalStakedOPL,
     accountBalance,
     lusdBalance,
     lqtyBalance
@@ -55,7 +55,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
         total,
         borrowingRate,
         redemptionRate,
-        totalStakedLQTY,
+        totalStakedOPL,
         accountBalance,
         lusdBalance,
         lqtyBalance,
@@ -114,7 +114,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
                 return {
                     "name": "Staked OPAL",
                     "tooltip": "The total amount of OPAL that is staked for earning fee revenue.",
-                    "body": totalStakedLQTY.shorten()
+                    "body": totalStakedOPL.shorten()
                 }
             case "tcr":
                 return {

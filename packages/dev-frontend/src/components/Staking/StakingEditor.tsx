@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Heading, Box, Card, Button } from "theme-ui";
 
-import { Decimal, Decimalish, Difference, LiquityStoreState, LQTYStake } from "@fluidity/lib-base";
+import { Decimal, Decimalish, Difference, LiquityStoreState, OPLStake } from "@fluidity/lib-base";
 import { useLiquitySelector } from "@fluidity/lib-react";
 
 import { COIN, GT } from "../../strings";
@@ -12,14 +12,14 @@ import { LoadingOverlay } from "../LoadingOverlay";
 
 import { useStakingView } from "./context/StakingViewContext";
 
-const select = ({ lqtyBalance, totalStakedLQTY }: LiquityStoreState) => ({
+const select = ({ lqtyBalance, totalStakedOPL }: LiquityStoreState) => ({
   lqtyBalance,
-  totalStakedLQTY
+  totalStakedOPL
 });
 
 type StakingEditorProps = {
   title: string;
-  originalStake: LQTYStake;
+  originalStake: OPLStake;
   editedLQTY: Decimal;
   dispatch: (action: { type: "setStake"; newValue: Decimalish } | { type: "revert" }) => void;
 };
@@ -31,21 +31,21 @@ export const StakingEditor: React.FC<StakingEditorProps> = ({
   editedLQTY,
   dispatch
 }) => {
-  const { lqtyBalance, totalStakedLQTY } = useLiquitySelector(select);
+  const { lqtyBalance, totalStakedOPL } = useLiquitySelector(select);
   const { changePending } = useStakingView();
   const editingState = useState<string>();
 
-  const edited = !editedLQTY.eq(originalStake.stakedLQTY);
+  const edited = !editedLQTY.eq(originalStake.stakedOPL);
 
-  const maxAmount = originalStake.stakedLQTY.add(lqtyBalance);
+  const maxAmount = originalStake.stakedOPL.add(lqtyBalance);
   const maxedOut = editedLQTY.eq(maxAmount);
 
-  const totalStakedLQTYAfterChange = totalStakedLQTY.sub(originalStake.stakedLQTY).add(editedLQTY);
+  const totalStakedLQTYAfterChange = totalStakedOPL.sub(originalStake.stakedOPL).add(editedLQTY);
 
-  const originalPoolShare = originalStake.stakedLQTY.mulDiv(100, totalStakedLQTY);
+  const originalPoolShare = originalStake.stakedOPL.mulDiv(100, totalStakedOPL);
   const newPoolShare = editedLQTY.mulDiv(100, totalStakedLQTYAfterChange);
   const poolShareChange =
-    originalStake.stakedLQTY.nonZero && Difference.between(newPoolShare, originalPoolShare).nonZero;
+    originalStake.stakedOPL.nonZero && Difference.between(newPoolShare, originalPoolShare).nonZero;
 
   return (
     <Card>

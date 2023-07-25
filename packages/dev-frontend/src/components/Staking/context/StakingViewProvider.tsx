@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { LiquityStoreState, LQTYStake } from "@fluidity/lib-base";
+import { LiquityStoreState, OPLStake } from "@fluidity/lib-base";
 import { LiquityStoreUpdate, useLiquityReducer } from "@fluidity/lib-react";
 
 import { useMyTransactionState } from "../../Transaction";
@@ -13,7 +13,7 @@ type StakingViewProviderAction =
   | { type: "startChange" | "abortChange" };
 
 type StakingViewProviderState = {
-  lqtyStake: LQTYStake;
+  lqtyStake: OPLStake;
   changePending: boolean;
   adjusting: boolean;
 };
@@ -52,7 +52,7 @@ const reduce = (
 
       if (updatedStake) {
         const changeCommitted =
-          !updatedStake.stakedLQTY.eq(oldStake.stakedLQTY) ||
+          !updatedStake.stakedOPL.eq(oldStake.stakedOPL) ||
           updatedStake.collateralGain.lt(oldStake.collateralGain) ||
           updatedStake.lusdGain.lt(oldStake.lusdGain);
 

@@ -34,7 +34,7 @@ const wsParams = (network: string, infuraApiKey: string): [string, string] => [
 ];
 
 const projectNetworks: { [name: string]: Network } = {
-    bakerloo: { chainId: 444900, name: "bakerloo" }
+  autonity: { chainId: 65100000, name: "autonity" }
 }
 
 const getNetwork = (network: Networkish): Network => {
@@ -67,7 +67,7 @@ const getNetwork = (network: Networkish): Network => {
 // NOTE: Able / disable ETH networks
 // const infuraSupportedNetworks = ["homestead", "kovan", "rinkeby", "ropsten", "goerli"];
 const infuraSupportedNetworks = [""];
-const webSocketSupportedNetworks = ["bakerloo"];
+const webSocketSupportedNetworks = ["autonity"];
 
 export const isWalletConnected = (account: string | null | undefined) => account && account !== "0x0000000000000000000000000000000000000000"
 

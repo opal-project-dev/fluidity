@@ -49,7 +49,7 @@ export function handleAUTGainWithdrawn(event: AUTGainWithdrawn): void {
     event,
     event.params._depositor,
     event.params._AUT,
-    event.params._LUSDLoss
+    event.params._ONEULoss
   );
 
   if (depositUpdate != null) {

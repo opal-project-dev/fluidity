@@ -145,11 +145,11 @@ const AccountPositions: React.FC = () => {
             <Text sx={{ fontSize: 2 }}>Staked</Text>
             <Flex sx={{ alignItems: "center", justifyContent: "space-between", my: 1 }}>
                 <Text sx={{ fontSize: 2, fontWeight: "bold" }}>OUSD</Text>
-                <Text>{stabilityDeposit.currentLUSD.prettify()}</Text>
+                <Text>{stabilityDeposit.currentONEU.prettify()}</Text>
             </Flex>
             <Flex sx={{ alignItems: "center", justifyContent: "space-between", my: 1 }}>
                 <Text sx={{ fontSize: 2, fontWeight: "bold" }}>OPAL</Text>
-                <Text>{lqtyStake.stakedLQTY.prettify()}</Text>
+                <Text>{lqtyStake.stakedOPL.prettify()}</Text>
             </Flex>
         </Flex>
     )

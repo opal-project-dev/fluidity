@@ -40,19 +40,19 @@ export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({
   const { lusdBalance, lusdInStabilityPool } = useLiquitySelector(select);
   const editingState = useState<string>();
 
-  const edited = !editedLUSD.eq(originalDeposit.currentLUSD);
+  const edited = !editedLUSD.eq(originalDeposit.currentONEU);
 
-  const maxAmount = originalDeposit.currentLUSD.add(lusdBalance);
+  const maxAmount = originalDeposit.currentONEU.add(lusdBalance);
   const maxedOut = editedLUSD.eq(maxAmount);
 
   const lusdInStabilityPoolAfterChange = lusdInStabilityPool
-    .sub(originalDeposit.currentLUSD)
+    .sub(originalDeposit.currentONEU)
     .add(editedLUSD);
 
-  const originalPoolShare = originalDeposit.currentLUSD.mulDiv(100, lusdInStabilityPool);
+  const originalPoolShare = originalDeposit.currentONEU.mulDiv(100, lusdInStabilityPool);
   const newPoolShare = editedLUSD.mulDiv(100, lusdInStabilityPoolAfterChange);
   const poolShareChange =
-    originalDeposit.currentLUSD.nonZero &&
+    originalDeposit.currentONEU.nonZero &&
     Difference.between(newPoolShare, originalPoolShare).nonZero;
 
   return (

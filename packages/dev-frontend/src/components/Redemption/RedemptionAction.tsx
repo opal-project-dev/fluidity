@@ -24,7 +24,7 @@ export const RedemptionAction: React.FC<RedemptionActionProps> = ({
 
   const [sendTransaction] = useTransactionFunction(
     transactionId,
-    liquity.redeemLUSD.bind(liquity, lusdAmount, maxRedemptionRate)
+    liquity.redeemONEU.bind(liquity, lusdAmount, maxRedemptionRate)
   );
 
   return (

@@ -36,15 +36,15 @@ export function handleLiquidation(event: Liquidation): void {
     event.params._liquidatedColl,
     event.params._liquidatedDebt,
     event.params._collGasCompensation,
-    event.params._LUSDGasCompensation
+    event.params._ONEUGasCompensation
   );
 }
 
 export function handleRedemption(event: Redemption): void {
   finishCurrentRedemption(
     event,
-    event.params._attemptedLUSDAmount,
-    event.params._actualLUSDAmount,
+    event.params._attemptedONEUAmount,
+    event.params._actualONEUAmount,
     event.params._AUTSent,
     event.params._AUTFee
   );

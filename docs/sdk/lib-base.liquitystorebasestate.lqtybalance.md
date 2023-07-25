@@ -4,7 +4,7 @@
 
 ## LiquityStoreBaseState.lqtyBalance property
 
-User's LQTY token balance.
+User's OPL token balance.
 
 <b>Signature:</b>
 

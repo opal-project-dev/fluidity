@@ -5,9 +5,9 @@ import { useLiquitySelector } from "@fluidity/lib-react";
 import { InfoIcon } from "../InfoIcon";
 import { fetchLqtyPrice } from "./context/fetchLqtyPrice";
 
-const selector = ({ lusdInStabilityPool, remainingStabilityPoolLQTYReward }: LiquityStoreState) => ({
+const selector = ({ lusdInStabilityPool, remainingStabilityPoolOPLReward }: LiquityStoreState) => ({
   lusdInStabilityPool,
-  remainingStabilityPoolLQTYReward
+  remainingStabilityPoolOPLReward
 });
 
 const yearlyIssuanceFraction = 0.5;
@@ -15,10 +15,10 @@ const dailyIssuanceFraction = Decimal.from(1 - yearlyIssuanceFraction ** (1 / 36
 const dailyIssuancePercentage = dailyIssuanceFraction.mul(100);
 
 export const Yield: React.FC = () => {
-  const { lusdInStabilityPool, remainingStabilityPoolLQTYReward } = useLiquitySelector(selector);
+  const { lusdInStabilityPool, remainingStabilityPoolOPLReward } = useLiquitySelector(selector);
 
   const [lqtyPrice, setLqtyPrice] = useState<Decimal | undefined>(undefined);
-  const hasZeroValue = remainingStabilityPoolLQTYReward.isZero || lusdInStabilityPool.isZero;
+  const hasZeroValue = remainingStabilityPoolOPLReward.isZero || lusdInStabilityPool.isZero;
 
   useEffect(() => {
     (async () => {
@@ -33,10 +33,10 @@ export const Yield: React.FC = () => {
 
   if (hasZeroValue || lqtyPrice === undefined) return null;
 
-  const lqtyIssuanceOneDay = remainingStabilityPoolLQTYReward.mul(dailyIssuanceFraction);
+  const lqtyIssuanceOneDay = remainingStabilityPoolOPLReward.mul(dailyIssuanceFraction);
   const lqtyIssuanceOneDayInUSD = lqtyIssuanceOneDay.mul(lqtyPrice);
   const aprPercentage = lqtyIssuanceOneDayInUSD.mulDiv(365 * 100, lusdInStabilityPool);
-  const remainingLqtyInUSD = remainingStabilityPoolLQTYReward.mul(lqtyPrice);
+  const remainingLqtyInUSD = remainingStabilityPoolOPLReward.mul(lqtyPrice);
 
   if (aprPercentage.isZero) return null;
 

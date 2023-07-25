@@ -5,8 +5,8 @@ import {
   Decimal,
   Decimalish,
   LiquityStoreState,
-  LQTYStake,
-  LQTYStakeChange
+  OPLStake,
+  OPLStakeChange
 } from "@fluidity/lib-base";
 
 import { LiquityStoreUpdate, useLiquityReducer, useLiquitySelector } from "@fluidity/lib-react";
@@ -21,7 +21,7 @@ import { ErrorDescription } from "../ErrorDescription";
 
 const init = ({ lqtyStake }: LiquityStoreState) => ({
   originalStake: lqtyStake,
-  editedLQTY: lqtyStake.stakedLQTY
+  editedLQTY: lqtyStake.stakedOPL
 });
 
 type StakeManagerState = ReturnType<typeof init>;
@@ -41,7 +41,7 @@ const reduce = (state: StakeManagerState, action: StakeManagerAction): StakeMana
       return { ...state, editedLQTY: Decimal.from(action.newValue) };
 
     case "revert":
-      return { ...state, editedLQTY: originalStake.stakedLQTY };
+      return { ...state, editedLQTY: originalStake.stakedOPL };
 
     case "updateStore": {
       const {
@@ -63,16 +63,16 @@ const reduce = (state: StakeManagerState, action: StakeManagerAction): StakeMana
 const selectLQTYBalance = ({ lqtyBalance }: LiquityStoreState) => lqtyBalance;
 
 type StakingManagerActionDescriptionProps = {
-  originalStake: LQTYStake;
-  change: LQTYStakeChange<Decimal>;
+  originalStake: OPLStake;
+  change: OPLStakeChange<Decimal>;
 };
 
 const StakingManagerActionDescription: React.FC<StakingManagerActionDescriptionProps> = ({
   originalStake,
   change
 }) => {
-  const stakeLQTY = change.stakeLQTY?.prettify().concat(" ", GT);
-  const unstakeLQTY = change.unstakeLQTY?.prettify().concat(" ", GT);
+  const stakeLQTY = change.stakeOPL?.prettify().concat(" ", GT);
+  const unstakeLQTY = change.unstakeOPL?.prettify().concat(" ", GT);
   const collateralGain = originalStake.collateralGain.nonZero?.prettify(4).concat(" NTN");
   const lusdGain = originalStake.lusdGain.nonZero?.prettify().concat(" ", COIN);
 
@@ -124,13 +124,13 @@ export const StakingManager: React.FC = () => {
   const change = originalStake.whatChanged(editedLQTY);
   const [validChange, description] = !change
     ? [undefined, undefined]
-    : change.stakeLQTY?.gt(lqtyBalance)
+    : change.stakeOPL?.gt(lqtyBalance)
     ? [
         undefined,
         <ErrorDescription>
           The amount you're trying to stake exceeds your balance by{" "}
           <Amount>
-            {change.stakeLQTY.sub(lqtyBalance).prettify()} {GT}
+            {change.stakeOPL.sub(lqtyBalance).prettify()} {GT}
           </Amount>
           .
         </ErrorDescription>

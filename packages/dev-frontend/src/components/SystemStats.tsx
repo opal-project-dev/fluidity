@@ -55,7 +55,7 @@ const select = ({
     lusdInStabilityPool,
     borrowingRate,
     redemptionRate,
-    totalStakedLQTY,
+    totalStakedOPL,
 }: LiquityStoreState) => ({
     numberOfTroves,
     price,
@@ -63,7 +63,7 @@ const select = ({
     lusdInStabilityPool,
     borrowingRate,
     redemptionRate,
-    totalStakedLQTY,
+    totalStakedOPL,
 });
 
 const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
@@ -75,7 +75,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
         total,
         borrowingRate,
         redemptionRate,
-        totalStakedLQTY,
+        totalStakedOPL,
     } = useLiquitySelector(select);
 
     const lusdInStabilityPoolPct =
@@ -144,7 +144,7 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
                     name="Staked OPAL"
                     tooltip="The total amount of OPAL that is staked for earning fee revenue."
                 >
-                    {totalStakedLQTY.shorten()}
+                    {totalStakedOPL.shorten()}
                 </Statistic>
             }
             {showStat("tcr") &&

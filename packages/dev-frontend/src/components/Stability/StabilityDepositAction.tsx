@@ -25,9 +25,9 @@ export const StabilityDepositAction: React.FC<StabilityDepositActionProps> = ({
 
   const [sendTransaction] = useTransactionFunction(
     transactionId,
-    change.depositLUSD
-      ? liquity.send.depositLUSDInStabilityPool.bind(liquity.send, change.depositLUSD, frontendTag)
-      : liquity.send.withdrawLUSDFromStabilityPool.bind(liquity.send, change.withdrawLUSD)
+    change.depositONEU
+      ? liquity.send.depositONEUInStabilityPool.bind(liquity.send, change.depositONEU, frontendTag)
+      : liquity.send.withdrawONEUFromStabilityPool.bind(liquity.send, change.withdrawONEU)
   );
 
   return <Button onClick={sendTransaction}>{children}</Button>;

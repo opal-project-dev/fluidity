@@ -4,10 +4,10 @@
 
 ## LiquityStoreBaseState.lqtyStake property
 
-User's LQTY stake.
+User's OPL stake.
 
 <b>Signature:</b>
 
 ```typescript
-lqtyStake: LQTYStake;
+lqtyStake: OPLStake;
 ```
