@@ -87,7 +87,7 @@ const deployContracts = async (
       "LockupContractFactory",
       { ...overrides }
     ),
-    lqtyStaking: await deployContract(deployer, getContractFactory, "OPLStaking", { ...overrides }),
+    oplStaking: await deployContract(deployer, getContractFactory, "OPLStaking", { ...overrides }),
     priceFeed: await deployContract(
       deployer,
       getContractFactory,
@@ -102,14 +102,13 @@ const deployContracts = async (
     }),
     gasPool: await deployContract(deployer, getContractFactory, "GasPool", {
       ...overrides
-    }),
-    unipool: await deployContract(deployer, getContractFactory, "Unipool", { ...overrides })
+    })
   };
 
   return [
     {
       ...addresses,
-      lusdToken: await deployContract(
+      oneuToken: await deployContract(
         deployer,
         getContractFactory,
         "ONEUToken",
@@ -119,15 +118,14 @@ const deployContracts = async (
         { ...overrides }
       ),
 
-      lqtyToken: await deployContract(
+      oplToken: await deployContract(
         deployer,
         getContractFactory,
         "OPLToken",
         addresses.communityIssuance,
-        addresses.lqtyStaking,
+        addresses.oplStaking,
         addresses.lockupContractFactory,
         Wallet.createRandom().address, // _bountyAddress (TODO: parameterize this)
-        addresses.unipool, // _lpRewardsAddress
         Wallet.createRandom().address, // _multisigAddress (TODO: parameterize this)
         { ...overrides }
       ),
@@ -170,9 +168,7 @@ const connectContracts = async (
     priceFeed,
     sortedTroves,
     stabilityPool,
-    gasPool,
-    unipool,
-    uniToken
+    gasPool
   }: _LiquityContracts,
   deployer: Signer,
   overrides?: Overrides
@@ -282,12 +278,6 @@ const connectContracts = async (
       communityIssuance.setAddresses(lqtyToken.address, stabilityPool.address, {
         ...overrides,
         nonce
-      }),
-
-    nonce =>
-      unipool.setParams(lqtyToken.address, uniToken.address, 2 * 30 * 24 * 60 * 60, {
-        ...overrides,
-        nonce
       })
   ];
 
@@ -297,21 +287,21 @@ const connectContracts = async (
   await Promise.all(txs.map(tx => tx.wait().then(() => log(`Connected ${++i}`))));
 };
 
-const deployMockUniToken = (
-  deployer: Signer,
-  getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
-  overrides?: Overrides
-) =>
-  deployContract(
-    deployer,
-    getContractFactory,
-    "ERC20Mock",
-    "Mock Uniswap V2",
-    "UNI-V2",
-    Wallet.createRandom().address, // initialAccount
-    0, // initialBalance
-    { ...overrides }
-  );
+// const deployMockUniToken = (
+//   deployer: Signer,
+//   getContractFactory: (name: string, signer: Signer) => Promise<ContractFactory>,
+//   overrides?: Overrides
+// ) =>
+//   deployContract(
+//     deployer,
+//     getContractFactory,
+//     "ERC20Mock",
+//     "Mock Uniswap V2",
+//     "UNI-V2",
+//     Wallet.createRandom().address, // initialAccount
+//     0, // initialBalance
+//     { ...overrides }
+//   );
 
 export const deployAndSetupContracts = async (
   deployer: Signer,
@@ -343,11 +333,11 @@ export const deployAndSetupContracts = async (
         startBlock,
 
         addresses: {
-          ...addresses,
+          ...addresses
 
-          uniToken: await (wethAddress
-            ? createUniswapV2Pair(deployer, wethAddress, addresses.oneuToken, overrides)
-            : deployMockUniToken(deployer, getContractFactory, overrides))
+          // uniToken: await (wethAddress
+          //   ? createUniswapV2Pair(deployer, wethAddress, addresses.oneuToken, overrides)
+          //   : deployMockUniToken(deployer, getContractFactory, overrides))
         }
       })
     ))
