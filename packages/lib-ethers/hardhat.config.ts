@@ -77,6 +77,9 @@ const oracleAddresses = {
   kovan: {
     chainlink: "0x9326BFA02ADD2366b30bacB125260Af641031331",
     tellor: "0x20374E579832859f180536A69093A126Db1c8aE9" // Playground
+  },
+  autonity: {
+    chainlink: "0xce40AF5bFeDa2ECAc145C0185B43a1b6b202F73E"
   }
 };
 
@@ -91,7 +94,7 @@ const wethAddresses = {
   kovan: "0xd0A1E359811322d97991E03f863a0C30C2cF029C"
 };
 
-const hasWAUT = (network: string): network is keyof typeof wethAddresses => network in wethAddresses;
+const hasWETH = (network: string): network is keyof typeof wethAddresses => network in wethAddresses;
 
 const config: HardhatUserConfig = {
   networks: {
@@ -125,6 +128,11 @@ const config: HardhatUserConfig = {
 
     kiln: {
       url: "https://rpc.kiln.themerge.dev",
+      accounts: [deployerAccount]
+    },
+
+    autonity: {
+      url: "https://rpc1.piccadilly.autonity.org/",
       accounts: [deployerAccount]
     }
   },
@@ -204,7 +212,7 @@ task("deploy", "Deploys the contracts to the network")
   )
   .setAction(
     async ({ channel, gasPrice, useRealPriceFeed, createUniswapPair }: DeployParams, env) => {
-      const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
+      //const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
       const [deployer] = await env.ethers.getSigners();
 
       useRealPriceFeed ??= env.network.name === "mainnet";
@@ -215,7 +223,7 @@ task("deploy", "Deploys the contracts to the network")
 
       let wethAddress: string | undefined = undefined;
       if (createUniswapPair) {
-        if (!hasWAUT(env.network.name)) {
+        if (!hasWETH(env.network.name)) {
           throw new Error(`WAUT not deployed on ${env.network.name}`);
         }
         wethAddress = wethAddresses[env.network.name];
@@ -223,7 +231,7 @@ task("deploy", "Deploys the contracts to the network")
 
       setSilent(false);
 
-      const deployment = await env.deployLiquity(deployer, useRealPriceFeed, wethAddress, overrides);
+      const deployment = await env.deployLiquity(deployer, useRealPriceFeed, wethAddress);
 
       if (useRealPriceFeed) {
         const contracts = _connectToContracts(deployer, deployment);
@@ -234,8 +242,7 @@ task("deploy", "Deploys the contracts to the network")
           console.log(`Hooking up PriceFeed with oracles ...`);
 
           const tx = await contracts.priceFeed.setAddresses(
-            oracleAddresses[env.network.name].chainlink,
-            overrides
+            oracleAddresses[env.network.name].chainlink
           );
 
           await tx.wait();
