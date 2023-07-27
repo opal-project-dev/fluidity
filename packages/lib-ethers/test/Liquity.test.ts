@@ -948,97 +948,97 @@ describe("EthersLiquity", () => {
       [deployerLiquity, liquity] = await connectUsers([deployer, user]);
     });
 
-    const someUniTokens = 1000;
+    // const someUniTokens = 1000;
 
-    it("should obtain some UNI LP tokens", async () => {
-      await liquity._mintUniToken(someUniTokens);
+    // it("should obtain some UNI LP tokens", async () => {
+    //   await liquity._mintUniToken(someUniTokens);
 
-      const uniTokenBalance = await liquity.getUniTokenBalance();
-      expect(`${uniTokenBalance}`).to.equal(`${someUniTokens}`);
-    });
+    //   const uniTokenBalance = await liquity.getUniTokenBalance();
+    //   expect(`${uniTokenBalance}`).to.equal(`${someUniTokens}`);
+    // });
 
-    it("should fail to stake UNI LP before approving the spend", async () => {
-      await expect(liquity.stakeUniTokens(someUniTokens)).to.eventually.be.rejected;
-    });
+    // it("should fail to stake UNI LP before approving the spend", async () => {
+    //   await expect(liquity.stakeUniTokens(someUniTokens)).to.eventually.be.rejected;
+    // });
 
-    it("should stake UNI LP after approving the spend", async () => {
-      const initialAllowance = await liquity.getUniTokenAllowance();
-      expect(`${initialAllowance}`).to.equal("0");
+    // it("should stake UNI LP after approving the spend", async () => {
+    //   const initialAllowance = await liquity.getUniTokenAllowance();
+    //   expect(`${initialAllowance}`).to.equal("0");
 
-      await liquity.approveUniTokens();
+    //   await liquity.approveUniTokens();
 
-      const newAllowance = await liquity.getUniTokenAllowance();
-      expect(newAllowance.isZero).to.be.false;
+    //   const newAllowance = await liquity.getUniTokenAllowance();
+    //   expect(newAllowance.isZero).to.be.false;
 
-      await liquity.stakeUniTokens(someUniTokens);
+    //   await liquity.stakeUniTokens(someUniTokens);
 
-      const uniTokenBalance = await liquity.getUniTokenBalance();
-      expect(`${uniTokenBalance}`).to.equal("0");
+    //   const uniTokenBalance = await liquity.getUniTokenBalance();
+    //   expect(`${uniTokenBalance}`).to.equal("0");
 
-      const stake = await liquity.getLiquidityMiningStake();
-      expect(`${stake}`).to.equal(`${someUniTokens}`);
-    });
+    //   const stake = await liquity.getLiquidityMiningStake();
+    //   expect(`${stake}`).to.equal(`${someUniTokens}`);
+    // });
 
-    it("should have an OPL reward after some time has passed", async function () {
-      this.timeout("20s");
+    // it("should have an OPL reward after some time has passed", async function () {
+    //   this.timeout("20s");
 
-      // Liquidity mining rewards are seconds-based, so we don't need to wait long.
-      // By actually waiting in real time, we avoid using increaseTime(), which only works on
-      // Hardhat EVM.
-      await new Promise(resolve => setTimeout(resolve, 4000));
+    //   // Liquidity mining rewards are seconds-based, so we don't need to wait long.
+    //   // By actually waiting in real time, we avoid using increaseTime(), which only works on
+    //   // Hardhat EVM.
+    //   await new Promise(resolve => setTimeout(resolve, 4000));
 
-      // Trigger a new block with a dummy TX.
-      await liquity._mintUniToken(0);
+    //   // Trigger a new block with a dummy TX.
+    //   await liquity._mintUniToken(0);
 
-      const lqtyReward = Number(await liquity.getLiquidityMiningOPLReward());
-      expect(lqtyReward).to.be.at.least(1); // ~0.2572 per second [(4e6/3) / (60*24*60*60)]
+    //   const lqtyReward = Number(await liquity.getLiquidityMiningOPLReward());
+    //   expect(lqtyReward).to.be.at.least(1); // ~0.2572 per second [(4e6/3) / (60*24*60*60)]
 
-      await liquity.withdrawOPLRewardFromLiquidityMining();
-      const lqtyBalance = Number(await liquity.getOPLBalance());
-      expect(lqtyBalance).to.be.at.least(lqtyReward); // may have increased since checking
-    });
+    //   await liquity.withdrawOPLRewardFromLiquidityMining();
+    //   const lqtyBalance = Number(await liquity.getOPLBalance());
+    //   expect(lqtyBalance).to.be.at.least(lqtyReward); // may have increased since checking
+    // });
 
-    it("should partially unstake", async () => {
-      await liquity.unstakeUniTokens(someUniTokens / 2);
+    // it("should partially unstake", async () => {
+    //   await liquity.unstakeUniTokens(someUniTokens / 2);
 
-      const uniTokenStake = await liquity.getLiquidityMiningStake();
-      expect(`${uniTokenStake}`).to.equal(`${someUniTokens / 2}`);
+    //   const uniTokenStake = await liquity.getLiquidityMiningStake();
+    //   expect(`${uniTokenStake}`).to.equal(`${someUniTokens / 2}`);
 
-      const uniTokenBalance = await liquity.getUniTokenBalance();
-      expect(`${uniTokenBalance}`).to.equal(`${someUniTokens / 2}`);
-    });
+    //   const uniTokenBalance = await liquity.getUniTokenBalance();
+    //   expect(`${uniTokenBalance}`).to.equal(`${someUniTokens / 2}`);
+    // });
 
-    it("should unstake remaining tokens and withdraw remaining OPL reward", async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      await liquity._mintUniToken(0); // dummy block
-      await liquity.exitLiquidityMining();
+    // it("should unstake remaining tokens and withdraw remaining OPL reward", async () => {
+    //   await new Promise(resolve => setTimeout(resolve, 1000));
+    //   await liquity._mintUniToken(0); // dummy block
+    //   await liquity.exitLiquidityMining();
 
-      const uniTokenStake = await liquity.getLiquidityMiningStake();
-      expect(`${uniTokenStake}`).to.equal("0");
+    //   const uniTokenStake = await liquity.getLiquidityMiningStake();
+    //   expect(`${uniTokenStake}`).to.equal("0");
 
-      const lqtyReward = await liquity.getLiquidityMiningOPLReward();
-      expect(`${lqtyReward}`).to.equal("0");
+    //   const lqtyReward = await liquity.getLiquidityMiningOPLReward();
+    //   expect(`${lqtyReward}`).to.equal("0");
 
-      const uniTokenBalance = await liquity.getUniTokenBalance();
-      expect(`${uniTokenBalance}`).to.equal(`${someUniTokens}`);
-    });
+    //   const uniTokenBalance = await liquity.getUniTokenBalance();
+    //   expect(`${uniTokenBalance}`).to.equal(`${someUniTokens}`);
+    // });
 
-    it("should have no more rewards after the mining period is over", async function () {
-      if (network.name !== "hardhat") {
-        // increaseTime() only works on Hardhat EVM
-        this.skip();
-      }
+    // it("should have no more rewards after the mining period is over", async function () {
+    //   if (network.name !== "hardhat") {
+    //     // increaseTime() only works on Hardhat EVM
+    //     this.skip();
+    //   }
 
-      await liquity.stakeUniTokens(someUniTokens);
-      await increaseTime(2 * 30 * 24 * 60 * 60);
-      await liquity.exitLiquidityMining();
+    //   await liquity.stakeUniTokens(someUniTokens);
+    //   await increaseTime(2 * 30 * 24 * 60 * 60);
+    //   await liquity.exitLiquidityMining();
 
-      const remainingOPLReward = await liquity.getRemainingLiquidityMiningOPLReward();
-      expect(`${remainingOPLReward}`).to.equal("0");
+    //   const remainingOPLReward = await liquity.getRemainingLiquidityMiningOPLReward();
+    //   expect(`${remainingOPLReward}`).to.equal("0");
 
-      const lqtyBalance = Number(await liquity.getOPLBalance());
-      expect(lqtyBalance).to.be.within(1333333, 1333334);
-    });
+    //   const lqtyBalance = Number(await liquity.getOPLBalance());
+    //   expect(lqtyBalance).to.be.within(1333333, 1333334);
+    // });
   });
 
   // Test workarounds related to https://github.com/goldmandao/fluidity/issues/600

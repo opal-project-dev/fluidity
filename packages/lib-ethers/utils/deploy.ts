@@ -11,7 +11,7 @@ import {
   _connectToContracts
 } from "../src/contracts";
 
-import { createUniswapV2Pair } from "./UniswapV2Factory";
+// import { createUniswapV2Pair } from "./UniswapV2Factory";
 
 let silent = true;
 
@@ -324,7 +324,7 @@ export const deployAndSetupContracts = async (
     deploymentDate: new Date().getTime(),
     bootstrapPeriod: 0,
     totalStabilityPoolOPLReward: "0",
-    liquidityMiningOPLRewardRate: "0",
+    // liquidityMiningOPLRewardRate: "0",
     _priceFeedIsTestnet,
     _isDev,
 
