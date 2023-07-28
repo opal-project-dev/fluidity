@@ -5,24 +5,24 @@ pragma solidity 0.6.11;
 import "../TroveManager.sol";
 import "../BorrowerOperations.sol";
 import "../StabilityPool.sol";
-import "../LUSDToken.sol";
+import "../ONEUToken.sol";
 
 contract EchidnaProxy {
     TroveManager troveManager;
     BorrowerOperations borrowerOperations;
     StabilityPool stabilityPool;
-    LUSDToken lusdToken;
+    ONEUToken oneuToken;
 
     constructor(
         TroveManager _troveManager,
         BorrowerOperations _borrowerOperations,
         StabilityPool _stabilityPool,
-        LUSDToken _lusdToken
+        ONEUToken _oneuToken
     ) public {
         troveManager = _troveManager;
         borrowerOperations = _borrowerOperations;
         stabilityPool = _stabilityPool;
-        lusdToken = _lusdToken;
+        oneuToken = _oneuToken;
     }
 
     receive() external payable {
@@ -44,7 +44,7 @@ contract EchidnaProxy {
     }
 
     function redeemCollateralPrx(
-        uint _LUSDAmount,
+        uint _ONEUAmount,
         address _firstRedemptionHint,
         address _upperPartialRedemptionHint,
         address _lowerPartialRedemptionHint,
@@ -52,36 +52,70 @@ contract EchidnaProxy {
         uint _maxIterations,
         uint _maxFee
     ) external {
-        troveManager.redeemCollateral(_LUSDAmount, _firstRedemptionHint, _upperPartialRedemptionHint, _lowerPartialRedemptionHint, _partialRedemptionHintNICR, _maxIterations, _maxFee);
+        troveManager.redeemCollateral(
+            _ONEUAmount,
+            _firstRedemptionHint,
+            _upperPartialRedemptionHint,
+            _lowerPartialRedemptionHint,
+            _partialRedemptionHintNICR,
+            _maxIterations,
+            _maxFee
+        );
     }
 
     // Borrower Operations
-    function openTrovePrx(uint _ETH, uint _LUSDAmount, address _upperHint, address _lowerHint, uint _maxFee) external payable {
-        borrowerOperations.openTrove{value: _ETH}(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
+    function openTrovePrx(
+        uint _AUT,
+        uint _ONEUAmount,
+        address _upperHint,
+        address _lowerHint,
+        uint _maxFee
+    ) external payable {
+        borrowerOperations.openTrove{value: _AUT}(_maxFee, _ONEUAmount, _upperHint, _lowerHint);
     }
 
-    function addCollPrx(uint _ETH, address _upperHint, address _lowerHint) external payable {
-        borrowerOperations.addColl{value: _ETH}(_upperHint, _lowerHint);
+    function addCollPrx(uint _AUT, address _upperHint, address _lowerHint) external payable {
+        borrowerOperations.addColl{value: _AUT}(_upperHint, _lowerHint);
     }
 
     function withdrawCollPrx(uint _amount, address _upperHint, address _lowerHint) external {
         borrowerOperations.withdrawColl(_amount, _upperHint, _lowerHint);
     }
 
-    function withdrawLUSDPrx(uint _amount, address _upperHint, address _lowerHint, uint _maxFee) external {
-        borrowerOperations.withdrawLUSD(_maxFee, _amount, _upperHint, _lowerHint);
+    function withdrawONEUPrx(
+        uint _amount,
+        address _upperHint,
+        address _lowerHint,
+        uint _maxFee
+    ) external {
+        borrowerOperations.withdrawONEU(_maxFee, _amount, _upperHint, _lowerHint);
     }
 
-    function repayLUSDPrx(uint _amount, address _upperHint, address _lowerHint) external {
-        borrowerOperations.repayLUSD(_amount, _upperHint, _lowerHint);
+    function repayONEUPrx(uint _amount, address _upperHint, address _lowerHint) external {
+        borrowerOperations.repayONEU(_amount, _upperHint, _lowerHint);
     }
 
     function closeTrovePrx() external {
         borrowerOperations.closeTrove();
     }
 
-    function adjustTrovePrx(uint _ETH, uint _collWithdrawal, uint _debtChange, bool _isDebtIncrease, address _upperHint, address _lowerHint, uint _maxFee) external payable {
-        borrowerOperations.adjustTrove{value: _ETH}(_maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint);
+    function adjustTrovePrx(
+        uint _AUT,
+        uint _collWithdrawal,
+        uint _debtChange,
+        bool _isDebtIncrease,
+        address _upperHint,
+        address _lowerHint,
+        uint _maxFee
+    ) external payable {
+        borrowerOperations.adjustTrove{value: _AUT}(
+            _maxFee,
+            _collWithdrawal,
+            _debtChange,
+            _isDebtIncrease,
+            _upperHint,
+            _lowerHint
+        );
     }
 
     // Pool Manager
@@ -93,25 +127,29 @@ contract EchidnaProxy {
         stabilityPool.withdrawFromSP(_amount);
     }
 
-    // LUSD Token
+    // ONEU Token
 
     function transferPrx(address recipient, uint256 amount) external returns (bool) {
-        return lusdToken.transfer(recipient, amount);
+        return oneuToken.transfer(recipient, amount);
     }
 
     function approvePrx(address spender, uint256 amount) external returns (bool) {
-        return lusdToken.approve(spender, amount);
+        return oneuToken.approve(spender, amount);
     }
 
-    function transferFromPrx(address sender, address recipient, uint256 amount) external returns (bool) {
-        return lusdToken.transferFrom(sender, recipient, amount);
+    function transferFromPrx(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool) {
+        return oneuToken.transferFrom(sender, recipient, amount);
     }
 
     function increaseAllowancePrx(address spender, uint256 addedValue) external returns (bool) {
-        return lusdToken.increaseAllowance(spender, addedValue);
+        return oneuToken.increaseAllowance(spender, addedValue);
     }
 
     function decreaseAllowancePrx(address spender, uint256 subtractedValue) external returns (bool) {
-        return lusdToken.decreaseAllowance(spender, subtractedValue);
+        return oneuToken.decreaseAllowance(spender, subtractedValue);
     }
 }

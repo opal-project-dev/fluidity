@@ -26,10 +26,10 @@ def setAddresses(contracts):
         contracts.gasPool.address,
         contracts.collSurplusPool.address,
         contracts.priceFeedTestnet.address,
-        contracts.lusdToken.address,
+        contracts.oneuToken.address,
         contracts.sortedTroves.address,
-        contracts.lqtyToken.address,
-        contracts.lqtyStaking.address,
+        contracts.oplToken.address,
+        contracts.oplStaking.address,
         { 'from': accounts[0] }
     )
 
@@ -42,8 +42,8 @@ def setAddresses(contracts):
         contracts.collSurplusPool.address,
         contracts.priceFeedTestnet.address,
         contracts.sortedTroves.address,
-        contracts.lusdToken.address,
-        contracts.lqtyStaking.address,
+        contracts.oneuToken.address,
+        contracts.oplStaking.address,
         { 'from': accounts[0] }
     )
 
@@ -51,7 +51,7 @@ def setAddresses(contracts):
         contracts.borrowerOperations.address,
         contracts.troveManager.address,
         contracts.activePool.address,
-        contracts.lusdToken.address,
+        contracts.oneuToken.address,
         contracts.sortedTroves.address,
         contracts.priceFeedTestnet.address,
         contracts.communityIssuance.address,
@@ -85,10 +85,10 @@ def setAddresses(contracts):
         { 'from': accounts[0] }
     )
 
-    # LQTY
-    contracts.lqtyStaking.setAddresses(
-        contracts.lqtyToken.address,
-        contracts.lusdToken.address,
+    # OPL
+    contracts.oplStaking.setAddresses(
+        contracts.oplToken.address,
+        contracts.oneuToken.address,
         contracts.troveManager.address,
         contracts.borrowerOperations.address,
         contracts.activePool.address,
@@ -96,7 +96,7 @@ def setAddresses(contracts):
     )
 
     contracts.communityIssuance.setAddresses(
-        contracts.lqtyToken.address,
+        contracts.oplToken.address,
         contracts.stabilityPool.address,
         { 'from': accounts[0] }
     )
@@ -121,22 +121,21 @@ def contracts():
     contracts.collSurplusPool = CollSurplusPool.deploy({ 'from': accounts[0] })
     contracts.borrowerOperations = BorrowerOperationsTester.deploy({ 'from': accounts[0] })
     contracts.hintHelpers = HintHelpers.deploy({ 'from': accounts[0] })
-    contracts.lusdToken = LUSDToken.deploy(
+    contracts.oneuToken = ONEUToken.deploy(
         contracts.troveManager.address,
         contracts.stabilityPool.address,
         contracts.borrowerOperations.address,
         { 'from': accounts[0] }
     )
-    # LQTY
-    contracts.lqtyStaking = LQTYStaking.deploy({ 'from': accounts[0] })
+    # OPL
+    contracts.oplStaking = OPLStaking.deploy({ 'from': accounts[0] })
     contracts.communityIssuance = CommunityIssuance.deploy({ 'from': accounts[0] })
     contracts.lockupContractFactory = LockupContractFactory.deploy({ 'from': accounts[0] })
-    contracts.lqtyToken = LQTYToken.deploy(
+    contracts.oplToken = OPLToken.deploy(
         contracts.communityIssuance.address,
-        contracts.lqtyStaking.address,
+        contracts.oplStaking.address,
         contracts.lockupContractFactory.address,
         accounts[0], # bountyAddress
-        accounts[0],  # lpRewardsAddress
         accounts[0],  # multisigAddress
         { 'from': accounts[0] }
     )
@@ -147,9 +146,9 @@ def contracts():
 
 @pytest.fixture
 def print_expectations():
-    # ether_price_one_year = price_ether_initial * (1 + drift_ether)**8760
-    # print("Expected ether price at the end of the year: $", ether_price_one_year)
-    print("Expected LQTY price at the end of first month: $", price_LQTY_initial * (1 + drift_LQTY)**720)
+    # aut_price_one_year = price_aut_initial * (1 + drift_ether)**8760
+    # print("Expected aut price at the end of the year: $", aut_price_one_year)
+    print("Expected OPL price at the end of first month: $", price_OPL_initial * (1 + drift_OPL)**720)
 
     print("\n Open troves")
     print("E(Q_t^e)    = ", collateral_gamma_k * collateral_gamma_theta)
@@ -173,26 +172,26 @@ def _test_test(contracts):
 > In each period, the following events occur sequentially
 
 
-* exogenous ether price input
+* exogenous aut price input
 * trove liquidation
-* return of the previous period's stability pool determined (liquidation gain & airdropped LQTY gain)
+* return of the previous period's stability pool determined (liquidation gain & airdropped OPL gain)
 * trove closure
 * trove adjustment
 * open troves
 * issuance fee
 * trove pool formed
-* LUSD supply determined
-* LUSD stability pool demand determined
-* LUSD liquidity pool demand determined
-* LUSD price determined
+* ONEU supply determined
+* ONEU stability pool demand determined
+* ONEU liquidity pool demand determined
+* ONEU price determined
 * redemption & redemption fee
-* LQTY pool return determined
+* OPL pool return determined
 """
 def test_run_simulation(add_accounts, contracts, print_expectations):
-    LUSD_GAS_COMPENSATION = contracts.troveManager.LUSD_GAS_COMPENSATION() / 1e18
+    ONEU_GAS_COMPENSATION = contracts.troveManager.ONEU_GAS_COMPENSATION() / 1e18
     MIN_NET_DEBT = contracts.troveManager.MIN_NET_DEBT() / 1e18
 
-    contracts.priceFeedTestnet.setPrice(floatToWei(price_ether[0]), { 'from': accounts[0] })
+    contracts.priceFeedTestnet.setPrice(floatToWei(price_aut[0]), { 'from': accounts[0] })
     # whale
     whale_coll = 30000.0
     contracts.borrowerOperations.openTrove(MAX_FEE, Wei(10e24), ZERO_ADDRESS, ZERO_ADDRESS,
@@ -202,11 +201,11 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
     active_accounts = []
     inactive_accounts = [*range(1, len(accounts))]
 
-    price_LUSD = 1
-    price_LQTY_current = price_LQTY_initial
+    price_ONEU = 1
+    price_OPL_current = price_OPL_initial
 
     data = {"airdrop_gain": [0] * n_sim, "liquidation_gain": [0] * n_sim, "issuance_fee": [0] * n_sim, "redemption_fee": [0] * n_sim}
-    total_lusd_redempted = 0
+    total_oneu_redempted = 0
     total_coll_added = whale_coll
     total_coll_liquidated = 0
 
@@ -217,29 +216,29 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
 
     with open('tests/simulation.csv', 'w', newline='') as csvfile:
         datawriter = csv.writer(csvfile, delimiter=',')
-        datawriter.writerow(['iteration', 'ETH_price', 'price_LUSD', 'price_LQTY', 'num_troves', 'total_coll', 'total_debt', 'TCR', 'recovery_mode', 'last_ICR', 'SP_LUSD', 'SP_ETH', 'total_coll_added', 'total_coll_liquidated', 'total_lusd_redempted'])
+        datawriter.writerow(['iteration', 'AUT_price', 'price_ONEU', 'price_OPL', 'num_troves', 'total_coll', 'total_debt', 'TCR', 'recovery_mode', 'last_ICR', 'SP_ONEU', 'SP_AUT', 'total_coll_added', 'total_coll_liquidated', 'total_oneu_redempted'])
 
         #Simulation Process
         for index in range(1, n_sim):
             print('\n  --> Iteration', index)
             print('  -------------------\n')
-            #exogenous ether price input
-            price_ether_current = price_ether[index]
-            contracts.priceFeedTestnet.setPrice(floatToWei(price_ether_current), { 'from': accounts[0] })
+            #exogenous aut price input
+            price_aut_current = price_aut[index]
+            contracts.priceFeedTestnet.setPrice(floatToWei(price_aut_current), { 'from': accounts[0] })
 
             #trove liquidation & return of stability pool
-            result_liquidation = liquidate_troves(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, price_LUSD, price_LQTY_current, data, index)
+            result_liquidation = liquidate_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, price_OPL_current, data, index)
             total_coll_liquidated = total_coll_liquidated + result_liquidation[0]
             return_stability = result_liquidation[1]
 
             #close troves
-            result_close = close_troves(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, price_LUSD, index)
+            result_close = close_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, index)
 
             #adjust troves
-            [coll_added_adjust, issuance_LUSD_adjust] = adjust_troves(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, index)
+            [coll_added_adjust, issuance_ONEU_adjust] = adjust_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, index)
 
             #open troves
-            [coll_added_open, issuance_LUSD_open] = open_troves(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, price_LUSD, index)
+            [coll_added_open, issuance_ONEU_open] = open_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, index)
             total_coll_added = total_coll_added + coll_added_adjust + coll_added_open
             #active_accounts.sort(key=lambda a : a.get('CR_initial'))
 
@@ -247,28 +246,28 @@ def test_run_simulation(add_accounts, contracts, print_expectations):
             stability_update(accounts, contracts, active_accounts, return_stability, index)
 
             #Calculating Price, Liquidity Pool, and Redemption
-            [price_LUSD, redemption_pool, redemption_fee, issuance_LUSD_stabilizer] = price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, price_LUSD, index)
-            total_lusd_redempted = total_lusd_redempted + redemption_pool
-            print('LUSD price', price_LUSD)
-            print('LQTY price', price_LQTY_current)
+            [price_ONEU, redemption_pool, redemption_fee, issuance_ONEU_stabilizer] = price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, index)
+            total_oneu_redempted = total_oneu_redempted + redemption_pool
+            print('ONEU price', price_ONEU)
+            print('OPL price', price_OPL_current)
 
-            issuance_fee = price_LUSD * (issuance_LUSD_adjust + issuance_LUSD_open + issuance_LUSD_stabilizer)
+            issuance_fee = price_ONEU * (issuance_ONEU_adjust + issuance_ONEU_open + issuance_ONEU_stabilizer)
             data['issuance_fee'][index] = issuance_fee
             data['redemption_fee'][index] = redemption_fee
 
-            #LQTY Market
-            result_LQTY = LQTY_market(index, data)
-            price_LQTY_current = result_LQTY[0]
-            #annualized_earning = result_LQTY[1]
-            #MC_LQTY_current = result_LQTY[2]
+            #OPL Market
+            result_OPL = OPL_market(index, data)
+            price_OPL_current = result_OPL[0]
+            #annualized_earning = result_OPL[1]
+            #MC_OPL_current = result_OPL[2]
 
-            [ETH_price, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_LUSD, SP_ETH] = logGlobalState(contracts)
-            print('Total redempted ', total_lusd_redempted)
-            print('Total ETH added ', total_coll_added)
-            print('Total ETH liquid', total_coll_liquidated)
-            print(f'Ratio ETH liquid {100 * total_coll_liquidated / total_coll_added}%')
+            [AUT_price, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_ONEU, SP_AUT] = logGlobalState(contracts)
+            print('Total redempted ', total_oneu_redempted)
+            print('Total AUT added ', total_coll_added)
+            print('Total AUT liquid', total_coll_liquidated)
+            print(f'Ratio AUT liquid {100 * total_coll_liquidated / total_coll_added}%')
             print(' ----------------------\n')
 
-            datawriter.writerow([index, ETH_price, price_LUSD, price_LQTY_current, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_LUSD, SP_ETH, total_coll_added, total_coll_liquidated, total_lusd_redempted])
+            datawriter.writerow([index, AUT_price, price_ONEU, price_OPL_current, num_troves, total_coll, total_debt, TCR, recovery_mode, last_ICR, SP_ONEU, SP_AUT, total_coll_added, total_coll_liquidated, total_oneu_redempted])
 
-            assert price_LUSD > 0
+            assert price_ONEU > 0

@@ -1,353 +1,359 @@
-const deploymentHelper = require("../utils/deploymentHelpers.js")
+const deploymentHelper = require("../utils/deploymentHelpers.js");
 
-contract('Deployment script - Sets correct contract addresses dependencies after deployment', async accounts => {
-  const [owner] = accounts;
+contract(
+  "Deployment script - Sets correct contract addresses dependencies after deployment",
+  async accounts => {
+    const [owner] = accounts;
 
-  const [bountyAddress, lpRewardsAddress, multisig] = accounts.slice(997, 1000)
-  
-  let priceFeed
-  let lusdToken
-  let sortedTroves
-  let troveManager
-  let activePool
-  let stabilityPool
-  let defaultPool
-  let functionCaller
-  let borrowerOperations
-  let lqtyStaking
-  let lqtyToken
-  let communityIssuance
-  let lockupContractFactory
+    const [bountyAddress, multisig] = accounts.slice(997, 1000);
 
-  before(async () => {
-    const coreContracts = await deploymentHelper.deployLiquityCore()
-    const LQTYContracts = await deploymentHelper.deployLQTYContracts(bountyAddress, lpRewardsAddress, multisig)
+    let priceFeed;
+    let oneuToken;
+    let sortedTroves;
+    let troveManager;
+    let activePool;
+    let stabilityPool;
+    let defaultPool;
+    let functionCaller;
+    let borrowerOperations;
+    let oplStaking;
+    let oplToken;
+    let communityIssuance;
+    let lockupContractFactory;
 
-    priceFeed = coreContracts.priceFeedTestnet
-    lusdToken = coreContracts.lusdToken
-    sortedTroves = coreContracts.sortedTroves
-    troveManager = coreContracts.troveManager
-    activePool = coreContracts.activePool
-    stabilityPool = coreContracts.stabilityPool
-    defaultPool = coreContracts.defaultPool
-    functionCaller = coreContracts.functionCaller
-    borrowerOperations = coreContracts.borrowerOperations
+    before(async () => {
+      const coreContracts = await deploymentHelper.deployLiquityCore();
+      const OPLContracts = await deploymentHelper.deployOPLContracts(
+        bountyAddress,
 
-    lqtyStaking = LQTYContracts.lqtyStaking
-    lqtyToken = LQTYContracts.lqtyToken
-    communityIssuance = LQTYContracts.communityIssuance
-    lockupContractFactory = LQTYContracts.lockupContractFactory
+        multisig
+      );
 
-    await deploymentHelper.connectLQTYContracts(LQTYContracts)
-    await deploymentHelper.connectCoreContracts(coreContracts, LQTYContracts)
-    await deploymentHelper.connectLQTYContractsToCore(LQTYContracts, coreContracts)
-  })
+      priceFeed = coreContracts.priceFeedTestnet;
+      oneuToken = coreContracts.oneuToken;
+      sortedTroves = coreContracts.sortedTroves;
+      troveManager = coreContracts.troveManager;
+      activePool = coreContracts.activePool;
+      stabilityPool = coreContracts.stabilityPool;
+      defaultPool = coreContracts.defaultPool;
+      functionCaller = coreContracts.functionCaller;
+      borrowerOperations = coreContracts.borrowerOperations;
 
-  it('Sets the correct PriceFeed address in TroveManager', async () => {
-    const priceFeedAddress = priceFeed.address
+      oplStaking = OPLContracts.oplStaking;
+      oplToken = OPLContracts.oplToken;
+      communityIssuance = OPLContracts.communityIssuance;
+      lockupContractFactory = OPLContracts.lockupContractFactory;
 
-    const recordedPriceFeedAddress = await troveManager.priceFeed()
+      await deploymentHelper.connectOPLContracts(OPLContracts);
+      await deploymentHelper.connectCoreContracts(coreContracts, OPLContracts);
+      await deploymentHelper.connectOPLContractsToCore(OPLContracts, coreContracts);
+    });
 
-    assert.equal(priceFeedAddress, recordedPriceFeedAddress)
-  })
+    it("Sets the correct PriceFeed address in TroveManager", async () => {
+      const priceFeedAddress = priceFeed.address;
 
-  it('Sets the correct LUSDToken address in TroveManager', async () => {
-    const lusdTokenAddress = lusdToken.address
+      const recordedPriceFeedAddress = await troveManager.priceFeed();
 
-    const recordedClvTokenAddress = await troveManager.lusdToken()
+      assert.equal(priceFeedAddress, recordedPriceFeedAddress);
+    });
 
-    assert.equal(lusdTokenAddress, recordedClvTokenAddress)
-  })
+    it("Sets the correct ONEUToken address in TroveManager", async () => {
+      const oneuTokenAddress = oneuToken.address;
 
-  it('Sets the correct SortedTroves address in TroveManager', async () => {
-    const sortedTrovesAddress = sortedTroves.address
+      const recordedClvTokenAddress = await troveManager.oneuToken();
 
-    const recordedSortedTrovesAddress = await troveManager.sortedTroves()
+      assert.equal(oneuTokenAddress, recordedClvTokenAddress);
+    });
 
-    assert.equal(sortedTrovesAddress, recordedSortedTrovesAddress)
-  })
+    it("Sets the correct SortedTroves address in TroveManager", async () => {
+      const sortedTrovesAddress = sortedTroves.address;
 
-  it('Sets the correct BorrowerOperations address in TroveManager', async () => {
-    const borrowerOperationsAddress = borrowerOperations.address
+      const recordedSortedTrovesAddress = await troveManager.sortedTroves();
 
-    const recordedBorrowerOperationsAddress = await troveManager.borrowerOperationsAddress()
+      assert.equal(sortedTrovesAddress, recordedSortedTrovesAddress);
+    });
 
-    assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
-  })
+    it("Sets the correct BorrowerOperations address in TroveManager", async () => {
+      const borrowerOperationsAddress = borrowerOperations.address;
 
-  // ActivePool in TroveM
-  it('Sets the correct ActivePool address in TroveManager', async () => {
-    const activePoolAddress = activePool.address
+      const recordedBorrowerOperationsAddress = await troveManager.borrowerOperationsAddress();
 
-    const recordedActivePoolAddresss = await troveManager.activePool()
+      assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress);
+    });
 
-    assert.equal(activePoolAddress, recordedActivePoolAddresss)
-  })
+    // ActivePool in TroveM
+    it("Sets the correct ActivePool address in TroveManager", async () => {
+      const activePoolAddress = activePool.address;
 
-  // DefaultPool in TroveM
-  it('Sets the correct DefaultPool address in TroveManager', async () => {
-    const defaultPoolAddress = defaultPool.address
+      const recordedActivePoolAddresss = await troveManager.activePool();
 
-    const recordedDefaultPoolAddresss = await troveManager.defaultPool()
+      assert.equal(activePoolAddress, recordedActivePoolAddresss);
+    });
 
-    assert.equal(defaultPoolAddress, recordedDefaultPoolAddresss)
-  })
+    // DefaultPool in TroveM
+    it("Sets the correct DefaultPool address in TroveManager", async () => {
+      const defaultPoolAddress = defaultPool.address;
 
-  // StabilityPool in TroveM
-  it('Sets the correct StabilityPool address in TroveManager', async () => {
-    const stabilityPoolAddress = stabilityPool.address
+      const recordedDefaultPoolAddresss = await troveManager.defaultPool();
 
-    const recordedStabilityPoolAddresss = await troveManager.stabilityPool()
+      assert.equal(defaultPoolAddress, recordedDefaultPoolAddresss);
+    });
 
-    assert.equal(stabilityPoolAddress, recordedStabilityPoolAddresss)
-  })
+    // StabilityPool in TroveM
+    it("Sets the correct StabilityPool address in TroveManager", async () => {
+      const stabilityPoolAddress = stabilityPool.address;
 
-  // LQTY Staking in TroveM
-  it('Sets the correct LQTYStaking address in TroveManager', async () => {
-    const lqtyStakingAddress = lqtyStaking.address
+      const recordedStabilityPoolAddresss = await troveManager.stabilityPool();
 
-    const recordedLQTYStakingAddress = await troveManager.lqtyStaking()
-    assert.equal(lqtyStakingAddress, recordedLQTYStakingAddress)
-  })
+      assert.equal(stabilityPoolAddress, recordedStabilityPoolAddresss);
+    });
 
-  // Active Pool
+    // OPL Staking in TroveM
+    it("Sets the correct OPLStaking address in TroveManager", async () => {
+      const oplStakingAddress = oplStaking.address;
 
-  it('Sets the correct StabilityPool address in ActivePool', async () => {
-    const stabilityPoolAddress = stabilityPool.address
+      const recordedOPLStakingAddress = await troveManager.oplStaking();
+      assert.equal(oplStakingAddress, recordedOPLStakingAddress);
+    });
 
-    const recordedStabilityPoolAddress = await activePool.stabilityPoolAddress()
+    // Active Pool
 
-    assert.equal(stabilityPoolAddress, recordedStabilityPoolAddress)
-  })
+    it("Sets the correct StabilityPool address in ActivePool", async () => {
+      const stabilityPoolAddress = stabilityPool.address;
 
-  it('Sets the correct DefaultPool address in ActivePool', async () => {
-    const defaultPoolAddress = defaultPool.address
+      const recordedStabilityPoolAddress = await activePool.stabilityPoolAddress();
 
-    const recordedDefaultPoolAddress = await activePool.defaultPoolAddress()
+      assert.equal(stabilityPoolAddress, recordedStabilityPoolAddress);
+    });
 
-    assert.equal(defaultPoolAddress, recordedDefaultPoolAddress)
-  })
+    it("Sets the correct DefaultPool address in ActivePool", async () => {
+      const defaultPoolAddress = defaultPool.address;
 
-  it('Sets the correct BorrowerOperations address in ActivePool', async () => {
-    const borrowerOperationsAddress = borrowerOperations.address
+      const recordedDefaultPoolAddress = await activePool.defaultPoolAddress();
 
-    const recordedBorrowerOperationsAddress = await activePool.borrowerOperationsAddress()
+      assert.equal(defaultPoolAddress, recordedDefaultPoolAddress);
+    });
 
-    assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
-  })
+    it("Sets the correct BorrowerOperations address in ActivePool", async () => {
+      const borrowerOperationsAddress = borrowerOperations.address;
 
-  it('Sets the correct TroveManager address in ActivePool', async () => {
-    const troveManagerAddress = troveManager.address
+      const recordedBorrowerOperationsAddress = await activePool.borrowerOperationsAddress();
 
-    const recordedTroveManagerAddress = await activePool.troveManagerAddress()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
-  })
+      assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress);
+    });
 
-  // Stability Pool
+    it("Sets the correct TroveManager address in ActivePool", async () => {
+      const troveManagerAddress = troveManager.address;
 
-  it('Sets the correct ActivePool address in StabilityPool', async () => {
-    const activePoolAddress = activePool.address
+      const recordedTroveManagerAddress = await activePool.troveManagerAddress();
+      assert.equal(troveManagerAddress, recordedTroveManagerAddress);
+    });
 
-    const recordedActivePoolAddress = await stabilityPool.activePool()
-    assert.equal(activePoolAddress, recordedActivePoolAddress)
-  })
+    // Stability Pool
 
-  it('Sets the correct BorrowerOperations address in StabilityPool', async () => {
-    const borrowerOperationsAddress = borrowerOperations.address
+    it("Sets the correct ActivePool address in StabilityPool", async () => {
+      const activePoolAddress = activePool.address;
 
-    const recordedBorrowerOperationsAddress = await stabilityPool.borrowerOperations()
+      const recordedActivePoolAddress = await stabilityPool.activePool();
+      assert.equal(activePoolAddress, recordedActivePoolAddress);
+    });
 
-    assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
-  })
+    it("Sets the correct BorrowerOperations address in StabilityPool", async () => {
+      const borrowerOperationsAddress = borrowerOperations.address;
 
-  it('Sets the correct LUSDToken address in StabilityPool', async () => {
-    const lusdTokenAddress = lusdToken.address
+      const recordedBorrowerOperationsAddress = await stabilityPool.borrowerOperations();
 
-    const recordedClvTokenAddress = await stabilityPool.lusdToken()
+      assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress);
+    });
 
-    assert.equal(lusdTokenAddress, recordedClvTokenAddress)
-  })
+    it("Sets the correct ONEUToken address in StabilityPool", async () => {
+      const oneuTokenAddress = oneuToken.address;
 
-  it('Sets the correct TroveManager address in StabilityPool', async () => {
-    const troveManagerAddress = troveManager.address
+      const recordedClvTokenAddress = await stabilityPool.oneuToken();
 
-    const recordedTroveManagerAddress = await stabilityPool.troveManager()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
-  })
+      assert.equal(oneuTokenAddress, recordedClvTokenAddress);
+    });
 
-  // Default Pool
+    it("Sets the correct TroveManager address in StabilityPool", async () => {
+      const troveManagerAddress = troveManager.address;
 
-  it('Sets the correct TroveManager address in DefaultPool', async () => {
-    const troveManagerAddress = troveManager.address
+      const recordedTroveManagerAddress = await stabilityPool.troveManager();
+      assert.equal(troveManagerAddress, recordedTroveManagerAddress);
+    });
 
-    const recordedTroveManagerAddress = await defaultPool.troveManagerAddress()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
-  })
+    // Default Pool
 
-  it('Sets the correct ActivePool address in DefaultPool', async () => {
-    const activePoolAddress = activePool.address
+    it("Sets the correct TroveManager address in DefaultPool", async () => {
+      const troveManagerAddress = troveManager.address;
 
-    const recordedActivePoolAddress = await defaultPool.activePoolAddress()
-    assert.equal(activePoolAddress, recordedActivePoolAddress)
-  })
+      const recordedTroveManagerAddress = await defaultPool.troveManagerAddress();
+      assert.equal(troveManagerAddress, recordedTroveManagerAddress);
+    });
 
-  it('Sets the correct TroveManager address in SortedTroves', async () => {
-    const borrowerOperationsAddress = borrowerOperations.address
+    it("Sets the correct ActivePool address in DefaultPool", async () => {
+      const activePoolAddress = activePool.address;
 
-    const recordedBorrowerOperationsAddress = await sortedTroves.borrowerOperationsAddress()
-    assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
-  })
+      const recordedActivePoolAddress = await defaultPool.activePoolAddress();
+      assert.equal(activePoolAddress, recordedActivePoolAddress);
+    });
 
-  it('Sets the correct BorrowerOperations address in SortedTroves', async () => {
-    const troveManagerAddress = troveManager.address
+    it("Sets the correct TroveManager address in SortedTroves", async () => {
+      const borrowerOperationsAddress = borrowerOperations.address;
 
-    const recordedTroveManagerAddress = await sortedTroves.troveManager()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
-  })
+      const recordedBorrowerOperationsAddress = await sortedTroves.borrowerOperationsAddress();
+      assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress);
+    });
 
-  //--- BorrowerOperations ---
+    it("Sets the correct BorrowerOperations address in SortedTroves", async () => {
+      const troveManagerAddress = troveManager.address;
 
-  // TroveManager in BO
-  it('Sets the correct TroveManager address in BorrowerOperations', async () => {
-    const troveManagerAddress = troveManager.address
+      const recordedTroveManagerAddress = await sortedTroves.troveManager();
+      assert.equal(troveManagerAddress, recordedTroveManagerAddress);
+    });
 
-    const recordedTroveManagerAddress = await borrowerOperations.troveManager()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
-  })
+    //--- BorrowerOperations ---
 
-  // setPriceFeed in BO
-  it('Sets the correct PriceFeed address in BorrowerOperations', async () => {
-    const priceFeedAddress = priceFeed.address
+    // TroveManager in BO
+    it("Sets the correct TroveManager address in BorrowerOperations", async () => {
+      const troveManagerAddress = troveManager.address;
 
-    const recordedPriceFeedAddress = await borrowerOperations.priceFeed()
-    assert.equal(priceFeedAddress, recordedPriceFeedAddress)
-  })
+      const recordedTroveManagerAddress = await borrowerOperations.troveManager();
+      assert.equal(troveManagerAddress, recordedTroveManagerAddress);
+    });
 
-  // setSortedTroves in BO
-  it('Sets the correct SortedTroves address in BorrowerOperations', async () => {
-    const sortedTrovesAddress = sortedTroves.address
+    // setPriceFeed in BO
+    it("Sets the correct PriceFeed address in BorrowerOperations", async () => {
+      const priceFeedAddress = priceFeed.address;
 
-    const recordedSortedTrovesAddress = await borrowerOperations.sortedTroves()
-    assert.equal(sortedTrovesAddress, recordedSortedTrovesAddress)
-  })
+      const recordedPriceFeedAddress = await borrowerOperations.priceFeed();
+      assert.equal(priceFeedAddress, recordedPriceFeedAddress);
+    });
 
-  // setActivePool in BO
-  it('Sets the correct ActivePool address in BorrowerOperations', async () => {
-    const activePoolAddress = activePool.address
+    // setSortedTroves in BO
+    it("Sets the correct SortedTroves address in BorrowerOperations", async () => {
+      const sortedTrovesAddress = sortedTroves.address;
 
-    const recordedActivePoolAddress = await borrowerOperations.activePool()
-    assert.equal(activePoolAddress, recordedActivePoolAddress)
-  })
+      const recordedSortedTrovesAddress = await borrowerOperations.sortedTroves();
+      assert.equal(sortedTrovesAddress, recordedSortedTrovesAddress);
+    });
 
-  // setDefaultPool in BO
-  it('Sets the correct DefaultPool address in BorrowerOperations', async () => {
-    const defaultPoolAddress = defaultPool.address
+    // setActivePool in BO
+    it("Sets the correct ActivePool address in BorrowerOperations", async () => {
+      const activePoolAddress = activePool.address;
 
-    const recordedDefaultPoolAddress = await borrowerOperations.defaultPool()
-    assert.equal(defaultPoolAddress, recordedDefaultPoolAddress)
-  })
+      const recordedActivePoolAddress = await borrowerOperations.activePool();
+      assert.equal(activePoolAddress, recordedActivePoolAddress);
+    });
 
-  // LQTY Staking in BO
-  it('Sets the correct LQTYStaking address in BorrowerOperations', async () => {
-    const lqtyStakingAddress = lqtyStaking.address
+    // setDefaultPool in BO
+    it("Sets the correct DefaultPool address in BorrowerOperations", async () => {
+      const defaultPoolAddress = defaultPool.address;
 
-    const recordedLQTYStakingAddress = await borrowerOperations.lqtyStakingAddress()
-    assert.equal(lqtyStakingAddress, recordedLQTYStakingAddress)
-  })
+      const recordedDefaultPoolAddress = await borrowerOperations.defaultPool();
+      assert.equal(defaultPoolAddress, recordedDefaultPoolAddress);
+    });
 
+    // OPL Staking in BO
+    it("Sets the correct OPLStaking address in BorrowerOperations", async () => {
+      const oplStakingAddress = oplStaking.address;
 
-  // --- LQTY Staking ---
+      const recordedOPLStakingAddress = await borrowerOperations.oplStakingAddress();
+      assert.equal(oplStakingAddress, recordedOPLStakingAddress);
+    });
 
-  // Sets LQTYToken in LQTYStaking
-  it('Sets the correct LQTYToken address in LQTYStaking', async () => {
-    const lqtyTokenAddress = lqtyToken.address
+    // --- OPL Staking ---
 
-    const recordedLQTYTokenAddress = await lqtyStaking.lqtyToken()
-    assert.equal(lqtyTokenAddress, recordedLQTYTokenAddress)
-  })
+    // Sets OPLToken in OPLStaking
+    it("Sets the correct OPLToken address in OPLStaking", async () => {
+      const oplTokenAddress = oplToken.address;
 
-  // Sets ActivePool in LQTYStaking
-  it('Sets the correct ActivePool address in LQTYStaking', async () => {
-    const activePoolAddress = activePool.address
+      const recordedOPLTokenAddress = await oplStaking.oplToken();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
+    });
 
-    const recordedActivePoolAddress = await lqtyStaking.activePoolAddress()
-    assert.equal(activePoolAddress, recordedActivePoolAddress)
-  })
+    // Sets ActivePool in OPLStaking
+    it("Sets the correct ActivePool address in OPLStaking", async () => {
+      const activePoolAddress = activePool.address;
 
-  // Sets LUSDToken in LQTYStaking
-  it('Sets the correct ActivePool address in LQTYStaking', async () => {
-    const lusdTokenAddress = lusdToken.address
+      const recordedActivePoolAddress = await oplStaking.activePoolAddress();
+      assert.equal(activePoolAddress, recordedActivePoolAddress);
+    });
 
-    const recordedLUSDTokenAddress = await lqtyStaking.lusdToken()
-    assert.equal(lusdTokenAddress, recordedLUSDTokenAddress)
-  })
+    // Sets ONEUToken in OPLStaking
+    it("Sets the correct ActivePool address in OPLStaking", async () => {
+      const oneuTokenAddress = oneuToken.address;
 
-  // Sets TroveManager in LQTYStaking
-  it('Sets the correct ActivePool address in LQTYStaking', async () => {
-    const troveManagerAddress = troveManager.address
+      const recordedONEUTokenAddress = await oplStaking.oneuToken();
+      assert.equal(oneuTokenAddress, recordedONEUTokenAddress);
+    });
 
-    const recordedTroveManagerAddress = await lqtyStaking.troveManagerAddress()
-    assert.equal(troveManagerAddress, recordedTroveManagerAddress)
-  })
+    // Sets TroveManager in OPLStaking
+    it("Sets the correct ActivePool address in OPLStaking", async () => {
+      const troveManagerAddress = troveManager.address;
 
-  // Sets BorrowerOperations in LQTYStaking
-  it('Sets the correct BorrowerOperations address in LQTYStaking', async () => {
-    const borrowerOperationsAddress = borrowerOperations.address
+      const recordedTroveManagerAddress = await oplStaking.troveManagerAddress();
+      assert.equal(troveManagerAddress, recordedTroveManagerAddress);
+    });
 
-    const recordedBorrowerOperationsAddress = await lqtyStaking.borrowerOperationsAddress()
-    assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress)
-  })
+    // Sets BorrowerOperations in OPLStaking
+    it("Sets the correct BorrowerOperations address in OPLStaking", async () => {
+      const borrowerOperationsAddress = borrowerOperations.address;
 
-  // ---  LQTYToken ---
+      const recordedBorrowerOperationsAddress = await oplStaking.borrowerOperationsAddress();
+      assert.equal(borrowerOperationsAddress, recordedBorrowerOperationsAddress);
+    });
 
-  // Sets CI in LQTYToken
-  it('Sets the correct CommunityIssuance address in LQTYToken', async () => {
-    const communityIssuanceAddress = communityIssuance.address
+    // ---  OPLToken ---
 
-    const recordedcommunityIssuanceAddress = await lqtyToken.communityIssuanceAddress()
-    assert.equal(communityIssuanceAddress, recordedcommunityIssuanceAddress)
-  })
+    // Sets CI in OPLToken
+    it("Sets the correct CommunityIssuance address in OPLToken", async () => {
+      const communityIssuanceAddress = communityIssuance.address;
 
-  // Sets LQTYStaking in LQTYToken
-  it('Sets the correct LQTYStaking address in LQTYToken', async () => {
-    const lqtyStakingAddress = lqtyStaking.address
+      const recordedcommunityIssuanceAddress = await oplToken.communityIssuanceAddress();
+      assert.equal(communityIssuanceAddress, recordedcommunityIssuanceAddress);
+    });
 
-    const recordedLQTYStakingAddress =  await lqtyToken.lqtyStakingAddress()
-    assert.equal(lqtyStakingAddress, recordedLQTYStakingAddress)
-  })
+    // Sets OPLStaking in OPLToken
+    it("Sets the correct OPLStaking address in OPLToken", async () => {
+      const oplStakingAddress = oplStaking.address;
 
-  // Sets LCF in LQTYToken
-  it('Sets the correct LockupContractFactory address in LQTYToken', async () => {
-    const LCFAddress = lockupContractFactory.address
+      const recordedOPLStakingAddress = await oplToken.oplStakingAddress();
+      assert.equal(oplStakingAddress, recordedOPLStakingAddress);
+    });
 
-    const recordedLCFAddress =  await lqtyToken.lockupContractFactory()
-    assert.equal(LCFAddress, recordedLCFAddress)
-  })
+    // Sets LCF in OPLToken
+    it("Sets the correct LockupContractFactory address in OPLToken", async () => {
+      const LCFAddress = lockupContractFactory.address;
 
-  // --- LCF  ---
+      const recordedLCFAddress = await oplToken.lockupContractFactory();
+      assert.equal(LCFAddress, recordedLCFAddress);
+    });
 
-  // Sets LQTYToken in LockupContractFactory
-  it('Sets the correct LQTYToken address in LockupContractFactory', async () => {
-    const lqtyTokenAddress = lqtyToken.address
+    // --- LCF  ---
 
-    const recordedLQTYTokenAddress = await lockupContractFactory.lqtyTokenAddress()
-    assert.equal(lqtyTokenAddress, recordedLQTYTokenAddress)
-  })
+    // Sets OPLToken in LockupContractFactory
+    it("Sets the correct OPLToken address in LockupContractFactory", async () => {
+      const oplTokenAddress = oplToken.address;
 
-  // --- CI ---
+      const recordedOPLTokenAddress = await lockupContractFactory.oplTokenAddress();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
+    });
 
-  // Sets LQTYToken in CommunityIssuance
-  it('Sets the correct LQTYToken address in CommunityIssuance', async () => {
-    const lqtyTokenAddress = lqtyToken.address
+    // --- CI ---
 
-    const recordedLQTYTokenAddress = await communityIssuance.lqtyToken()
-    assert.equal(lqtyTokenAddress, recordedLQTYTokenAddress)
-  })
+    // Sets OPLToken in CommunityIssuance
+    it("Sets the correct OPLToken address in CommunityIssuance", async () => {
+      const oplTokenAddress = oplToken.address;
 
-  it('Sets the correct StabilityPool address in CommunityIssuance', async () => {
-    const stabilityPoolAddress = stabilityPool.address
+      const recordedOPLTokenAddress = await communityIssuance.oplToken();
+      assert.equal(oplTokenAddress, recordedOPLTokenAddress);
+    });
 
-    const recordedStabilityPoolAddress = await communityIssuance.stabilityPoolAddress()
-    assert.equal(stabilityPoolAddress, recordedStabilityPoolAddress)
-  })
-})
+    it("Sets the correct StabilityPool address in CommunityIssuance", async () => {
+      const stabilityPoolAddress = stabilityPool.address;
+
+      const recordedStabilityPoolAddress = await communityIssuance.stabilityPoolAddress();
+      assert.equal(stabilityPoolAddress, recordedStabilityPoolAddress);
+    });
+  }
+);

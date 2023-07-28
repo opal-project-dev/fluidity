@@ -1,277 +1,249 @@
-const { UniswapV2Factory } = require("./ABIs/UniswapV2Factory.js")
-const { UniswapV2Pair } = require("./ABIs/UniswapV2Pair.js")
-const { UniswapV2Router02 } = require("./ABIs/UniswapV2Router02.js")
-const { ChainlinkAggregatorV3Interface } = require("./ABIs/ChainlinkAggregatorV3Interface.js")
-const { TestHelper: th, TimeValues: timeVals } = require("../utils/testHelpers.js")
-const { dec } = th
-const MainnetDeploymentHelper = require("../utils/mainnetDeploymentHelpers.js")
-const toBigNum = ethers.BigNumber.from
+const { ChainlinkAggregatorV3Interface } = require("./ABIs/ChainlinkAggregatorV3Interface.js");
+const { TestHelper: th, TimeValues: timeVals } = require("../utils/testHelpers.js");
+const { dec } = th;
+const MainnetDeploymentHelper = require("../utils/mainnetDeploymentHelpers.js");
+const toBigNum = ethers.BigNumber.from;
 
 async function mainnetDeploy(configParams) {
-  const date = new Date()
-  console.log(date.toUTCString())
-  const deployerWallet = (await ethers.getSigners())[0]
+  const date = new Date();
+  console.log(date.toUTCString());
+  const deployerWallet = (await ethers.getSigners())[0];
   // const account2Wallet = (await ethers.getSigners())[1]
-  const mdh = new MainnetDeploymentHelper(configParams, deployerWallet)
-  const gasPrice = configParams.GAS_PRICE
+  const mdh = new MainnetDeploymentHelper(configParams, deployerWallet);
+  const gasPrice = configParams.GAS_PRICE;
 
-  const deploymentState = mdh.loadPreviousDeployment()
+  const deploymentState = mdh.loadPreviousDeployment();
 
-  console.log(`deployer address: ${deployerWallet.address}`)
-  assert.equal(deployerWallet.address, configParams.liquityAddrs.DEPLOYER)
+  console.log(`deployer address: ${deployerWallet.address}`);
+  assert.equal(deployerWallet.address, configParams.opalAddrs.DEPLOYER);
   // assert.equal(account2Wallet.address, configParams.beneficiaries.ACCOUNT_2)
-  let deployerETHBalance = await ethers.provider.getBalance(deployerWallet.address)
-  console.log(`deployerETHBalance before: ${deployerETHBalance}`)
+  let deployerAUTBalance = await ethers.provider.getBalance(deployerWallet.address);
+  console.log(`deployerAUTBalance before: ${deployerAUTBalance}`);
 
-  // Get UniswapV2Factory instance at its deployed address
-  const uniswapV2Factory = new ethers.Contract(
-    configParams.externalAddrs.UNISWAP_V2_FACTORY,
-    UniswapV2Factory.abi,
-    deployerWallet
-  )
-
-  console.log(`Uniswp addr: ${uniswapV2Factory.address}`)
-  const uniAllPairsLength = await uniswapV2Factory.allPairsLength()
-  console.log(`Uniswap Factory number of pairs: ${uniAllPairsLength}`)
-
-  deployerETHBalance = await ethers.provider.getBalance(deployerWallet.address)
-  console.log(`deployer's ETH balance before deployments: ${deployerETHBalance}`)
+  deployerAUTBalance = await ethers.provider.getBalance(deployerWallet.address);
+  console.log(`deployer's AUT balance before deployments: ${deployerAUTBalance}`);
 
   // Deploy core logic contracts
-  const liquityCore = await mdh.deployLiquityCoreMainnet(configParams.externalAddrs.TELLOR_MASTER, deploymentState)
-  await mdh.logContractObjects(liquityCore)
+  const opalCore = await mdh.deployOpalCoreMainnet(deploymentState);
+  await mdh.logContractObjects(opalCore);
 
-  // Check Uniswap Pair LUSD-ETH pair before pair creation
-  let LUSDWETHPairAddr = await uniswapV2Factory.getPair(liquityCore.lusdToken.address, configParams.externalAddrs.WETH_ERC20)
-  let WETHLUSDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.WETH_ERC20, liquityCore.lusdToken.address)
-  assert.equal(LUSDWETHPairAddr, WETHLUSDPairAddr)
-
-
-  if (LUSDWETHPairAddr == th.ZERO_ADDRESS) {
-    // Deploy Unipool for LUSD-WETH
-    await mdh.sendAndWaitForTransaction(uniswapV2Factory.createPair(
-      configParams.externalAddrs.WETH_ERC20,
-      liquityCore.lusdToken.address,
-      { gasPrice }
-    ))
-
-    // Check Uniswap Pair LUSD-WETH pair after pair creation (forwards and backwards should have same address)
-    LUSDWETHPairAddr = await uniswapV2Factory.getPair(liquityCore.lusdToken.address, configParams.externalAddrs.WETH_ERC20)
-    assert.notEqual(LUSDWETHPairAddr, th.ZERO_ADDRESS)
-    WETHLUSDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.WETH_ERC20, liquityCore.lusdToken.address)
-    console.log(`LUSD-WETH pair contract address after Uniswap pair creation: ${LUSDWETHPairAddr}`)
-    assert.equal(WETHLUSDPairAddr, LUSDWETHPairAddr)
-  }
-
-  // Deploy Unipool
-  const unipool = await mdh.deployUnipoolMainnet(deploymentState)
-
-  // Deploy LQTY Contracts
-  const LQTYContracts = await mdh.deployLQTYContractsMainnet(
-    configParams.liquityAddrs.GENERAL_SAFE, // bounty address
-    unipool.address,  // lp rewards address
-    configParams.liquityAddrs.LQTY_SAFE, // multisig LQTY endowment address
-    deploymentState,
-  )
+  // TODO
+  // Deploy OPL Contracts
+  const OPLContracts = await mdh.deployOPLContractsMainnet(
+    configParams.opalAddrs.GENERAL_SAFE, // bounty address
+    configParams.opalAddrs.OPL_SAFE, // multisig OPL endowment address
+    deploymentState
+  );
 
   // Connect all core contracts up
-  await mdh.connectCoreContractsMainnet(liquityCore, LQTYContracts, configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY)
-  await mdh.connectLQTYContractsMainnet(LQTYContracts)
-  await mdh.connectLQTYContractsToCoreMainnet(LQTYContracts, liquityCore)
+  await mdh.connectCoreContractsMainnet(
+    opalCore,
+    OPLContracts,
+    configParams.externalAddrs.CHAINLINK_AUTUSD_PROXY
+  );
+  await mdh.connectOPLContractsMainnet(OPLContracts);
+  await mdh.connectOPLContractsToCoreMainnet(OPLContracts, opalCore);
 
-  // Deploy a read-only multi-trove getter
-  const multiTroveGetter = await mdh.deployMultiTroveGetterMainnet(liquityCore, deploymentState)
+  // Deploy and log a read-only multi-trove getter
+  const multiTroveGetter = await mdh.deployMultiTroveGetterMainnet(opalCore, deploymentState);
+  console.log(`Multi trove getter address: ${multiTroveGetter.address}`);
 
-  // Connect Unipool to LQTYToken and the LUSD-WETH pair address, with a 6 week duration
-  const LPRewardsDuration = timeVals.SECONDS_IN_SIX_WEEKS
-  await mdh.connectUnipoolMainnet(unipool, LQTYContracts, LUSDWETHPairAddr, LPRewardsDuration)
+  // Log OPL addresses
+  await mdh.logContractObjects(OPLContracts);
 
-  // Log LQTY and Unipool addresses
-  await mdh.logContractObjects(LQTYContracts)
-  console.log(`Unipool address: ${unipool.address}`)
-  
   // let latestBlock = await ethers.provider.getBlockNumber()
-  let deploymentStartTime = await LQTYContracts.lqtyToken.getDeploymentStartTime()
+  let deploymentStartTime = await OPLContracts.oplToken.getDeploymentStartTime();
 
-  console.log(`deployment start time: ${deploymentStartTime}`)
-  const oneYearFromDeployment = (Number(deploymentStartTime) + timeVals.SECONDS_IN_ONE_YEAR).toString()
-  console.log(`time oneYearFromDeployment: ${oneYearFromDeployment}`)
+  console.log(`deployment start time: ${deploymentStartTime}`);
+  const oneYearFromDeployment = (
+    Number(deploymentStartTime) + timeVals.SECONDS_IN_ONE_YEAR
+  ).toString();
+  console.log(`time oneYearFromDeployment: ${oneYearFromDeployment}`);
 
   // Deploy LockupContracts - one for each beneficiary
-  const lockupContracts = {}
+  const lockupContracts = {};
 
   for (const [investor, investorAddr] of Object.entries(configParams.beneficiaries)) {
-    const lockupContractEthersFactory = await ethers.getContractFactory("LockupContract", deployerWallet)
-    if (deploymentState[investor] && deploymentState[investor].address) {
-      console.log(`Using previously deployed ${investor} lockup contract at address ${deploymentState[investor].address}`)
+    const lockupContractEthersFactory = await ethers.getContractFactory(
+      "LockupContract",
+      deployerWallet
+    );
+    if (deploymentState[investor] && deploymentState[investor].address && false) {
+      console.log(
+        `Using previously deployed ${investor} lockup contract at address ${deploymentState[investor].address}`
+      );
       lockupContracts[investor] = new ethers.Contract(
         deploymentState[investor].address,
         lockupContractEthersFactory.interface,
         deployerWallet
-      )
+      );
     } else {
-      const txReceipt = await mdh.sendAndWaitForTransaction(LQTYContracts.lockupContractFactory.deployLockupContract(investorAddr, oneYearFromDeployment, { gasPrice }))
+      const txReceipt = await mdh.sendAndWaitForTransaction(
+        OPLContracts.lockupContractFactory.deployLockupContract(investorAddr, oneYearFromDeployment)
+      );
 
-      const address = await txReceipt.logs[0].address // The deployment event emitted from the LC itself is is the first of two events, so this is its address 
+      const address = await txReceipt.logs[0].address; // The deployment event emitted from the LC itself is is the first of two events, so this is its address
       lockupContracts[investor] = new ethers.Contract(
         address,
         lockupContractEthersFactory.interface,
         deployerWallet
-      )
+      );
 
       deploymentState[investor] = {
         address: address,
         txHash: txReceipt.transactionHash
-      }
+      };
 
-      mdh.saveDeployment(deploymentState)
+      mdh.saveDeployment(deploymentState);
     }
 
-    const lqtyTokenAddr = LQTYContracts.lqtyToken.address
+    const oplTokenAddr = OPLContracts.oplToken.address;
     // verify
-    if (configParams.ETHERSCAN_BASE_URL) {
-      await mdh.verifyContract(investor, deploymentState, [lqtyTokenAddr, investorAddr, oneYearFromDeployment])
+    if (configParams.AUTERSCAN_BASE_URL) {
+      await mdh.verifyContract(investor, deploymentState, [
+        oplTokenAddr,
+        investorAddr,
+        oneYearFromDeployment
+      ]);
     }
   }
 
   // // --- TESTS AND CHECKS  ---
 
-  // Deployer repay LUSD
-  // console.log(`deployer trove debt before repaying: ${await liquityCore.troveManager.getTroveDebt(deployerWallet.address)}`)
- // await mdh.sendAndWaitForTransaction(liquityCore.borrowerOperations.repayLUSD(dec(800, 18), th.ZERO_ADDRESS, th.ZERO_ADDRESS, {gasPrice, gasLimit: 1000000}))
-  // console.log(`deployer trove debt after repaying: ${await liquityCore.troveManager.getTroveDebt(deployerWallet.address)}`)
-  
+  // Deployer repay ONEU
+  // console.log(`deployer trove debt before repaying: ${await opalCore.troveManager.getTroveDebt(deployerWallet.address)}`)
+  // await mdh.sendAndWaitForTransaction(opalCore.borrowerOperations.repayONEU(dec(800, 18), th.ZERO_ADDRESS, th.ZERO_ADDRESS, {gasPrice, gasLimit: 1000000}))
+  // console.log(`deployer trove debt after repaying: ${await opalCore.troveManager.getTroveDebt(deployerWallet.address)}`)
+
   // Deployer add coll
-  // console.log(`deployer trove coll before adding coll: ${await liquityCore.troveManager.getTroveColl(deployerWallet.address)}`)
-  // await mdh.sendAndWaitForTransaction(liquityCore.borrowerOperations.addColl(th.ZERO_ADDRESS, th.ZERO_ADDRESS, {value: dec(2, 'ether'), gasPrice, gasLimit: 1000000}))
-  // console.log(`deployer trove coll after addingColl: ${await liquityCore.troveManager.getTroveColl(deployerWallet.address)}`)
-  
+  // console.log(`deployer trove coll before adding coll: ${await opalCore.troveManager.getTroveColl(deployerWallet.address)}`)
+  // await mdh.sendAndWaitForTransaction(opalCore.borrowerOperations.addColl(th.ZERO_ADDRESS, th.ZERO_ADDRESS, {value: dec(2, 'ether'), gasPrice, gasLimit: 1000000}))
+  // console.log(`deployer trove coll after addingColl: ${await opalCore.troveManager.getTroveColl(deployerWallet.address)}`)
+
   // Check chainlink proxy price ---
 
   const chainlinkProxy = new ethers.Contract(
-    configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY,
+    configParams.externalAddrs.CHAINLINK_AUTUSD_PROXY,
     ChainlinkAggregatorV3Interface,
     deployerWallet
-  )
+  );
 
   // Get latest price
-  let chainlinkPrice = await chainlinkProxy.latestAnswer()
-  console.log(`current Chainlink price: ${chainlinkPrice}`)
-
-  // Check Tellor price directly (through our TellorCaller)
-  let tellorPriceResponse = await liquityCore.tellorCaller.getTellorCurrentValue(1) // id == 1: the ETH-USD request ID
-  console.log(`current Tellor price: ${tellorPriceResponse[1]}`)
-  console.log(`current Tellor timestamp: ${tellorPriceResponse[2]}`)
+  let chainlinkPrice = await chainlinkProxy.latestAnswer();
+  console.log(`current Chainlink price: ${chainlinkPrice}`);
 
   // // --- Lockup Contracts ---
-  console.log("LOCKUP CONTRACT CHECKS")
+  console.log("LOCKUP CONTRACT CHECKS");
   // Check lockup contracts exist for each beneficiary with correct unlock time
   for (investor of Object.keys(lockupContracts)) {
-    const lockupContract = lockupContracts[investor]
-    // check LC references correct LQTYToken 
-    const storedLQTYTokenAddr = await lockupContract.lqtyToken()
-    assert.equal(LQTYContracts.lqtyToken.address, storedLQTYTokenAddr)
+    const lockupContract = lockupContracts[investor];
+    // check LC references correct OPLToken
+    const storedOPLTokenAddr = await lockupContract.oplToken();
+    assert.equal(OPLContracts.oplToken.address, storedOPLTokenAddr);
     // Check contract has stored correct beneficary
-    const onChainBeneficiary = await lockupContract.beneficiary()
-    assert.equal(configParams.beneficiaries[investor].toLowerCase(), onChainBeneficiary.toLowerCase())
+    const onChainBeneficiary = await lockupContract.beneficiary();
+    assert.equal(
+      configParams.beneficiaries[investor].toLowerCase(),
+      onChainBeneficiary.toLowerCase()
+    );
     // Check correct unlock time (1 yr from deployment)
-    const unlockTime = await lockupContract.unlockTime()
-    assert.equal(oneYearFromDeployment, unlockTime)
+    const unlockTime = await lockupContract.unlockTime();
+    assert.equal(oneYearFromDeployment, unlockTime);
 
     console.log(
       `lockupContract addr: ${lockupContract.address},
-            stored LQTYToken addr: ${storedLQTYTokenAddr}
+            stored OPLToken addr: ${storedOPLTokenAddr}
             beneficiary: ${investor},
             beneficiary addr: ${configParams.beneficiaries[investor]},
             on-chain beneficiary addr: ${onChainBeneficiary},
             unlockTime: ${unlockTime}
             `
-    )
+    );
   }
 
-  // // --- Check correct addresses set in LQTYToken
-  // console.log("STORED ADDRESSES IN LQTY TOKEN")
-  // const storedMultisigAddress = await LQTYContracts.lqtyToken.multisigAddress()
-  // assert.equal(configParams.liquityAddrs.LQTY_SAFE.toLowerCase(), storedMultisigAddress.toLowerCase())
-  // console.log(`multi-sig address stored in LQTYToken : ${th.squeezeAddr(storedMultisigAddress)}`)
-  // console.log(`LQTY Safe address: ${th.squeezeAddr(configParams.liquityAddrs.LQTY_SAFE)}`)
+  // // --- Check correct addresses set in OPLToken
+  // console.log("STORED ADDRESSES IN OPL TOKEN")
+  // const storedMultisigAddress = await OPLContracts.oplToken.multisigAddress()
+  // assert.equal(configParams.opalAddrs.OPL_SAFE.toLowerCase(), storedMultisigAddress.toLowerCase())
+  // console.log(`multi-sig address stored in OPLToken : ${th.squeezeAddr(storedMultisigAddress)}`)
+  // console.log(`OPL Safe address: ${th.squeezeAddr(configParams.opalAddrs.OPL_SAFE)}`)
 
-  // // --- LQTY allowances of different addresses ---
-  // console.log("INITIAL LQTY BALANCES")
+  // // --- OPL allowances of different addresses ---
+  // console.log("INITIAL OPL BALANCES")
   // // Unipool
-  // const unipoolLQTYBal = await LQTYContracts.lqtyToken.balanceOf(unipool.address)
-  // // assert.equal(unipoolLQTYBal.toString(), '1333333333333333333333333')
-  // th.logBN('Unipool LQTY balance       ', unipoolLQTYBal)
+  // const unipoolOPLBal = await OPLContracts.oplToken.balanceOf(unipool.address)
+  // // assert.equal(unipoolOPLBal.toString(), '1333333333333333333333333')
+  // th.logBN('Unipool OPL balance       ', unipoolOPLBal)
 
-  // // LQTY Safe
-  // const lqtySafeBal = await LQTYContracts.lqtyToken.balanceOf(configParams.liquityAddrs.LQTY_SAFE)
-  // assert.equal(lqtySafeBal.toString(), '64666666666666666666666667')
-  // th.logBN('LQTY Safe balance     ', lqtySafeBal)
+  // // OPL Safe
+  // const oplSafeBal = await OPLContracts.oplToken.balanceOf(configParams.opalAddrs.OPL_SAFE)
+  // assert.equal(oplSafeBal.toString(), '64666666666666666666666667')
+  // th.logBN('OPL Safe balance     ', oplSafeBal)
 
   // // Bounties/hackathons (General Safe)
-  // const generalSafeBal = await LQTYContracts.lqtyToken.balanceOf(configParams.liquityAddrs.GENERAL_SAFE)
+  // const generalSafeBal = await OPLContracts.oplToken.balanceOf(configParams.opalAddrs.GENERAL_SAFE)
   // assert.equal(generalSafeBal.toString(), '2000000000000000000000000')
   // th.logBN('General Safe balance       ', generalSafeBal)
 
   // // CommunityIssuance contract
-  // const communityIssuanceBal = await LQTYContracts.lqtyToken.balanceOf(LQTYContracts.communityIssuance.address)
+  // const communityIssuanceBal = await OPLContracts.oplToken.balanceOf(OPLContracts.communityIssuance.address)
   // // assert.equal(communityIssuanceBal.toString(), '32000000000000000000000000')
   // th.logBN('Community Issuance balance', communityIssuanceBal)
 
   // // --- PriceFeed ---
   // console.log("PRICEFEED CHECKS")
   // // Check Pricefeed's status and last good price
-  // const lastGoodPrice = await liquityCore.priceFeed.lastGoodPrice()
-  // const priceFeedInitialStatus = await liquityCore.priceFeed.status()
+  // const lastGoodPrice = await opalCore.priceFeed.lastGoodPrice()
+  // const priceFeedInitialStatus = await opalCore.priceFeed.status()
   // th.logBN('PriceFeed first stored price', lastGoodPrice)
   // console.log(`PriceFeed initial status: ${priceFeedInitialStatus}`)
 
   // // Check PriceFeed's & TellorCaller's stored addresses
-  // const priceFeedCLAddress = await liquityCore.priceFeed.priceAggregator()
-  // const priceFeedTellorCallerAddress = await liquityCore.priceFeed.tellorCaller()
-  // assert.equal(priceFeedCLAddress, configParams.externalAddrs.CHAINLINK_ETHUSD_PROXY)
-  // assert.equal(priceFeedTellorCallerAddress, liquityCore.tellorCaller.address)
+  // const priceFeedCLAddress = await opalCore.priceFeed.priceAggregator()
+  // const priceFeedTellorCallerAddress = await opalCore.priceFeed.tellorCaller()
+  // assert.equal(priceFeedCLAddress, configParams.externalAddrs.CHAINLINK_AUTUSD_PROXY)
+  // assert.equal(priceFeedTellorCallerAddress, opalCore.tellorCaller.address)
 
   // // Check Tellor address
-  // const tellorCallerTellorMasterAddress = await liquityCore.tellorCaller.tellor()
+  // const tellorCallerTellorMasterAddress = await opalCore.tellorCaller.tellor()
   // assert.equal(tellorCallerTellorMasterAddress, configParams.externalAddrs.TELLOR_MASTER)
 
   // // --- Unipool ---
 
-  // // Check Unipool's LUSD-ETH Uniswap Pair address
+  // // Check Unipool's ONEU-AUT Uniswap Pair address
   // const unipoolUniswapPairAddr = await unipool.uniToken()
-  // console.log(`Unipool's stored LUSD-ETH Uniswap Pair address: ${unipoolUniswapPairAddr}`)
+  // console.log(`Unipool's stored ONEU-AUT Uniswap Pair address: ${unipoolUniswapPairAddr}`)
 
   // console.log("SYSTEM GLOBAL VARS CHECKS")
   // // --- Sorted Troves ---
 
   // // Check max size
-  // const sortedTrovesMaxSize = (await liquityCore.sortedTroves.data())[2]
+  // const sortedTrovesMaxSize = (await opalCore.sortedTroves.data())[2]
   // assert.equal(sortedTrovesMaxSize, '115792089237316195423570985008687907853269984665640564039457584007913129639935')
 
   // // --- TroveManager ---
 
-  // const liqReserve = await liquityCore.troveManager.LUSD_GAS_COMPENSATION()
-  // const minNetDebt = await liquityCore.troveManager.MIN_NET_DEBT()
+  // const liqReserve = await opalCore.troveManager.ONEU_GAS_COMPENSATION()
+  // const minNetDebt = await opalCore.troveManager.MIN_NET_DEBT()
 
   // th.logBN('system liquidation reserve', liqReserve)
   // th.logBN('system min net debt      ', minNetDebt)
 
-  // // --- Make first LUSD-ETH liquidity provision ---
+  // // --- Make first ONEU-AUT liquidity provision ---
 
   // // Open trove if not yet opened
-  // const troveStatus = await liquityCore.troveManager.getTroveStatus(deployerWallet.address)
+  // const troveStatus = await opalCore.troveManager.getTroveStatus(deployerWallet.address)
   // if (troveStatus.toString() != '1') {
-  //   let _3kLUSDWithdrawal = th.dec(3000, 18) // 3000 LUSD
-  //   let _3ETHcoll = th.dec(3, 'ether') // 3 ETH
+  //   let _3kONEUWithdrawal = th.dec(3000, 18) // 3000 ONEU
+  //   let _3AUTcoll = th.dec(3, 'ether') // 3 AUT
   //   console.log('Opening trove...')
   //   await mdh.sendAndWaitForTransaction(
-  //     liquityCore.borrowerOperations.openTrove(
+  //     opalCore.borrowerOperations.openTrove(
   //       th._100pct,
-  //       _3kLUSDWithdrawal,
+  //       _3kONEUWithdrawal,
   //       th.ZERO_ADDRESS,
   //       th.ZERO_ADDRESS,
-  //       { value: _3ETHcoll, gasPrice }
+  //       { value: _3AUTcoll, gasPrice }
   //     )
   //   )
   // } else {
@@ -279,36 +251,32 @@ async function mainnetDeploy(configParams) {
   // }
 
   // // Check deployer now has an open trove
-  // console.log(`deployer is in sorted list after making trove: ${await liquityCore.sortedTroves.contains(deployerWallet.address)}`)
+  // console.log(`deployer is in sorted list after making trove: ${await opalCore.sortedTroves.contains(deployerWallet.address)}`)
 
-  // const deployerTrove = await liquityCore.troveManager.Troves(deployerWallet.address)
+  // const deployerTrove = await opalCore.troveManager.Troves(deployerWallet.address)
   // th.logBN('deployer debt', deployerTrove[0])
   // th.logBN('deployer coll', deployerTrove[1])
   // th.logBN('deployer stake', deployerTrove[2])
   // console.log(`deployer's trove status: ${deployerTrove[3]}`)
 
-  // // Check deployer has LUSD
-  // let deployerLUSDBal = await liquityCore.lusdToken.balanceOf(deployerWallet.address)
-  // th.logBN("deployer's LUSD balance", deployerLUSDBal)
+  // // Check deployer has ONEU
+  // let deployerONEUBal = await opalCore.lusdToken.balanceOf(deployerWallet.address)
+  // th.logBN("deployer's ONEU balance", deployerONEUBal)
 
-  // // Check Uniswap pool has LUSD and WETH tokens
-  const LUSDETHPair = await new ethers.Contract(
-    LUSDWETHPairAddr,
-    UniswapV2Pair.abi,
-    deployerWallet
-  )
+  // // Check Uniswap pool has ONEU and WAUT tokens
+  //const ONEUAUTPair = await new ethers.Contract(ONEUWAUTPairAddr, UniswapV2Pair.abi, deployerWallet);
 
-  // const token0Addr = await LUSDETHPair.token0()
-  // const token1Addr = await LUSDETHPair.token1()
-  // console.log(`LUSD-ETH Pair token 0: ${th.squeezeAddr(token0Addr)},
-  //       LUSDToken contract addr: ${th.squeezeAddr(liquityCore.lusdToken.address)}`)
-  // console.log(`LUSD-ETH Pair token 1: ${th.squeezeAddr(token1Addr)},
-  //       WETH ERC20 contract addr: ${th.squeezeAddr(configParams.externalAddrs.WETH_ERC20)}`)
+  // const token0Addr = await ONEUAUTPair.token0()
+  // const token1Addr = await ONEUAUTPair.token1()
+  // console.log(`ONEU-AUT Pair token 0: ${th.squeezeAddr(token0Addr)},
+  //       ONEUToken contract addr: ${th.squeezeAddr(opalCore.lusdToken.address)}`)
+  // console.log(`ONEU-AUT Pair token 1: ${th.squeezeAddr(token1Addr)},
+  //       WAUT ERC20 contract addr: ${th.squeezeAddr(configParams.externalAddrs.WAUT_ERC20)}`)
 
-  // // Check initial LUSD-ETH pair reserves before provision
-  // let reserves = await LUSDETHPair.getReserves()
-  // th.logBN("LUSD-ETH Pair's LUSD reserves before provision", reserves[0])
-  // th.logBN("LUSD-ETH Pair's ETH reserves before provision", reserves[1])
+  // // Check initial ONEU-AUT pair reserves before provision
+  // let reserves = await ONEUAUTPair.getReserves()
+  // th.logBN("ONEU-AUT Pair's ONEU reserves before provision", reserves[0])
+  // th.logBN("ONEU-AUT Pair's AUT reserves before provision", reserves[1])
 
   // // Get the UniswapV2Router contract
   // const uniswapV2Router02 = new ethers.Contract(
@@ -317,39 +285,39 @@ async function mainnetDeploy(configParams) {
   //   deployerWallet
   // )
 
-  // // --- Provide liquidity to LUSD-ETH pair if not yet done so ---
-  // let deployerLPTokenBal = await LUSDETHPair.balanceOf(deployerWallet.address)
+  // // --- Provide liquidity to ONEU-AUT pair if not yet done so ---
+  // let deployerLPTokenBal = await ONEUAUTPair.balanceOf(deployerWallet.address)
   // if (deployerLPTokenBal.toString() == '0') {
   //   console.log('Providing liquidity to Uniswap...')
-  //   // Give router an allowance for LUSD
-  //   await liquityCore.lusdToken.increaseAllowance(uniswapV2Router02.address, dec(10000, 18))
+  //   // Give router an allowance for ONEU
+  //   await opalCore.lusdToken.increaseAllowance(uniswapV2Router02.address, dec(10000, 18))
 
   //   // Check Router's spending allowance
-  //   const routerLUSDAllowanceFromDeployer = await liquityCore.lusdToken.allowance(deployerWallet.address, uniswapV2Router02.address)
-  //   th.logBN("router's spending allowance for deployer's LUSD", routerLUSDAllowanceFromDeployer)
+  //   const routerONEUAllowanceFromDeployer = await opalCore.lusdToken.allowance(deployerWallet.address, uniswapV2Router02.address)
+  //   th.logBN("router's spending allowance for deployer's ONEU", routerONEUAllowanceFromDeployer)
 
   //   // Get amounts for liquidity provision
-  //   const LP_ETH = dec(1, 'ether')
+  //   const LP_AUT = dec(1, 'ether')
 
-  //   // Convert 8-digit CL price to 18 and multiply by ETH amount
-  //   const LUSDAmount = toBigNum(chainlinkPrice)
+  //   // Convert 8-digit CL price to 18 and multiply by AUT amount
+  //   const ONEUAmount = toBigNum(chainlinkPrice)
   //     .mul(toBigNum(dec(1, 10)))
-  //     .mul(toBigNum(LP_ETH))
+  //     .mul(toBigNum(LP_AUT))
   //     .div(toBigNum(dec(1, 18)))
 
-  //   const minLUSDAmount = LUSDAmount.sub(toBigNum(dec(100, 18)))
+  //   const minONEUAmount = ONEUAmount.sub(toBigNum(dec(100, 18)))
 
   //   latestBlock = await ethers.provider.getBlockNumber()
   //   now = (await ethers.provider.getBlock(latestBlock)).timestamp
   //   let tenMinsFromNow = now + (60 * 60 * 10)
 
-  //   // Provide liquidity to LUSD-ETH pair
+  //   // Provide liquidity to ONEU-AUT pair
   //   await mdh.sendAndWaitForTransaction(
-  //     uniswapV2Router02.addLiquidityETH(
-  //       liquityCore.lusdToken.address, // address of LUSD token
-  //       LUSDAmount, // LUSD provision
-  //       minLUSDAmount, // minimum LUSD provision
-  //       LP_ETH, // minimum ETH provision
+  //     uniswapV2Router02.addLiquidityAUT(
+  //       opalCore.lusdToken.address, // address of ONEU token
+  //       ONEUAmount, // ONEU provision
+  //       minONEUAmount, // minimum ONEU provision
+  //       LP_AUT, // minimum AUT provision
   //       deployerWallet.address, // address to send LP tokens to
   //       tenMinsFromNow, // deadline for this tx
   //       {
@@ -362,33 +330,31 @@ async function mainnetDeploy(configParams) {
   // } else {
   //   console.log('Liquidity already provided to Uniswap')
   // }
-  // // Check LUSD-ETH reserves after liquidity provision:
-  // reserves = await LUSDETHPair.getReserves()
-  // th.logBN("LUSD-ETH Pair's LUSD reserves after provision", reserves[0])
-  // th.logBN("LUSD-ETH Pair's ETH reserves after provision", reserves[1])
-
-
+  // // Check ONEU-AUT reserves after liquidity provision:
+  // reserves = await ONEUAUTPair.getReserves()
+  // th.logBN("ONEU-AUT Pair's ONEU reserves after provision", reserves[0])
+  // th.logBN("ONEU-AUT Pair's AUT reserves after provision", reserves[1])
 
   // // ---  Check LP staking  ---
-  // console.log("CHECK LP STAKING EARNS LQTY")
+  // console.log("CHECK LP STAKING EARNS OPL")
 
   // // Check deployer's LP tokens
-  // deployerLPTokenBal = await LUSDETHPair.balanceOf(deployerWallet.address)
+  // deployerLPTokenBal = await ONEUAUTPair.balanceOf(deployerWallet.address)
   // th.logBN("deployer's LP token balance", deployerLPTokenBal)
 
   // // Stake LP tokens in Unipool
-  // console.log(`LUSDETHPair addr: ${LUSDETHPair.address}`)
+  // console.log(`ONEUAUTPair addr: ${ONEUAUTPair.address}`)
   // console.log(`Pair addr stored in Unipool: ${await unipool.uniToken()}`)
 
-  // earnedLQTY = await unipool.earned(deployerWallet.address)
-  // th.logBN("deployer's farmed LQTY before staking LP tokens", earnedLQTY)
+  // earnedOPL = await unipool.earned(deployerWallet.address)
+  // th.logBN("deployer's farmed OPL before staking LP tokens", earnedOPL)
 
   // const deployerUnipoolStake = await unipool.balanceOf(deployerWallet.address)
   // if (deployerUnipoolStake.toString() == '0') {
   //   console.log('Staking to Unipool...')
   //   // Deployer approves Unipool
   //   await mdh.sendAndWaitForTransaction(
-  //     LUSDETHPair.approve(unipool.address, deployerLPTokenBal, { gasPrice })
+  //     ONEUAUTPair.approve(unipool.address, deployerLPTokenBal, { gasPrice })
   //   )
 
   //   await mdh.sendAndWaitForTransaction(unipool.stake(1, { gasPrice }))
@@ -399,41 +365,37 @@ async function mainnetDeploy(configParams) {
   // console.log("wait 90 seconds before checking earnings... ")
   // await configParams.waitFunction()
 
-  // earnedLQTY = await unipool.earned(deployerWallet.address)
-  // th.logBN("deployer's farmed LQTY from Unipool after waiting ~1.5mins", earnedLQTY)
+  // earnedOPL = await unipool.earned(deployerWallet.address)
+  // th.logBN("deployer's farmed OPL from Unipool after waiting ~1.5mins", earnedOPL)
 
-  // let deployerLQTYBal = await LQTYContracts.lqtyToken.balanceOf(deployerWallet.address)
-  // th.logBN("deployer LQTY Balance Before SP deposit", deployerLQTYBal)
+  // let deployerOPLBal = await OPLContracts.oplToken.balanceOf(deployerWallet.address)
+  // th.logBN("deployer OPL Balance Before SP deposit", deployerOPLBal)
 
+  // // --- Make SP deposit and earn OPL ---
+  // console.log("CHECK DEPLOYER MAKING DEPOSIT AND EARNING OPL")
 
-
-  // // --- Make SP deposit and earn LQTY ---
-  // console.log("CHECK DEPLOYER MAKING DEPOSIT AND EARNING LQTY")
-
-  // let SPDeposit = await liquityCore.stabilityPool.getCompoundedLUSDDeposit(deployerWallet.address)
+  // let SPDeposit = await opalCore.stabilityPool.getCompoundedONEUDeposit(deployerWallet.address)
   // th.logBN("deployer SP deposit before making deposit", SPDeposit)
 
   // // Provide to SP
-  // await mdh.sendAndWaitForTransaction(liquityCore.stabilityPool.provideToSP(dec(15, 18), th.ZERO_ADDRESS, { gasPrice, gasLimit: 400000 }))
+  // await mdh.sendAndWaitForTransaction(opalCore.stabilityPool.provideToSP(dec(15, 18), th.ZERO_ADDRESS, { gasPrice, gasLimit: 400000 }))
 
-  // // Get SP deposit 
-  // SPDeposit = await liquityCore.stabilityPool.getCompoundedLUSDDeposit(deployerWallet.address)
-  // th.logBN("deployer SP deposit after depositing 15 LUSD", SPDeposit)
+  // // Get SP deposit
+  // SPDeposit = await opalCore.stabilityPool.getCompoundedONEUDeposit(deployerWallet.address)
+  // th.logBN("deployer SP deposit after depositing 15 ONEU", SPDeposit)
 
   // console.log("wait 90 seconds before withdrawing...")
   // // wait 90 seconds
   // await configParams.waitFunction()
 
   // // Withdraw from SP
-  // // await mdh.sendAndWaitForTransaction(liquityCore.stabilityPool.withdrawFromSP(dec(1000, 18), { gasPrice, gasLimit: 400000 }))
+  // // await mdh.sendAndWaitForTransaction(opalCore.stabilityPool.withdrawFromSP(dec(1000, 18), { gasPrice, gasLimit: 400000 }))
 
-  // // SPDeposit = await liquityCore.stabilityPool.getCompoundedLUSDDeposit(deployerWallet.address)
+  // // SPDeposit = await opalCore.stabilityPool.getCompoundedONEUDeposit(deployerWallet.address)
   // // th.logBN("deployer SP deposit after full withdrawal", SPDeposit)
 
-  // // deployerLQTYBal = await LQTYContracts.lqtyToken.balanceOf(deployerWallet.address)
-  // // th.logBN("deployer LQTY Balance after SP deposit withdrawal", deployerLQTYBal)
-
-
+  // // deployerOPLBal = await OPLContracts.oplToken.balanceOf(deployerWallet.address)
+  // // th.logBN("deployer OPL Balance after SP deposit withdrawal", deployerOPLBal)
 
   // // ---  Attempt withdrawal from LC  ---
   // console.log("CHECK BENEFICIARY ATTEMPTING WITHDRAWAL FROM LC")
@@ -441,203 +403,175 @@ async function mainnetDeploy(configParams) {
   // // connect Acct2 wallet to the LC they are beneficiary of
   // let account2LockupContract = await lockupContracts["ACCOUNT_2"].connect(account2Wallet)
 
-  // // Deployer funds LC with 10 LQTY
-  // // await mdh.sendAndWaitForTransaction(LQTYContracts.lqtyToken.transfer(account2LockupContract.address, dec(10, 18), { gasPrice }))
+  // // Deployer funds LC with 10 OPL
+  // // await mdh.sendAndWaitForTransaction(OPLContracts.oplToken.transfer(account2LockupContract.address, dec(10, 18), { gasPrice }))
 
-  // // account2 LQTY bal
-  // let account2bal = await LQTYContracts.lqtyToken.balanceOf(account2Wallet.address)
-  // th.logBN("account2 LQTY bal before withdrawal attempt", account2bal)
+  // // account2 OPL bal
+  // let account2bal = await OPLContracts.oplToken.balanceOf(account2Wallet.address)
+  // th.logBN("account2 OPL bal before withdrawal attempt", account2bal)
 
-  // // Check LC LQTY bal 
-  // let account2LockupContractBal = await LQTYContracts.lqtyToken.balanceOf(account2LockupContract.address)
-  // th.logBN("account2's LC LQTY bal before withdrawal attempt", account2LockupContractBal)
+  // // Check LC OPL bal
+  // let account2LockupContractBal = await OPLContracts.oplToken.balanceOf(account2LockupContract.address)
+  // th.logBN("account2's LC OPL bal before withdrawal attempt", account2LockupContractBal)
 
   // // Acct2 attempts withdrawal from  LC
-  // await mdh.sendAndWaitForTransaction(account2LockupContract.withdrawLQTY({ gasPrice, gasLimit: 1000000 }))
+  // await mdh.sendAndWaitForTransaction(account2LockupContract.withdrawOPL({ gasPrice, gasLimit: 1000000 }))
 
-  // // Acct LQTY bal
-  // account2bal = await LQTYContracts.lqtyToken.balanceOf(account2Wallet.address)
-  // th.logBN("account2's LQTY bal after LC withdrawal attempt", account2bal)
+  // // Acct OPL bal
+  // account2bal = await OPLContracts.oplToken.balanceOf(account2Wallet.address)
+  // th.logBN("account2's OPL bal after LC withdrawal attempt", account2bal)
 
-  // // Check LC bal 
-  // account2LockupContractBal = await LQTYContracts.lqtyToken.balanceOf(account2LockupContract.address)
-  // th.logBN("account2's LC LQTY bal LC withdrawal attempt", account2LockupContractBal)
+  // // Check LC bal
+  // account2LockupContractBal = await OPLContracts.oplToken.balanceOf(account2LockupContract.address)
+  // th.logBN("account2's LC OPL bal LC withdrawal attempt", account2LockupContractBal)
 
-  // // --- Stake LQTY ---
-  // console.log("CHECK DEPLOYER STAKING LQTY")
+  // // --- Stake OPL ---
+  // console.log("CHECK DEPLOYER STAKING OPL")
 
-  // // Log deployer LQTY bal and stake before staking
-  // deployerLQTYBal = await LQTYContracts.lqtyToken.balanceOf(deployerWallet.address)
-  // th.logBN("deployer LQTY bal before staking", deployerLQTYBal)
-  // let deployerLQTYStake = await LQTYContracts.lqtyStaking.stakes(deployerWallet.address)
-  // th.logBN("deployer stake before staking", deployerLQTYStake)
+  // // Log deployer OPL bal and stake before staking
+  // deployerOPLBal = await OPLContracts.oplToken.balanceOf(deployerWallet.address)
+  // th.logBN("deployer OPL bal before staking", deployerOPLBal)
+  // let deployerOPLStake = await OPLContracts.oplStaking.stakes(deployerWallet.address)
+  // th.logBN("deployer stake before staking", deployerOPLStake)
 
-  // // stake 13 LQTY
-  // await mdh.sendAndWaitForTransaction(LQTYContracts.lqtyStaking.stake(dec(13, 18), { gasPrice, gasLimit: 1000000 }))
+  // // stake 13 OPL
+  // await mdh.sendAndWaitForTransaction(OPLContracts.oplStaking.stake(dec(13, 18), { gasPrice, gasLimit: 1000000 }))
 
-  // // Log deployer LQTY bal and stake after staking
-  // deployerLQTYBal = await LQTYContracts.lqtyToken.balanceOf(deployerWallet.address)
-  // th.logBN("deployer LQTY bal after staking", deployerLQTYBal)
-  // deployerLQTYStake = await LQTYContracts.lqtyStaking.stakes(deployerWallet.address)
-  // th.logBN("deployer stake after staking", deployerLQTYStake)
+  // // Log deployer OPL bal and stake after staking
+  // deployerOPLBal = await OPLContracts.oplToken.balanceOf(deployerWallet.address)
+  // th.logBN("deployer OPL bal after staking", deployerOPLBal)
+  // deployerOPLStake = await OPLContracts.oplStaking.stakes(deployerWallet.address)
+  // th.logBN("deployer stake after staking", deployerOPLStake)
 
   // // Log deployer rev share immediately after staking
-  // let deployerLUSDRevShare = await LQTYContracts.lqtyStaking.getPendingLUSDGain(deployerWallet.address)
-  // th.logBN("deployer pending LUSD revenue share", deployerLUSDRevShare)
-
-
+  // let deployerONEURevShare = await OPLContracts.oplStaking.getPendingONEUGain(deployerWallet.address)
+  // th.logBN("deployer pending ONEU revenue share", deployerONEURevShare)
 
   // // --- 2nd Account opens trove ---
-  // const trove2Status = await liquityCore.troveManager.getTroveStatus(account2Wallet.address)
+  // const trove2Status = await opalCore.troveManager.getTroveStatus(account2Wallet.address)
   // if (trove2Status.toString() != '1') {
   //   console.log("Acct 2 opens a trove ...")
-  //   let _2kLUSDWithdrawal = th.dec(2000, 18) // 2000 LUSD
-  //   let _1pt5_ETHcoll = th.dec(15, 17) // 1.5 ETH
+  //   let _2kONEUWithdrawal = th.dec(2000, 18) // 2000 ONEU
+  //   let _1pt5_AUTcoll = th.dec(15, 17) // 1.5 AUT
   //   const borrowerOpsEthersFactory = await ethers.getContractFactory("BorrowerOperations", account2Wallet)
-  //   const borrowerOpsAcct2 = await new ethers.Contract(liquityCore.borrowerOperations.address, borrowerOpsEthersFactory.interface, account2Wallet)
+  //   const borrowerOpsAcct2 = await new ethers.Contract(opalCore.borrowerOperations.address, borrowerOpsEthersFactory.interface, account2Wallet)
 
-  //   await mdh.sendAndWaitForTransaction(borrowerOpsAcct2.openTrove(th._100pct, _2kLUSDWithdrawal, th.ZERO_ADDRESS, th.ZERO_ADDRESS, { value: _1pt5_ETHcoll, gasPrice, gasLimit: 1000000 }))
+  //   await mdh.sendAndWaitForTransaction(borrowerOpsAcct2.openTrove(th._100pct, _2kONEUWithdrawal, th.ZERO_ADDRESS, th.ZERO_ADDRESS, { value: _1pt5_AUTcoll, gasPrice, gasLimit: 1000000 }))
   // } else {
   //   console.log('Acct 2 already has an active trove')
   // }
 
-  // const acct2Trove = await liquityCore.troveManager.Troves(account2Wallet.address)
+  // const acct2Trove = await opalCore.troveManager.Troves(account2Wallet.address)
   // th.logBN('acct2 debt', acct2Trove[0])
   // th.logBN('acct2 coll', acct2Trove[1])
   // th.logBN('acct2 stake', acct2Trove[2])
   // console.log(`acct2 trove status: ${acct2Trove[3]}`)
 
-  // // Log deployer's pending LUSD gain - check fees went to staker (deloyer)
-  // deployerLUSDRevShare = await LQTYContracts.lqtyStaking.getPendingLUSDGain(deployerWallet.address)
-  // th.logBN("deployer pending LUSD revenue share from staking, after acct 2 opened trove", deployerLUSDRevShare)
+  // // Log deployer's pending ONEU gain - check fees went to staker (deloyer)
+  // deployerONEURevShare = await OPLContracts.oplStaking.getPendingONEUGain(deployerWallet.address)
+  // th.logBN("deployer pending ONEU revenue share from staking, after acct 2 opened trove", deployerONEURevShare)
 
   // //  --- deployer withdraws staking gains ---
   // console.log("CHECK DEPLOYER WITHDRAWING STAKING GAINS")
 
-  // // check deployer's LUSD balance before withdrawing staking gains
-  // deployerLUSDBal = await liquityCore.lusdToken.balanceOf(deployerWallet.address)
-  // th.logBN('deployer LUSD bal before withdrawing staking gains', deployerLUSDBal)
+  // // check deployer's ONEU balance before withdrawing staking gains
+  // deployerONEUBal = await opalCore.lusdToken.balanceOf(deployerWallet.address)
+  // th.logBN('deployer ONEU bal before withdrawing staking gains', deployerONEUBal)
 
   // // Deployer withdraws staking gains
-  // await mdh.sendAndWaitForTransaction(LQTYContracts.lqtyStaking.unstake(0, { gasPrice, gasLimit: 1000000 }))
+  // await mdh.sendAndWaitForTransaction(OPLContracts.oplStaking.unstake(0, { gasPrice, gasLimit: 1000000 }))
 
-  // // check deployer's LUSD balance after withdrawing staking gains
-  // deployerLUSDBal = await liquityCore.lusdToken.balanceOf(deployerWallet.address)
-  // th.logBN('deployer LUSD bal after withdrawing staking gains', deployerLUSDBal)
-
+  // // check deployer's ONEU balance after withdrawing staking gains
+  // deployerONEUBal = await opalCore.lusdToken.balanceOf(deployerWallet.address)
+  // th.logBN('deployer ONEU bal after withdrawing staking gains', deployerONEUBal)
 
   // // --- System stats  ---
 
-  // Uniswap LUSD-ETH pool size
-  reserves = await LUSDETHPair.getReserves()
-  th.logBN("LUSD-ETH Pair's current LUSD reserves", reserves[0])
-  th.logBN("LUSD-ETH Pair's current ETH reserves", reserves[1])
-
   // Number of troves
-  const numTroves = await liquityCore.troveManager.getTroveOwnersCount()
-  console.log(`number of troves: ${numTroves} `)
+  const numTroves = await opalCore.troveManager.getTroveOwnersCount();
+  console.log(`number of troves: ${numTroves} `);
 
   // Sorted list size
-  const listSize = await liquityCore.sortedTroves.getSize()
-  console.log(`Trove list size: ${listSize} `)
+  const listSize = await opalCore.sortedTroves.getSize();
+  console.log(`Trove list size: ${listSize} `);
 
   // Total system debt and coll
-  const entireSystemDebt = await liquityCore.troveManager.getEntireSystemDebt()
-  const entireSystemColl = await liquityCore.troveManager.getEntireSystemColl()
-  th.logBN("Entire system debt", entireSystemDebt)
-  th.logBN("Entire system coll", entireSystemColl)
-  
+  const entireSystemDebt = await opalCore.troveManager.getEntireSystemDebt();
+  const entireSystemColl = await opalCore.troveManager.getEntireSystemColl();
+  th.logBN("Entire system debt", entireSystemDebt);
+  th.logBN("Entire system coll", entireSystemColl);
+
   // TCR
-  const TCR = await liquityCore.troveManager.getTCR(chainlinkPrice)
-  console.log(`TCR: ${TCR}`)
+  const TCR = await opalCore.troveManager.getTCR(chainlinkPrice);
+  console.log(`TCR: ${TCR}`);
 
   // current borrowing rate
-  const baseRate = await liquityCore.troveManager.baseRate()
-  const currentBorrowingRate = await liquityCore.troveManager.getBorrowingRateWithDecay()
-  th.logBN("Base rate", baseRate)
-  th.logBN("Current borrowing rate", currentBorrowingRate)
+  const baseRate = await opalCore.troveManager.baseRate();
+  const currentBorrowingRate = await opalCore.troveManager.getBorrowingRateWithDecay();
+  th.logBN("Base rate", baseRate);
+  th.logBN("Current borrowing rate", currentBorrowingRate);
 
   // total SP deposits
-  const totalSPDeposits = await liquityCore.stabilityPool.getTotalLUSDDeposits()
-  th.logBN("Total LUSD SP deposits", totalSPDeposits)
+  const totalSPDeposits = await opalCore.stabilityPool.getTotalONEUDeposits();
+  th.logBN("Total ONEU SP deposits", totalSPDeposits);
 
-  // total LQTY Staked in LQTYStaking
-  const totalLQTYStaked = await LQTYContracts.lqtyStaking.totalLQTYStaked()
-  th.logBN("Total LQTY staked", totalLQTYStaked)
-
-  // total LP tokens staked in Unipool
-  const totalLPTokensStaked = await unipool.totalSupply()
-  th.logBN("Total LP (LUSD-ETH) tokens staked in unipool", totalLPTokensStaked)
+  // total OPL Staked in OPLStaking
+  const totalOPLStaked = await OPLContracts.oplStaking.totalOPLStaked();
+  th.logBN("Total OPL staked", totalOPLStaked);
 
   // --- State variables ---
 
-  // TroveManager 
-  console.log("TroveManager state variables:")
-  const totalStakes = await liquityCore.troveManager.totalStakes()
-  const totalStakesSnapshot = await liquityCore.troveManager.totalStakesSnapshot()
-  const totalCollateralSnapshot = await liquityCore.troveManager.totalCollateralSnapshot()
-  th.logBN("Total trove stakes", totalStakes)
-  th.logBN("Snapshot of total trove stakes before last liq. ", totalStakesSnapshot)
-  th.logBN("Snapshot of total trove collateral before last liq. ", totalCollateralSnapshot)
+  // TroveManager
+  console.log("TroveManager state variables:");
+  const totalStakes = await opalCore.troveManager.totalStakes();
+  const totalStakesSnapshot = await opalCore.troveManager.totalStakesSnapshot();
+  const totalCollateralSnapshot = await opalCore.troveManager.totalCollateralSnapshot();
+  th.logBN("Total trove stakes", totalStakes);
+  th.logBN("Snapshot of total trove stakes before last liq. ", totalStakesSnapshot);
+  th.logBN("Snapshot of total trove collateral before last liq. ", totalCollateralSnapshot);
 
-  const L_ETH = await liquityCore.troveManager.L_ETH()
-  const L_LUSDDebt = await liquityCore.troveManager.L_LUSDDebt()
-  th.logBN("L_ETH", L_ETH)
-  th.logBN("L_LUSDDebt", L_LUSDDebt)
+  const L_AUT = await opalCore.troveManager.L_AUT();
+  const L_ONEUDebt = await opalCore.troveManager.L_ONEUDebt();
+  th.logBN("L_AUT", L_AUT);
+  th.logBN("L_ONEUDebt", L_ONEUDebt);
 
   // StabilityPool
-  console.log("StabilityPool state variables:")
-  const P = await liquityCore.stabilityPool.P()
-  const currentScale = await liquityCore.stabilityPool.currentScale()
-  const currentEpoch = await liquityCore.stabilityPool.currentEpoch()
-  const S = await liquityCore.stabilityPool.epochToScaleToSum(currentEpoch, currentScale)
-  const G = await liquityCore.stabilityPool.epochToScaleToG(currentEpoch, currentScale)
-  th.logBN("Product P", P)
-  th.logBN("Current epoch", currentEpoch)
-  th.logBN("Current scale", currentScale)
-  th.logBN("Sum S, at current epoch and scale", S)
-  th.logBN("Sum G, at current epoch and scale", G)
+  console.log("StabilityPool state variables:");
+  const P = await opalCore.stabilityPool.P();
+  const currentScale = await opalCore.stabilityPool.currentScale();
+  const currentEpoch = await opalCore.stabilityPool.currentEpoch();
+  const S = await opalCore.stabilityPool.epochToScaleToSum(currentEpoch, currentScale);
+  const G = await opalCore.stabilityPool.epochToScaleToG(currentEpoch, currentScale);
+  th.logBN("Product P", P);
+  th.logBN("Current epoch", currentEpoch);
+  th.logBN("Current scale", currentScale);
+  th.logBN("Sum S, at current epoch and scale", S);
+  th.logBN("Sum G, at current epoch and scale", G);
 
-  // LQTYStaking
-  console.log("LQTYStaking state variables:")
-  const F_LUSD = await LQTYContracts.lqtyStaking.F_LUSD()
-  const F_ETH = await LQTYContracts.lqtyStaking.F_ETH()
-  th.logBN("F_LUSD", F_LUSD)
-  th.logBN("F_ETH", F_ETH)
-
+  // OPLStaking
+  console.log("OPLStaking state variables:");
+  const F_ONEU = await OPLContracts.oplStaking.F_ONEU();
+  const F_AUT = await OPLContracts.oplStaking.F_AUT();
+  th.logBN("F_ONEU", F_ONEU);
+  th.logBN("F_AUT", F_AUT);
 
   // CommunityIssuance
-  console.log("CommunityIssuance state variables:")
-  const totalLQTYIssued = await LQTYContracts.communityIssuance.totalLQTYIssued()
-  th.logBN("Total LQTY issued to depositors / front ends", totalLQTYIssued)
+  console.log("CommunityIssuance state variables:");
+  const totalOPLIssued = await OPLContracts.communityIssuance.totalOPLIssued();
+  th.logBN("Total OPL issued to depositors / front ends", totalOPLIssued);
 
-
-  // TODO: Uniswap *LQTY-ETH* pool size (check it's deployed?)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  // TODO: Uniswap *OPL-AUT* pool size (check it's deployed?)
 
   // ************************
-  // --- NOT FOR APRIL 5: Deploy a LQTYToken2 with General Safe as beneficiary to test minting LQTY showing up in Gnosis App  ---
+  // --- NOT FOR APRIL 5: Deploy a OPLToken2 with General Safe as beneficiary to test minting OPL showing up in Gnosis App  ---
 
-  // // General Safe LQTY bal before:
+  // // General Safe OPL bal before:
   // const realGeneralSafeAddr = "0xF06016D822943C42e3Cb7FC3a6A3B1889C1045f8"
 
-  //   const LQTYToken2EthersFactory = await ethers.getContractFactory("LQTYToken2", deployerWallet)
-  //   const lqtyToken2 = await LQTYToken2EthersFactory.deploy( 
-  //     "0xF41E0DD45d411102ed74c047BdA544396cB71E27",  // CI param: LC1 
-  //     "0x9694a04263593AC6b895Fc01Df5929E1FC7495fA", // LQTY Staking param: LC2
+  //   const OPLToken2EthersFactory = await ethers.getContractFactory("OPLToken2", deployerWallet)
+  //   const oplToken2 = await OPLToken2EthersFactory.deploy(
+  //     "0xF41E0DD45d411102ed74c047BdA544396cB71E27",  // CI param: LC1
+  //     "0x9694a04263593AC6b895Fc01Df5929E1FC7495fA", // OPL Staking param: LC2
   //     "0x98f95E112da23c7b753D8AE39515A585be6Fb5Ef", // LCF param: LC3
   //     realGeneralSafeAddr,  // bounty/hackathon param: REAL general safe addr
   //     "0x98f95E112da23c7b753D8AE39515A585be6Fb5Ef", // LP rewards param: LC3
@@ -645,15 +579,13 @@ async function mainnetDeploy(configParams) {
   //     {gasPrice, gasLimit: 10000000}
   //   )
 
-  //   console.log(`lqty2 address: ${lqtyToken2.address}`)
+  //   console.log(`opl2 address: ${oplToken2.address}`)
 
-  //   let generalSafeLQTYBal = await lqtyToken2.balanceOf(realGeneralSafeAddr)
-  //   console.log(`generalSafeLQTYBal: ${generalSafeLQTYBal}`)
-
-
+  //   let generalSafeOPLBal = await oplToken2.balanceOf(realGeneralSafeAddr)
+  //   console.log(`generalSafeOPLBal: ${generalSafeOPLBal}`)
 
   // ************************
-  // --- NOT FOR APRIL 5: Test short-term lockup contract LQTY withdrawal on mainnet ---
+  // --- NOT FOR APRIL 5: Test short-term lockup contract OPL withdrawal on mainnet ---
 
   // now = (await ethers.provider.getBlock(latestBlock)).timestamp
 
@@ -661,9 +593,9 @@ async function mainnetDeploy(configParams) {
 
   // new deployment
   // const LCshortTerm = await LCShortTermEthersFactory.deploy(
-  //   LQTYContracts.lqtyToken.address,
+  //   OPLContracts.oplToken.address,
   //   deployerWallet.address,
-  //   now, 
+  //   now,
   //   {gasPrice, gasLimit: 1000000}
   // )
 
@@ -671,7 +603,7 @@ async function mainnetDeploy(configParams) {
 
   // existing deployment
   // const deployedShortTermLC = await new ethers.Contract(
-  //   "0xbA8c3C09e9f55dA98c5cF0C28d15Acb927792dC7", 
+  //   "0xbA8c3C09e9f55dA98c5cF0C28d15Acb927792dC7",
   //   LCShortTermEthersFactory.interface,
   //   deployerWallet
   // )
@@ -689,27 +621,27 @@ async function mainnetDeploy(configParams) {
   //   now = (await ethers.provider.getBlock(latestBlock)).timestamp
   //   console.log(`time now: ${now}`)
 
-  //   // check deployer LQTY bal
-  //   let deployerLQTYBal = await LQTYContracts.lqtyToken.balanceOf(deployerWallet.address)
-  //   console.log(`deployerLQTYBal before he withdraws: ${deployerLQTYBal}`)
+  //   // check deployer OPL bal
+  //   let deployerOPLBal = await OPLContracts.oplToken.balanceOf(deployerWallet.address)
+  //   console.log(`deployerOPLBal before he withdraws: ${deployerOPLBal}`)
 
-  //   // check LC LQTY bal
-  //   let LC_LQTYBal = await LQTYContracts.lqtyToken.balanceOf(deployedShortTermLC.address)
-  //   console.log(`LC LQTY bal before withdrawal: ${LC_LQTYBal}`)
+  //   // check LC OPL bal
+  //   let LC_OPLBal = await OPLContracts.oplToken.balanceOf(deployedShortTermLC.address)
+  //   console.log(`LC OPL bal before withdrawal: ${LC_OPLBal}`)
 
   // // withdraw from LC
-  // const withdrawFromShortTermTx = await deployedShortTermLC.withdrawLQTY( {gasPrice, gasLimit: 1000000})
+  // const withdrawFromShortTermTx = await deployedShortTermLC.withdrawOPL( {gasPrice, gasLimit: 1000000})
   // withdrawFromShortTermTx.wait()
 
   // // check deployer bal after LC withdrawal
-  // deployerLQTYBal = await LQTYContracts.lqtyToken.balanceOf(deployerWallet.address)
-  // console.log(`deployerLQTYBal after he withdraws: ${deployerLQTYBal}`)
+  // deployerOPLBal = await OPLContracts.oplToken.balanceOf(deployerWallet.address)
+  // console.log(`deployerOPLBal after he withdraws: ${deployerOPLBal}`)
 
-  //   // check LC LQTY bal
-  //   LC_LQTYBal = await LQTYContracts.lqtyToken.balanceOf(deployedShortTermLC.address)
-  //   console.log(`LC LQTY bal after withdrawal: ${LC_LQTYBal}`)
+  //   // check LC OPL bal
+  //   LC_OPLBal = await OPLContracts.oplToken.balanceOf(deployedShortTermLC.address)
+  //   console.log(`LC OPL bal after withdrawal: ${LC_OPLBal}`)
 }
 
 module.exports = {
   mainnetDeploy
-}
+};

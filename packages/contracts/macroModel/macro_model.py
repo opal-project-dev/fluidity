@@ -28,21 +28,21 @@ period = 24*365
 month=24*30
 day=24
 
-#ether price
-price_ether_initial = 1000
-price_ether = [price_ether_initial]
-sd_ether=0.02
-drift_ether = 0
+#aut price
+price_aut_initial = 1000
+price_aut = [price_aut_initial]
+sd_aut=0.02
+drift_aut = 0
 
-#LQTY price & airdrop
-price_LQTY_initial = 1
-price_LQTY = [price_LQTY_initial]
-sd_LQTY=0.005
-drift_LQTY = 0.0035
+#OPL price & airdrop
+price_OPL_initial = 1
+price_OPL = [price_OPL_initial]
+sd_OPL=0.005
+drift_OPL = 0.0035
 #reduced for now. otherwise the initial return too high
-quantity_LQTY_airdrop = 500
-supply_LQTY=[0]
-LQTY_total_supply=100000000
+quantity_OPL_airdrop = 500
+supply_OPL=[0]
+OPL_total_supply=100000000
 
 #PE ratio
 PE_ratio = 50
@@ -69,12 +69,12 @@ delta = -20
 
 #close troves
 sd_closetroves=0.5
-#sensitivity to LUSD price
+#sensitivity to ONEU price
 beta = 0.2
 
 #open troves
-distribution_parameter1_ether_quantity=10
-distribution_parameter2_ether_quantity=500
+distribution_parameter1_aut_quantity=10
+distribution_parameter2_aut_quantity=500
 distribution_parameter1_CR = 1.1
 distribution_parameter2_CR = 0.1
 distribution_parameter3_CR = 16
@@ -84,7 +84,7 @@ sd_opentroves=0.5
 n_steady=0.5
 initial_open=10
 
-#sensitivity to LUSD price & issuance fee
+#sensitivity to ONEU price & issuance fee
 alpha = 0.3
 
 #number of runs in simulation
@@ -95,11 +95,11 @@ n_sim= 8640
 Ether Price
 """
 
-#ether price
+#aut price
 for i in range(1, period):
   random.seed(2019375+10000*i)
-  shock_ether = random.normalvariate(0,sd_ether)
-  price_ether.append(price_ether[i-1]*(1+shock_ether)*(1+drift_ether))
+  shock_aut = random.normalvariate(0,sd_aut)
+  price_aut.append(price_aut[i-1]*(1+shock_aut)*(1+drift_aut))
 
 """Natural Rate"""
 
@@ -109,13 +109,13 @@ for i in range(1, period):
   shock_natural = random.normalvariate(0,sd_natural_rate)
   natural_rate.append(natural_rate[i-1]*(1+shock_natural))
 
-"""LQTY Price - First Month"""
+"""OPL Price - First Month"""
 
-#LQTY price
+#OPL price
 for i in range(1, month):
   random.seed(2+13*i)
-  shock_LQTY = random.normalvariate(0,sd_LQTY)  
-  price_LQTY.append(price_LQTY[i-1]*(1+shock_LQTY)*(1+drift_LQTY))
+  shock_OPL = random.normalvariate(0,sd_OPL)  
+  price_OPL.append(price_OPL[i-1]*(1+shock_OPL)*(1+drift_OPL))
 
 """# Troves
 
@@ -124,19 +124,19 @@ Liquidate Troves
 
 def liquidate_troves(troves, index, data):
   troves['CR_current'] = troves['Ether_Price']*troves['Ether_Quantity']/troves['Supply']
-  price_LUSD_previous = data.loc[index-1,'Price_LUSD']
-  price_LQTY_previous = data.loc[index-1,'price_LQTY']
+  price_ONEU_previous = data.loc[index-1,'Price_ONEU']
+  price_OPL_previous = data.loc[index-1,'price_OPL']
   stability_pool_previous = data.loc[index-1, 'stability']
 
   troves_liquidated = troves[troves.CR_current < 1.1]
   troves = troves[troves.CR_current >= 1.1]
   debt_liquidated = troves_liquidated['Supply'].sum()
-  ether_liquidated = troves_liquidated['Ether_Quantity'].sum()
+  aut_liquidated = troves_liquidated['Ether_Quantity'].sum()
   n_liquidate = troves_liquidated.shape[0]
   troves = troves.reset_index(drop = True)
 
-  liquidation_gain = ether_liquidated*price_ether_current - debt_liquidated*price_LUSD_previous
-  airdrop_gain = price_LQTY_previous * quantity_LQTY_airdrop
+  liquidation_gain = aut_liquidated*price_aut_current - debt_liquidated*price_ONEU_previous
+  airdrop_gain = price_OPL_previous * quantity_OPL_airdrop
   
   np.random.seed(2+index)
   shock_return = np.random.normal(0,sd_return)
@@ -144,25 +144,25 @@ def liquidate_troves(troves, index, data):
    return_stability = initial_return*(1+shock_return)
   elif index<=month:
     #min function to rule out the large fluctuation caused by the large but temporary liquidation gain in a particular period
-    return_stability = min(0.5, 365*(data.loc[index-day:index, 'liquidation_gain'].sum()+data.loc[index-day:index, 'airdrop_gain'].sum())/(price_LUSD_previous*stability_pool_previous))
+    return_stability = min(0.5, 365*(data.loc[index-day:index, 'liquidation_gain'].sum()+data.loc[index-day:index, 'airdrop_gain'].sum())/(price_ONEU_previous*stability_pool_previous))
   else:
-    return_stability = (365/30)*(data.loc[index-month:index, 'liquidation_gain'].sum()+data.loc[index-month:index, 'airdrop_gain'].sum())/(price_LUSD_previous*stability_pool_previous)
+    return_stability = (365/30)*(data.loc[index-month:index, 'liquidation_gain'].sum()+data.loc[index-month:index, 'airdrop_gain'].sum())/(price_ONEU_previous*stability_pool_previous)
   
-  return[troves, return_stability, debt_liquidated, ether_liquidated, liquidation_gain, airdrop_gain, n_liquidate]
+  return[troves, return_stability, debt_liquidated, aut_liquidated, liquidation_gain, airdrop_gain, n_liquidate]
 
 """Close Troves"""
 
-def close_troves(troves, index2, price_LUSD_previous):
+def close_troves(troves, index2, price_ONEU_previous):
   np.random.seed(208+index2)
   shock_closetroves = np.random.normal(0,sd_closetroves)
   n_troves = troves.shape[0]
 
   if index2 <= 240:
     number_closetroves = np.random.uniform(0,1)
-  elif price_LUSD_previous >=1:
+  elif price_ONEU_previous >=1:
     number_closetroves = max(0, n_steady * (1+shock_closetroves))
   else:
-    number_closetroves = max(0, n_steady * (1+shock_closetroves)) + beta*(1-price_LUSD_previous)*n_troves
+    number_closetroves = max(0, n_steady * (1+shock_closetroves)) + beta*(1-price_ONEU_previous)*n_troves
   
   number_closetroves = int(round(number_closetroves))
   
@@ -178,7 +178,7 @@ def close_troves(troves, index2, price_LUSD_previous):
 """Adjust Troves"""
 
 def adjust_troves(troves, index):
-  issuance_LUSD_adjust = 0
+  issuance_ONEU_adjust = 0
   random.seed(57984-3*index)
   ratio = random.uniform(0,1)
   for i in range(0, troves.shape[0]):
@@ -193,55 +193,55 @@ def adjust_troves(troves, index):
         working_trove['Supply'] = working_trove['Ether_Price']*working_trove['Ether_Quantity']/working_trove['CR_initial']
       if check>2:
         supply_new = working_trove['Ether_Price']*working_trove['Ether_Quantity']/working_trove['CR_initial']
-        issuance_LUSD_adjust = issuance_LUSD_adjust + rate_issuance * (supply_new - working_trove['Supply'])
+        issuance_ONEU_adjust = issuance_ONEU_adjust + rate_issuance * (supply_new - working_trove['Supply'])
         working_trove['Supply'] = supply_new
   #Another part of the troves are adjusted by adjusting collaterals
     if p < ratio and (check < -1 or check > 2):
       working_trove['Ether_Quantity'] = working_trove['CR_initial']*working_trove['Supply']/working_trove['Ether_Price']
     
     troves.loc[i] = working_trove
-  return[troves, issuance_LUSD_adjust]
+  return[troves, issuance_ONEU_adjust]
 
 """Open Troves"""
 
-def open_troves(troves, index1, price_LUSD_previous):
+def open_troves(troves, index1, price_ONEU_previous):
   random.seed(2019*index1)  
-  issuance_LUSD_open = 0
+  issuance_ONEU_open = 0
   shock_opentroves = random.normalvariate(0,sd_opentroves)
   n_troves = troves.shape[0]
 
   if index1<=0:
     number_opentroves = initial_open
-  elif price_LUSD_previous <=1 + rate_issuance:
+  elif price_ONEU_previous <=1 + rate_issuance:
     number_opentroves = max(0, n_steady * (1+shock_opentroves))
   else:
-    number_opentroves = max(0, n_steady * (1+shock_opentroves)) + alpha*(price_LUSD_previous-rate_issuance-1)*n_troves
+    number_opentroves = max(0, n_steady * (1+shock_opentroves)) + alpha*(price_ONEU_previous-rate_issuance-1)*n_troves
   
   number_opentroves = int(round(float(number_opentroves)))
 
   for i in range(0, number_opentroves):
-    price_ether_current = price_ether[index1]
+    price_aut_current = price_aut[index1]
     
     np.random.seed(2033 + index1 + i*i)
     CR_ratio = distribution_parameter1_CR + distribution_parameter2_CR * np.random.chisquare(df=distribution_parameter3_CR)
     
     np.random.seed(20 + 10 * i + index1)
-    quantity_ether = np.random.gamma(distribution_parameter1_ether_quantity, scale=distribution_parameter2_ether_quantity)
+    quantity_aut = np.random.gamma(distribution_parameter1_aut_quantity, scale=distribution_parameter2_aut_quantity)
     
     np.random.seed(209870- index1 + i*i)
     rational_inattention = np.random.gamma(distribution_parameter1_inattention, scale=distribution_parameter2_inattention)
     
-    supply_trove = price_ether_current * quantity_ether / CR_ratio
-    issuance_LUSD_open = issuance_LUSD_open + rate_issuance * supply_trove
+    supply_trove = price_aut_current * quantity_aut / CR_ratio
+    issuance_ONEU_open = issuance_ONEU_open + rate_issuance * supply_trove
 
-    new_row = {"Ether_Price": price_ether_current, "Ether_Quantity": quantity_ether, 
+    new_row = {"Ether_Price": price_aut_current, "Ether_Quantity": quantity_aut, 
                "CR_initial": CR_ratio, "Supply": supply_trove, 
                "Rational_inattention": rational_inattention, "CR_current": CR_ratio}
     troves = troves.append(new_row, ignore_index=True)
 
-  return[troves, number_opentroves, issuance_LUSD_open]
+  return[troves, number_opentroves, issuance_ONEU_open]
 
-"""# LUSD Market
+"""# ONEU Market
 
 Stability Pool
 """
@@ -256,10 +256,10 @@ def stability_update(stability_pool_previous, return_previous, index):
     stability_pool = stability_pool_previous* (1+shock_stability)* (1+ return_previous- natural_rate_current)**theta
   return[stability_pool]
 
-"""LUSD Price, liquidity pool, and redemption"""
+"""ONEU Price, liquidity pool, and redemption"""
 
 def price_stabilizer(troves, index, data, stability_pool, n_open):
-  issuance_LUSD_stabilizer = 0
+  issuance_ONEU_stabilizer = 0
   redemption_fee = 0
   n_redempt = 0
   redempted = 0
@@ -269,8 +269,8 @@ def price_stabilizer(troves, index, data, stability_pool, n_open):
   np.random.seed(20*index)
   shock_liquidity = np.random.normal(0,sd_liquidity)
   liquidity_pool_previous = float(data['liquidity'][index-1])
-  price_LUSD_previous = float(data['Price_LUSD'][index-1])
-  price_LUSD_current= price_LUSD_previous*((supply-stability_pool)/(liquidity_pool_previous*(drift_liquidity+shock_liquidity)))**(1/delta)
+  price_ONEU_previous = float(data['Price_ONEU'][index-1])
+  price_ONEU_current= price_ONEU_previous*((supply-stability_pool)/(liquidity_pool_previous*(drift_liquidity+shock_liquidity)))**(1/delta)
   
 
 #Liquidity Pool
@@ -278,42 +278,42 @@ def price_stabilizer(troves, index, data, stability_pool, n_open):
 
 #Stabilizer
   #Ceiling Arbitrageurs
-  if price_LUSD_current > 1.1 + rate_issuance:
+  if price_ONEU_current > 1.1 + rate_issuance:
     #supply_current = sum(troves['Supply'])
-    supply_wanted=stability_pool+liquidity_pool_previous*(drift_liquidity+shock_liquidity)*((1.1+rate_issuance)/price_LUSD_previous)**delta
+    supply_wanted=stability_pool+liquidity_pool_previous*(drift_liquidity+shock_liquidity)*((1.1+rate_issuance)/price_ONEU_previous)**delta
     supply_trove = supply_wanted - supply
 
     CR_ratio = 1.1
     rational_inattention = 0.1
-    quantity_ether = supply_trove * CR_ratio / price_ether_current
-    issuance_LUSD_stabilizer = rate_issuance * supply_trove
+    quantity_aut = supply_trove * CR_ratio / price_aut_current
+    issuance_ONEU_stabilizer = rate_issuance * supply_trove
 
-    new_row = {"Ether_Price": price_ether_current, "Ether_Quantity": quantity_ether, "CR_initial": CR_ratio,
+    new_row = {"Ether_Price": price_aut_current, "Ether_Quantity": quantity_aut, "CR_initial": CR_ratio,
                "Supply": supply_trove, "Rational_inattention": rational_inattention, "CR_current": CR_ratio}
     troves = troves.append(new_row, ignore_index=True)
-    price_LUSD_current = 1.1 + rate_issuance
+    price_ONEU_current = 1.1 + rate_issuance
     #missing in the previous version  
     liquidity_pool = supply_wanted-stability_pool
     n_open=n_open+1
     
 
   #Floor Arbitrageurs
-  if price_LUSD_current < 1 - rate_redemption:
+  if price_ONEU_current < 1 - rate_redemption:
     np.random.seed(30*index)
     shock_redemption = np.random.normal(0,sd_redemption)
     redemption_ratio = redemption_star * (1+shock_redemption)
 
     #supply_current = sum(troves['Supply'])
-    supply_target=stability_pool+liquidity_pool_previous*(drift_liquidity+shock_liquidity)*((1-rate_redemption)/price_LUSD_previous)**delta
+    supply_target=stability_pool+liquidity_pool_previous*(drift_liquidity+shock_liquidity)*((1-rate_redemption)/price_ONEU_previous)**delta
     supply_diff = supply - supply_target
     if supply_diff < redemption_ratio * liquidity_pool:
       redemption_pool=supply_diff
       #liquidity_pool = liquidity_pool - redemption_pool
-      price_LUSD_current = 1 - rate_redemption
+      price_ONEU_current = 1 - rate_redemption
     else:
       redemption_pool=redemption_ratio * liquidity_pool
       #liquidity_pool = (1-redemption_ratio)*liquidity_pool
-      price_LUSD_current= price_LUSD_previous * (liquidity_pool/(liquidity_pool_previous*(drift_liquidity+shock_liquidity)))**(1/delta)
+      price_ONEU_current= price_ONEU_previous * (liquidity_pool/(liquidity_pool_previous*(drift_liquidity+shock_liquidity)))**(1/delta)
     
     #Shutting down the riskiest troves
     troves = troves.sort_values(by='CR_current', ascending = True)
@@ -330,25 +330,25 @@ def price_stabilizer(troves, index, data, stability_pool, n_open):
     residual = redemption_pool - redempted
     wk = troves.index[0]
     troves['Supply'][wk] = troves['Supply'][wk] - residual
-    troves['Ether_Quantity'][wk] = troves['Ether_Quantity'][wk] - residual/price_ether_current
-    troves['CR_current'][wk] = price_ether_current * troves['Ether_Quantity'][wk] / troves['Supply'][wk]
+    troves['Ether_Quantity'][wk] = troves['Ether_Quantity'][wk] - residual/price_aut_current
+    troves['CR_current'][wk] = price_aut_current * troves['Ether_Quantity'][wk] / troves['Supply'][wk]
 
     #Redemption Fee
     redemption_fee = rate_redemption * redemption_pool
     
 
   troves = troves.reset_index(drop=True)
-  return[price_LUSD_current, liquidity_pool, troves, issuance_LUSD_stabilizer, redemption_fee, n_redempt, redemption_pool, n_open]
+  return[price_ONEU_current, liquidity_pool, troves, issuance_ONEU_stabilizer, redemption_fee, n_redempt, redemption_pool, n_open]
 
-"""# LQTY Market"""
+"""# OPL Market"""
 
 
 
-def LQTY_market(index, data):
-  quantity_LQTY = (100000000/3)*(1-0.5**(index/period))
+def OPL_market(index, data):
+  quantity_OPL = (100000000/3)*(1-0.5**(index/period))
   np.random.seed(2+3*index)
   if index <= month: 
-    price_LQTY_current = price_LQTY[index-1]
+    price_OPL_current = price_OPL[index-1]
     annualized_earning = (index/month)**0.5*np.random.normal(200000000,500000)
   else:
     revenue_issuance = data.loc[index-month:index, 'issuance_fee'].sum()
@@ -356,49 +356,49 @@ def LQTY_market(index, data):
     annualized_earning = 365*(revenue_issuance+revenue_redemption)/30
     #discountin factor to factor in the risk in early days
     discount=index/period
-    price_LQTY_current = discount*PE_ratio*annualized_earning/LQTY_total_supply
+    price_OPL_current = discount*PE_ratio*annualized_earning/OPL_total_supply
   
-  MC_LQTY_current = price_LQTY_current * quantity_LQTY
-  return[price_LQTY_current, annualized_earning, MC_LQTY_current]
+  MC_OPL_current = price_OPL_current * quantity_OPL
+  return[price_OPL_current, annualized_earning, MC_OPL_current]
 
 """# Simulation Program"""
 
 #Defining Initials
-initials = {"Price_LUSD":[1.00], "Price_Ether":[price_ether_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
+initials = {"Price_ONEU":[1.00], "Price_Ether":[price_aut_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
             "n_troves":[initial_open], "stability":[0], "liquidity":[0], "redemption_pool":[0],
-            "supply_LUSD":[0],  "return_stability":[initial_return], "airdrop_gain":[0], "liquidation_gain":[0],  "issuance_fee":[0], "redemption_fee":[0],
-            "price_LQTY":[price_LQTY_initial], "MC_LQTY":[0], "annualized_earning":[0]}
+            "supply_ONEU":[0],  "return_stability":[initial_return], "airdrop_gain":[0], "liquidation_gain":[0],  "issuance_fee":[0], "redemption_fee":[0],
+            "price_OPL":[price_OPL_initial], "MC_OPL":[0], "annualized_earning":[0]}
 data = pd.DataFrame(initials)
 troves= pd.DataFrame({"Ether_Price":[], "Ether_Quantity":[], "CR_initial":[], 
               "Supply":[], "Rational_inattention":[], "CR_current":[]})
-result_open = open_troves(troves, 0, data['Price_LUSD'][0])
+result_open = open_troves(troves, 0, data['Price_ONEU'][0])
 troves = result_open[0]
-issuance_LUSD_open = result_open[2]
-data.loc[0,'issuance_fee'] = issuance_LUSD_open * initials["Price_LUSD"][0]
-data.loc[0,'supply_LUSD'] = troves["Supply"].sum()
+issuance_ONEU_open = result_open[2]
+data.loc[0,'issuance_fee'] = issuance_ONEU_open * initials["Price_ONEU"][0]
+data.loc[0,'supply_ONEU'] = troves["Supply"].sum()
 data.loc[0,'liquidity'] = 0.5*troves["Supply"].sum()
 data.loc[0,'stability'] = 0.5*troves["Supply"].sum()
 
 #Simulation Process
 for index in range(1, n_sim):
-#exogenous ether price input
-  price_ether_current = price_ether[index]
-  troves['Ether_Price'] = price_ether_current
-  price_LUSD_previous = data.loc[index-1,'Price_LUSD']
-  price_LQTY_previous = data.loc[index-1,'price_LQTY']
+#exogenous aut price input
+  price_aut_current = price_aut[index]
+  troves['Ether_Price'] = price_aut_current
+  price_ONEU_previous = data.loc[index-1,'Price_ONEU']
+  price_OPL_previous = data.loc[index-1,'price_OPL']
 
 #trove liquidation & return of stability pool
   result_liquidation = liquidate_troves(troves, index, data)
   troves = result_liquidation[0]
   return_stability = result_liquidation[1]
   debt_liquidated = result_liquidation[2]
-  ether_liquidated = result_liquidation[3]
+  aut_liquidated = result_liquidation[3]
   liquidation_gain = result_liquidation[4]
   airdrop_gain = result_liquidation[5]
   n_liquidate = result_liquidation[6]
 
 #close troves
-  result_close = close_troves(troves, index, price_LUSD_previous)
+  result_close = close_troves(troves, index, price_ONEU_previous)
   troves = result_close[0]
   n_close = result_close[1]
   #if n_close<0:
@@ -407,23 +407,23 @@ for index in range(1, n_sim):
 #adjust troves
   result_adjustment = adjust_troves(troves, index)
   troves = result_adjustment[0]
-  issuance_LUSD_adjust = result_adjustment[1]
+  issuance_ONEU_adjust = result_adjustment[1]
 
 #open troves
-  result_open = open_troves(troves, index, price_LUSD_previous)
+  result_open = open_troves(troves, index, price_ONEU_previous)
   troves = result_open[0]
   n_open = result_open[1]  
-  issuance_LUSD_open = result_open[2]
+  issuance_ONEU_open = result_open[2]
 
 #Stability Pool
   stability_pool = stability_update(data.loc[index-1,'stability'], return_stability, index)[0]
 
 #Calculating Price, Liquidity Pool, and Redemption
   result_price = price_stabilizer(troves, index, data, stability_pool, n_open)
-  price_LUSD_current = result_price[0]
+  price_ONEU_current = result_price[0]
   liquidity_pool = result_price[1]
   troves = result_price[2]
-  issuance_LUSD_stabilizer = result_price[3]
+  issuance_ONEU_stabilizer = result_price[3]
   redemption_fee = result_price[4]
   n_redempt = result_price[5]
   redemption_pool = result_price[6]
@@ -431,28 +431,28 @@ for index in range(1, n_sim):
   if liquidity_pool<0:
     break
 
-#LQTY Market
-  result_LQTY = LQTY_market(index, data)
-  price_LQTY_current = result_LQTY[0]
-  annualized_earning = result_LQTY[1]
-  MC_LQTY_current = result_LQTY[2]
+#OPL Market
+  result_OPL = OPL_market(index, data)
+  price_OPL_current = result_OPL[0]
+  annualized_earning = result_OPL[1]
+  MC_OPL_current = result_OPL[2]
 
 #Summary
-  issuance_fee = price_LUSD_current * (issuance_LUSD_adjust + issuance_LUSD_open + issuance_LUSD_stabilizer)
+  issuance_fee = price_ONEU_current * (issuance_ONEU_adjust + issuance_ONEU_open + issuance_ONEU_stabilizer)
   n_troves = troves.shape[0]
-  supply_LUSD = troves['Supply'].sum()
+  supply_ONEU = troves['Supply'].sum()
   if index >= month:
-    price_LQTY.append(price_LQTY_current)
+    price_OPL.append(price_OPL_current)
 
-  new_row = {"Price_LUSD":float(price_LUSD_current), "Price_Ether":float(price_ether_current), "n_open":float(n_open), "n_close":float(n_close), 
+  new_row = {"Price_ONEU":float(price_ONEU_current), "Price_Ether":float(price_aut_current), "n_open":float(n_open), "n_close":float(n_close), 
              "n_liquidate":float(n_liquidate), "n_redempt": float(n_redempt), "n_troves":float(n_troves),
-              "stability":float(stability_pool), "liquidity":float(liquidity_pool), "redemption_pool":float(redemption_pool), "supply_LUSD":float(supply_LUSD),
+              "stability":float(stability_pool), "liquidity":float(liquidity_pool), "redemption_pool":float(redemption_pool), "supply_ONEU":float(supply_ONEU),
              "issuance_fee":float(issuance_fee), "redemption_fee":float(redemption_fee),
              "airdrop_gain":float(airdrop_gain), "liquidation_gain":float(liquidation_gain), "return_stability":float(return_stability), 
-             "annualized_earning":float(annualized_earning), "MC_LQTY":float(MC_LQTY_current), "price_LQTY":float(price_LQTY_current)
+             "annualized_earning":float(annualized_earning), "MC_OPL":float(MC_OPL_current), "price_OPL":float(price_OPL_current)
              }
   data = data.append(new_row, ignore_index=True)
-  if price_LUSD_current < 0:
+  if price_ONEU_current < 0:
     break
 
 """#**Exhibition**"""
@@ -465,7 +465,7 @@ def linevis(data, measure):
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['Price_LUSD'], name="LUSD Price"),
+    go.Scatter(x=data.index/720, y=data['Price_ONEU'], name="ONEU Price"),
     secondary_y=False,
 )
 fig.add_trace(
@@ -473,10 +473,10 @@ fig.add_trace(
     secondary_y=True,
 )
 fig.update_layout(
-    title_text="Price Dynamics of LUSD and Ether"
+    title_text="Price Dynamics of ONEU and Ether"
 )
 fig.update_xaxes(tick0=0, dtick=1, title_text="Month")
-fig.update_yaxes(title_text="LUSD Price", secondary_y=False)
+fig.update_yaxes(title_text="ONEU Price", secondary_y=False)
 fig.update_yaxes(title_text="Ether Price", secondary_y=True)
 fig.show()
 
@@ -486,15 +486,15 @@ fig.add_trace(
     secondary_y=False,
 )
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['supply_LUSD'], name="LUSD Supply"),
+    go.Scatter(x=data.index/720, y=data['supply_ONEU'], name="ONEU Supply"),
     secondary_y=True,
 )
 fig.update_layout(
-    title_text="Dynamics of Trove Numbers and LUSD Supply"
+    title_text="Dynamics of Trove Numbers and ONEU Supply"
 )
 fig.update_xaxes(tick0=0, dtick=1, title_text="Month")
 fig.update_yaxes(title_text="Number of Troves", secondary_y=False)
-fig.update_yaxes(title_text="LUSD Supply", secondary_y=True)
+fig.update_yaxes(title_text="ONEU Supply", secondary_y=True)
 fig.show()
 
 fig = make_subplots(rows=2, cols=1)
@@ -594,19 +594,19 @@ fig.show()
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['price_LQTY'], name="LQTY Price"),
+    go.Scatter(x=data.index/720, y=data['price_OPL'], name="OPL Price"),
     secondary_y=False,
 )
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['MC_LQTY'], name="LQTY Market Cap"),
+    go.Scatter(x=data.index/720, y=data['MC_OPL'], name="OPL Market Cap"),
     secondary_y=True,
 )
 fig.update_layout(
-    title_text="Dynamics of the Price and Market Cap of LQTY"
+    title_text="Dynamics of the Price and Market Cap of OPL"
 )
 fig.update_xaxes(tick0=0, dtick=1, title_text="Month")
-fig.update_yaxes(title_text="LQTY Price", secondary_y=False)
-fig.update_yaxes(title_text="LQTY Market Cap", secondary_y=True)
+fig.update_yaxes(title_text="OPL Price", secondary_y=False)
+fig.update_yaxes(title_text="OPL Market Cap", secondary_y=True)
 fig.show()
 
 def trove_histogram(measure):
@@ -644,28 +644,28 @@ issuance fee = redemption fee = base rate
 """
 
 #Defining Initials
-initials = {"Price_LUSD":[1.00], "Price_Ether":[price_ether_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
+initials = {"Price_ONEU":[1.00], "Price_Ether":[price_aut_initial], "n_open":[initial_open], "n_close":[0], "n_liquidate": [0], "n_redempt":[0], 
             "n_troves":[initial_open], "stability":[0], "liquidity":[0], "redemption_pool":[0],
-            "supply_LUSD":[0],  "return_stability":[initial_return], "airdrop_gain":[0], "liquidation_gain":[0],  "issuance_fee":[0], "redemption_fee":[0],
-            "price_LQTY":[price_LQTY_initial], "MC_LQTY":[0], "annualized_earning":[0], "base_rate":[base_rate_initial]}
+            "supply_ONEU":[0],  "return_stability":[initial_return], "airdrop_gain":[0], "liquidation_gain":[0],  "issuance_fee":[0], "redemption_fee":[0],
+            "price_OPL":[price_OPL_initial], "MC_OPL":[0], "annualized_earning":[0], "base_rate":[base_rate_initial]}
 data2 = pd.DataFrame(initials)
 troves2= pd.DataFrame({"Ether_Price":[], "Ether_Quantity":[], "CR_initial":[], 
               "Supply":[], "Rational_inattention":[], "CR_current":[]})
-result_open = open_troves(troves2, 0, data2['Price_LUSD'][0])
+result_open = open_troves(troves2, 0, data2['Price_ONEU'][0])
 troves2 = result_open[0]
-issuance_LUSD_open = result_open[2]
-data2.loc[0,'issuance_fee'] = issuance_LUSD_open * initials["Price_LUSD"][0]
-data2.loc[0,'supply_LUSD'] = troves2["Supply"].sum()
+issuance_ONEU_open = result_open[2]
+data2.loc[0,'issuance_fee'] = issuance_ONEU_open * initials["Price_ONEU"][0]
+data2.loc[0,'supply_ONEU'] = troves2["Supply"].sum()
 data2.loc[0,'liquidity'] = 0.5*troves2["Supply"].sum()
 data2.loc[0,'stability'] = 0.5*troves2["Supply"].sum()
 
 #Simulation Process
 for index in range(1, n_sim):
-#exogenous ether price input
-  price_ether_current = price_ether[index]
-  troves2['Ether_Price'] = price_ether_current
-  price_LUSD_previous = data2.loc[index-1,'Price_LUSD']
-  price_LQTY_previous = data2.loc[index-1,'price_LQTY']
+#exogenous aut price input
+  price_aut_current = price_aut[index]
+  troves2['Ether_Price'] = price_aut_current
+  price_ONEU_previous = data2.loc[index-1,'Price_ONEU']
+  price_OPL_previous = data2.loc[index-1,'price_OPL']
 
 #policy function determines base rate
   base_rate_current = 0.98 * data2.loc[index-1,'base_rate'] + 0.5*(data2.loc[index-1,'redemption_pool']/troves2['Supply'].sum())
@@ -677,13 +677,13 @@ for index in range(1, n_sim):
   troves2 = result_liquidation[0]
   return_stability = result_liquidation[1]
   debt_liquidated = result_liquidation[2]
-  ether_liquidated = result_liquidation[3]
+  aut_liquidated = result_liquidation[3]
   liquidation_gain = result_liquidation[4]
   airdrop_gain = result_liquidation[5]
   n_liquidate = result_liquidation[6]
 
 #close troves
-  result_close = close_troves(troves2, index, price_LUSD_previous)
+  result_close = close_troves(troves2, index, price_ONEU_previous)
   troves2 = result_close[0]
   n_close = result_close[1]
   #if n_close<0:
@@ -692,23 +692,23 @@ for index in range(1, n_sim):
 #adjust troves
   result_adjustment = adjust_troves(troves2, index)
   troves2 = result_adjustment[0]
-  issuance_LUSD_adjust = result_adjustment[1]
+  issuance_ONEU_adjust = result_adjustment[1]
 
 #open troves
-  result_open = open_troves(troves2, index, price_LUSD_previous)
+  result_open = open_troves(troves2, index, price_ONEU_previous)
   troves2 = result_open[0]
   n_open = result_open[1]  
-  issuance_LUSD_open = result_open[2]
+  issuance_ONEU_open = result_open[2]
 
 #Stability Pool
   stability_pool = stability_update(data2.loc[index-1,'stability'], return_stability, index)[0]
 
 #Calculating Price, Liquidity Pool, and Redemption
   result_price = price_stabilizer(troves2, index, data2, stability_pool, n_open)
-  price_LUSD_current = result_price[0]
+  price_ONEU_current = result_price[0]
   liquidity_pool = result_price[1]
   troves2 = result_price[2]
-  issuance_LUSD_stabilizer = result_price[3]
+  issuance_ONEU_stabilizer = result_price[3]
   redemption_fee = result_price[4]
   n_redempt = result_price[5]
   redemption_pool = result_price[6]
@@ -716,28 +716,28 @@ for index in range(1, n_sim):
   if liquidity_pool<0:
     break
 
-#LQTY Market
-  result_LQTY = LQTY_market(index, data2)
-  price_LQTY_current = result_LQTY[0]
-  annualized_earning = result_LQTY[1]
-  MC_LQTY_current = result_LQTY[2]
+#OPL Market
+  result_OPL = OPL_market(index, data2)
+  price_OPL_current = result_OPL[0]
+  annualized_earning = result_OPL[1]
+  MC_OPL_current = result_OPL[2]
 
 #Summary
-  issuance_fee = price_LUSD_current * (issuance_LUSD_adjust + issuance_LUSD_open + issuance_LUSD_stabilizer)
+  issuance_fee = price_ONEU_current * (issuance_ONEU_adjust + issuance_ONEU_open + issuance_ONEU_stabilizer)
   n_troves = troves2.shape[0]
-  supply_LUSD = troves2['Supply'].sum()
+  supply_ONEU = troves2['Supply'].sum()
   if index >= month:
-    price_LQTY.append(price_LQTY_current)
+    price_OPL.append(price_OPL_current)
 
-  new_row = {"Price_LUSD":float(price_LUSD_current), "Price_Ether":float(price_ether_current), "n_open":float(n_open), "n_close":float(n_close), 
+  new_row = {"Price_ONEU":float(price_ONEU_current), "Price_Ether":float(price_aut_current), "n_open":float(n_open), "n_close":float(n_close), 
              "n_liquidate":float(n_liquidate), "n_redempt": float(n_redempt), "n_troves":float(n_troves),
-              "stability":float(stability_pool), "liquidity":float(liquidity_pool), "redemption_pool":float(redemption_pool), "supply_LUSD":float(supply_LUSD),
+              "stability":float(stability_pool), "liquidity":float(liquidity_pool), "redemption_pool":float(redemption_pool), "supply_ONEU":float(supply_ONEU),
              "issuance_fee":float(issuance_fee), "redemption_fee":float(redemption_fee),
              "airdrop_gain":float(airdrop_gain), "liquidation_gain":float(liquidation_gain), "return_stability":float(return_stability), 
-             "annualized_earning":float(annualized_earning), "MC_LQTY":float(MC_LQTY_current), "price_LQTY":float(price_LQTY_current), 
+             "annualized_earning":float(annualized_earning), "MC_OPL":float(MC_OPL_current), "price_OPL":float(price_OPL_current), 
              "base_rate":float(base_rate_current)}
   data2 = data2.append(new_row, ignore_index=True)
-  if price_LUSD_current < 0:
+  if price_ONEU_current < 0:
     break
 
 data2
@@ -746,7 +746,7 @@ data2
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['Price_LUSD'], name="LUSD Price"),
+    go.Scatter(x=data.index/720, y=data['Price_ONEU'], name="ONEU Price"),
     secondary_y=False,
 )
 fig.add_trace(
@@ -754,14 +754,14 @@ fig.add_trace(
     secondary_y=True,
 )
 fig.add_trace(
-    go.Scatter(x=data2.index/720, y=data2['Price_LUSD'], name="LUSD Price New", line = dict(dash='dot')),
+    go.Scatter(x=data2.index/720, y=data2['Price_ONEU'], name="ONEU Price New", line = dict(dash='dot')),
     secondary_y=False,
 )
 fig.update_layout(
-    title_text="Price Dynamics of LUSD and Ether"
+    title_text="Price Dynamics of ONEU and Ether"
 )
 fig.update_xaxes(tick0=0, dtick=1, title_text="Month")
-fig.update_yaxes(title_text="LUSD Price", secondary_y=False)
+fig.update_yaxes(title_text="ONEU Price", secondary_y=False)
 fig.update_yaxes(title_text="Ether Price", secondary_y=True)
 fig.show()
 
@@ -771,7 +771,7 @@ fig.add_trace(
     secondary_y=False,
 )
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['supply_LUSD'], name="LUSD Supply"),
+    go.Scatter(x=data.index/720, y=data['supply_ONEU'], name="ONEU Supply"),
     secondary_y=True,
 )
 fig.add_trace(
@@ -779,15 +779,15 @@ fig.add_trace(
     secondary_y=False,
 )
 fig.add_trace(
-    go.Scatter(x=data2.index/720, y=data2['supply_LUSD'], name="LUSD Supply New", line = dict(dash='dot')),
+    go.Scatter(x=data2.index/720, y=data2['supply_ONEU'], name="ONEU Supply New", line = dict(dash='dot')),
     secondary_y=True,
 )
 fig.update_layout(
-    title_text="Dynamics of Trove Numbers and LUSD Supply"
+    title_text="Dynamics of Trove Numbers and ONEU Supply"
 )
 fig.update_xaxes(tick0=0, dtick=1, title_text="Month")
 fig.update_yaxes(title_text="Number of Troves", secondary_y=False)
-fig.update_yaxes(title_text="LUSD Supply", secondary_y=True)
+fig.update_yaxes(title_text="ONEU Supply", secondary_y=True)
 fig.show()
 
 fig = make_subplots(rows=2, cols=2)
@@ -956,27 +956,27 @@ fig.show()
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['price_LQTY'], name="LQTY Price"),
+    go.Scatter(x=data.index/720, y=data['price_OPL'], name="OPL Price"),
     secondary_y=False,
 )
 fig.add_trace(
-    go.Scatter(x=data.index/720, y=data['MC_LQTY'], name="LQTY Market Cap"),
+    go.Scatter(x=data.index/720, y=data['MC_OPL'], name="OPL Market Cap"),
     secondary_y=True,
 )
 fig.add_trace(
-    go.Scatter(x=data2.index/720, y=data2['price_LQTY'], name="LQTY Price New", line = dict(dash='dot')),
+    go.Scatter(x=data2.index/720, y=data2['price_OPL'], name="OPL Price New", line = dict(dash='dot')),
     secondary_y=False,
 )
 fig.add_trace(
-    go.Scatter(x=data2.index/720, y=data2['MC_LQTY'], name="LQTY Market Cap New", line = dict(dash='dot')),
+    go.Scatter(x=data2.index/720, y=data2['MC_OPL'], name="OPL Market Cap New", line = dict(dash='dot')),
     secondary_y=True,
 )
 fig.update_layout(
-    title_text="Dynamics of the Price and Market Cap of LQTY"
+    title_text="Dynamics of the Price and Market Cap of OPL"
 )
 fig.update_xaxes(tick0=0, dtick=1, title_text="Month")
-fig.update_yaxes(title_text="LQTY Price", secondary_y=False)
-fig.update_yaxes(title_text="LQTY Market Cap", secondary_y=True)
+fig.update_yaxes(title_text="OPL Price", secondary_y=False)
+fig.update_yaxes(title_text="OPL Market Cap", secondary_y=True)
 fig.show()
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])

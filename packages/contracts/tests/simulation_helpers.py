@@ -18,61 +18,61 @@ n_sim = year
 # number of liquidations for each call to `liquidateTroves`
 NUM_LIQUIDATIONS = 10
 
-LUSD_GAS_COMPENSATION = 200.0
+ONEU_GAS_COMPENSATION = 200.0
 MIN_NET_DEBT = 1800.0
 MAX_FEE = Wei(1e18)
 
 """# Ether price (exogenous)
 
-Ether is the collateral for LUSD. The ether price $P_t^e$ follows 
+Ether is the collateral for ONEU. The aut price $P_t^e$ follows 
 > $P_t^e = P_{t-1}^e (1+\zeta_t^e)(1+\sigma_t^e)$, 
 
-where $\zeta_t^e \sim N(0, $ sd_ether$)$ represents ether price shock and $\sigma_t^e$ the drift of ether price. At the end of the year, the expected ether price is:
-> $E(P_{8760}^e) = P_0^e \cdot (1 +$ drift_ether$)^{8760}$
+where $\zeta_t^e \sim N(0, $ sd_aut$)$ represents aut price shock and $\sigma_t^e$ the drift of aut price. At the end of the year, the expected aut price is:
+> $E(P_{8760}^e) = P_0^e \cdot (1 +$ drift_aut$)^{8760}$
 
 """
 
-#ether price
-price_ether_initial = 2000
-price_ether = [price_ether_initial]
-sd_ether=0.02
-#drift_ether = 0.001
+#aut price
+price_aut_initial = 2000
+price_aut = [price_aut_initial]
+sd_aut=0.02
+#drift_aut = 0.001
 # 4 stages:
 # growth
 # crash
 # growth
 # decrease
 period1 = 2 * month
-drift_ether1 = 0.001
+drift_aut1 = 0.001
 period2 = period1 + 7 * day
-drift_ether2 = -0.02
+drift_aut2 = -0.02
 period3 = 6 * month
-drift_ether3 = 0.0013
+drift_aut3 = 0.0013
 period4 = period
-drift_ether4 = -0.0002
+drift_aut4 = -0.0002
 
-"""# LQTY price
-In the first month, the price of LQTY follows
+"""# OPL price
+In the first month, the price of OPL follows
 
 > $P_t^q = P_{t-1}^q (1+\zeta_t^q)(1+\sigma_t^q)$. 
 
-Note that $\zeta_t^q \sim N(0,$ sd_LQTY) represents LQTY price shock and $\sigma_t^q$ the drift. Here, $\sigma_t^q =$ drift_LQTY, so that the expected LQTY price increases from price_LQTY_initial to the following at the end of the first month:
-> $E(P_{720}^q) = $price_LQTY_initial$ \cdot (1+$ drift_LQTY$)^{720}$
+Note that $\zeta_t^q \sim N(0,$ sd_OPL) represents OPL price shock and $\sigma_t^q$ the drift. Here, $\sigma_t^q =$ drift_OPL, so that the expected OPL price increases from price_OPL_initial to the following at the end of the first month:
+> $E(P_{720}^q) = $price_OPL_initial$ \cdot (1+$ drift_OPL$)^{720}$
 
-The LQTY price from the second month on is endogenously determined.
+The OPL price from the second month on is endogenously determined.
 """
 
-#LQTY price & airdrop
-price_LQTY_initial = 0.4
-price_LQTY = [price_LQTY_initial]
-sd_LQTY=0.005
-drift_LQTY = 0.0035
-supply_LQTY=[0]
-LQTY_total_supply=100000000
+#OPL price & airdrop
+price_OPL_initial = 0.4
+price_OPL = [price_OPL_initial]
+sd_OPL=0.005
+drift_OPL = 0.0035
+supply_OPL=[0]
+OPL_total_supply=100000000
 
-"""**LQTY Endogenous Price**
+"""**OPL Endogenous Price**
 
-The staked LQTY pool earning consists of the issuance fee revenue and redemption fee revenue
+The staked OPL pool earning consists of the issuance fee revenue and redemption fee revenue
 > $R_t^q = R_t^i + R_t^r.$
 
 From period 721 onwards, using the data in the last 720 periods (i.e. the last 30 days), we can calculate the annualized earning
@@ -96,14 +96,14 @@ The P/E ratio is defined as follows
 
 where $r^{PE} =$ PE_ratio ~and \zeta_t^{PE}\sim N(0, 0.1)~ $\zeta_t^{PE} = 0$.
 
-> $$r_t=\frac{LQTY Market Cap}{Annualized Earning}=\frac{MC_t}{E_t}$$
+> $$r_t=\frac{OPL Market Cap}{Annualized Earning}=\frac{MC_t}{E_t}$$
 
-> $MC_t=P_t^q \cdot$ LQTY_total_supply
+> $MC_t=P_t^q \cdot$ OPL_total_supply
 
-Therefore, the LQTY price dynamics is determined
-> $$P_t^q=discount \cdot \frac{r^{PE}}{LQTY\_total\_supply}E_t$$
+Therefore, the OPL price dynamics is determined
+> $$P_t^q=discount \cdot \frac{r^{PE}}{OPL\_total\_supply}E_t$$
 
-Interpretation: The denominator implies that with more LQTY tokens issued, LQTY price decreases. However, the depreciation effect can be counteracted by the growth of the earning.
+Interpretation: The denominator implies that with more OPL tokens issued, OPL price decreases. However, the depreciation effect can be counteracted by the growth of the earning.
 
 """
 
@@ -136,7 +136,7 @@ where $\zeta_t^s \sim N(0, sd\_stability)$ is the shock in the liquidity pool.
 
 During the first month the formula above is also multiplied by a drift factor, $drift\_stability$.
 
-$R_{t-1}^s$ is the return in the stability pool, which consists of liquidation gain and airdrop LQTY gain.
+$R_{t-1}^s$ is the return in the stability pool, which consists of liquidation gain and airdrop OPL gain.
 
 
 The natural rate of the stability pool follows
@@ -164,7 +164,7 @@ sd_natural_rate = 0.002
 """# Trove pool
 
 Each trove is defined by five numbers
-> (collateral in ether, debt in LUSD, collateral ratio target, rational inattention, collateral ratio)
+> (collateral in aut, debt in ONEU, collateral ratio target, rational inattention, collateral ratio)
 
 which can be denoted by
 > ($Q_t^e(i)$, $Q_t^d(i)$, $CR^*(i)$, $\tau(i)$, $CR_t(i)$).
@@ -185,19 +185,19 @@ where the shock $\zeta_t^o \sim N(0,sd\_opentroves)$.
 
 $R_t^o$ represents the break-even natural rate of opening troves and $f_t^i$ represents the issuance fee.
 
-$P_{t}^{l}$ is the price of LUSD.
+$P_{t}^{l}$ is the price of ONEU.
 
 $N_t^o$ is rounded to an integer.
 
 ---
 
-The amount of LUSD tokens generated by a new trove is
+The amount of ONEU tokens generated by a new trove is
 > $$Q_t^d(i) = \frac{P_t^e Q_t^e(i)}{CR^*(i)}.$$
 
 ---
 
 
-The distribution of ether $Q_t^e(i)$ follows
+The distribution of aut $Q_t^e(i)$ follows
 > $Q_t^e(i) \sim \Gamma(k, \theta)$
 
 So that $E(Q_t^e) = collateral\_gamma\_k \cdot collateral\_gamma\_theta$ and $Var(Q_t^e) = \sqrt{collateral\_gamma\_k} \cdot collateral\_gamma\_theta$
@@ -217,7 +217,7 @@ $SD(CR^*(i))=target\_cr\_b*\sqrt{2*target\_cr\_chi\_square\_df}$
 ---
 Each trove is associated with a rational inattention parameter $\tau(i)$.
 
-The collateral ratio of the existing troves vary with the ether price $P_t^e$
+The collateral ratio of the existing troves vary with the aut price $P_t^e$
 > $$CR_t(i) = \frac{P_t^e Q_t^e(i)}{Q_t^d(i)}.$$
 
 If the collateral ratio falls in the range 
@@ -244,7 +244,7 @@ target_cr_chi_square_df = 16
 rational_inattention_gamma_k = 4
 rational_inattention_gamma_theta = 0.08
 
-#sensitivity to LUSD price & issuance fee
+#sensitivity to ONEU price & issuance fee
 alpha = 0.3
 
 """**Close Troves**
@@ -262,13 +262,13 @@ $N_t^c$ is rounded to an integer.
 
 #close troves
 sd_closetroves=0.5
-#sensitivity to LUSD price
+#sensitivity to ONEU price
 beta = 0.2
 
 """**Trove Liquidation**
 
 At the beginning of each period, 
-right after the feed of ether price, 
+right after the feed of aut price, 
 the system checks the collateral ratio of the exisitng troves in the
 trove pool. 
 
@@ -280,7 +280,7 @@ this trove is liquidated. Namely, it is eliminated from the trove pool.
 Denote the amount of liquidated troves by $N_t^l$. The sum of the debt amounts to
 > $$Q_t^d=\sum_i^{N_t^l} Q_t^d(i)$$
 
-The amount of ether is
+The amount of aut is
 > $$Q_t^e=\sum_i^{N_t^l} Q_t^e(i)$$
 
 The debt $Q_t^d$ is paid by the stability pool in exchange for the collateral $Q_t^e$. Therefore, the return of the previous period's stability pool is
@@ -290,43 +290,43 @@ The debt $Q_t^d$ is paid by the stability pool in exchange for the collateral $Q
 
 where:
 - $R_t^l=P_t^eQ_t^e-P_{t-1}^lQ_t^d$ is the liquidation gain 
-- $R_t^a=P_{t}^q\hat{Q}_t^q$ is the airdrop gain, $\hat{Q}_t^q=1000$ denotes the amount of LQTY token airdropped to the stability pool providers
-- $D_{t}^{s}$ is the total amount of LUSD deposited in the Stability Pool (see below)
+- $R_t^a=P_{t}^q\hat{Q}_t^q$ is the airdrop gain, $\hat{Q}_t^q=1000$ denotes the amount of OPL token airdropped to the stability pool providers
+- $D_{t}^{s}$ is the total amount of ONEU deposited in the Stability Pool (see below)
 
 # Exogenous Factors
 
 Ether Price
 """
 
-#ether price
+#aut price
 for i in range(1, period1):
     random.seed(2019375+10000*i)
-    shock_ether = random.normalvariate(0, sd_ether)
-    price_ether.append(price_ether[i-1] * (1 + shock_ether) * (1 + drift_ether1))
-print(" - ETH period 1 -")
-print(f"Min ETH price: {min(price_ether[1:period1])}")
-print(f"Max ETH price: {max(price_ether[1:period1])}")
+    shock_aut = random.normalvariate(0, sd_aut)
+    price_aut.append(price_aut[i-1] * (1 + shock_aut) * (1 + drift_aut1))
+print(" - AUT period 1 -")
+print(f"Min AUT price: {min(price_aut[1:period1])}")
+print(f"Max AUT price: {max(price_aut[1:period1])}")
 for i in range(period1, period2):
     random.seed(2019375+10000*i)
-    shock_ether = random.normalvariate(0, sd_ether)
-    price_ether.append(price_ether[i-1] * (1 + shock_ether) * (1 + drift_ether2))
-print(" - ETH period 2 -")
-print(f"Min ETH price: {min(price_ether[period1:period2])}")
-print(f"Max ETH price: {max(price_ether[period1:period2])}")
+    shock_aut = random.normalvariate(0, sd_aut)
+    price_aut.append(price_aut[i-1] * (1 + shock_aut) * (1 + drift_aut2))
+print(" - AUT period 2 -")
+print(f"Min AUT price: {min(price_aut[period1:period2])}")
+print(f"Max AUT price: {max(price_aut[period1:period2])}")
 for i in range(period2, period3):
     random.seed(2019375+10000*i)
-    shock_ether = random.normalvariate(0, sd_ether)
-    price_ether.append(price_ether[i-1] * (1 + shock_ether) * (1 + drift_ether3))
-print(" - ETH period 3 -")
-print(f"Min ETH price: {min(price_ether[period2:period3])}")
-print(f"Max ETH price: {max(price_ether[period2:period3])}")
+    shock_aut = random.normalvariate(0, sd_aut)
+    price_aut.append(price_aut[i-1] * (1 + shock_aut) * (1 + drift_aut3))
+print(" - AUT period 3 -")
+print(f"Min AUT price: {min(price_aut[period2:period3])}")
+print(f"Max AUT price: {max(price_aut[period2:period3])}")
 for i in range(period3, period4):
     random.seed(2019375+10000*i)
-    shock_ether = random.normalvariate(0, sd_ether)
-    price_ether.append(price_ether[i-1] * (1 + shock_ether) * (1 + drift_ether4))
-print(" - ETH period 4 -")
-print(f"Min ETH price: {min(price_ether[period3:period4])}")
-print(f"Max ETH price: {max(price_ether[period3:period4])}")
+    shock_aut = random.normalvariate(0, sd_aut)
+    price_aut.append(price_aut[i-1] * (1 + shock_aut) * (1 + drift_aut4))
+print(" - AUT period 4 -")
+print(f"Min AUT price: {min(price_aut[period3:period4])}")
+print(f"Max AUT price: {max(price_aut[period3:period4])}")
 
 """Natural Rate"""
 
@@ -336,26 +336,26 @@ for i in range(1, period):
     shock_natural = random.normalvariate(0,sd_natural_rate)
     natural_rate.append(natural_rate[i-1]*(1+shock_natural))
 
-"""LQTY Price - First Month"""
+"""OPL Price - First Month"""
 
-#LQTY price
+#OPL price
 for i in range(1, month):
     random.seed(2+13*i)
-    shock_LQTY = random.normalvariate(0,sd_LQTY)  
-    price_LQTY.append(price_LQTY[i-1]*(1+shock_LQTY)*(1+drift_LQTY))
+    shock_OPL = random.normalvariate(0,sd_OPL)  
+    price_OPL.append(price_OPL[i-1]*(1+shock_OPL)*(1+drift_OPL))
 
 """# Troves
 
 Liquidate Troves
 """
 
-def is_recovery_mode(contracts, price_ether_current):
-    price = Wei(price_ether_current * 1e18)
+def is_recovery_mode(contracts, price_aut_current):
+    price = Wei(price_aut_current * 1e18)
     return contracts.troveManager.checkRecoveryMode(price)
 
-def pending_liquidations(contracts, price_ether_current):
+def pending_liquidations(contracts, price_aut_current):
     last_trove = contracts.sortedTroves.getLast()
-    last_ICR = contracts.troveManager.getCurrentICR(last_trove, Wei(price_ether_current * 1e18))
+    last_ICR = contracts.troveManager.getCurrentICR(last_trove, Wei(price_aut_current * 1e18))
 
     if last_trove == ZERO_ADDRESS:
         return False
@@ -363,17 +363,17 @@ def pending_liquidations(contracts, price_ether_current):
         return False
     if last_ICR < Wei(11e17):
         return True
-    if not is_recovery_mode(contracts, price_ether_current):
+    if not is_recovery_mode(contracts, price_aut_current):
         return False
 
-    stability_pool_balance = contracts.stabilityPool.getTotalLUSDDeposits()
+    stability_pool_balance = contracts.stabilityPool.getTotalONEUDeposits()
     trove = last_trove
     for i in range(NUM_LIQUIDATIONS):
         debt = contracts.troveManager.getEntireDebtAndColl(trove)[0]
         if stability_pool_balance >= debt:
             return True
         trove = contracts.sortedTroves.getPrev(trove)
-        ICR = contracts.troveManager.getCurrentICR(trove, Wei(price_ether_current * 1e18))
+        ICR = contracts.troveManager.getCurrentICR(trove, Wei(price_aut_current * 1e18))
         if ICR >= Wei(15e17):
             return False
 
@@ -398,27 +398,27 @@ def remove_accounts_from_events(accounts, active_accounts, inactive_accounts, ev
 # Re-arranging:
 # F = 0.5 ** (1/8760)
 # F = 0.99992087674
-def quantity_LQTY_airdrop(index):
+def quantity_OPL_airdrop(index):
     F = 0.99992087674
     if index <= 0:
         return 0
     return 32e6 * (F ** (index-1) - F ** index)
 
-def liquidate_troves(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, price_LUSD, price_LQTY_current, data, index):
+def liquidate_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, price_OPL_current, data, index):
     if len(active_accounts) == 0:
         return [0, 0]
 
-    stability_pool_previous = contracts.stabilityPool.getTotalLUSDDeposits() / 1e18
-    stability_pool_eth_previous = contracts.stabilityPool.getETH() / 1e18
+    stability_pool_previous = contracts.stabilityPool.getTotalONEUDeposits() / 1e18
+    stability_pool_eth_previous = contracts.stabilityPool.getAUT() / 1e18
 
-    while pending_liquidations(contracts, price_ether_current):
+    while pending_liquidations(contracts, price_aut_current):
         try:
             tx = contracts.troveManager.liquidateTroves(NUM_LIQUIDATIONS, { 'from': accounts[0], 'gas_limit': 8000000, 'allow_revert': True })
             #print(tx.events['TroveLiquidated'])
             remove_accounts_from_events(accounts, active_accounts, inactive_accounts, tx.events['TroveLiquidated'], '_borrower')
         except:
             print(f"TM: {contracts.troveManager.address}")
-            stability_pool_balance = contracts.stabilityPool.getTotalLUSDDeposits()
+            stability_pool_balance = contracts.stabilityPool.getTotalONEUDeposits()
             print(f"stability_pool_balance: {stability_pool_balance / 1e18}")
             trove = last_trove
             for i in range(NUM_LIQUIDATIONS):
@@ -428,25 +428,25 @@ def liquidate_troves(accounts, contracts, active_accounts, inactive_accounts, pr
                 if stability_pool_balance >= debt:
                     print("True!")
                 trove = contracts.sortedTroves.getPrev(trove)
-                ICR = contracts.troveManager.getCurrentICR(trove, Wei(price_ether_current * 1e18))
+                ICR = contracts.troveManager.getCurrentICR(trove, Wei(price_aut_current * 1e18))
                 print(f"ICR: {ICR}")
-    stability_pool_current = contracts.stabilityPool.getTotalLUSDDeposits() / 1e18
-    stability_pool_eth_current = contracts.stabilityPool.getETH() / 1e18
+    stability_pool_current = contracts.stabilityPool.getTotalONEUDeposits() / 1e18
+    stability_pool_eth_current = contracts.stabilityPool.getAUT() / 1e18
 
     debt_liquidated = stability_pool_current - stability_pool_previous
-    ether_liquidated = stability_pool_eth_current - stability_pool_eth_previous
-    liquidation_gain = ether_liquidated * price_ether_current - debt_liquidated * price_LUSD
-    airdrop_gain = price_LQTY_current * quantity_LQTY_airdrop(index)
+    aut_liquidated = stability_pool_eth_current - stability_pool_eth_previous
+    liquidation_gain = aut_liquidated * price_aut_current - debt_liquidated * price_ONEU
+    airdrop_gain = price_OPL_current * quantity_OPL_airdrop(index)
 
     data['liquidation_gain'][index] = liquidation_gain
     data['airdrop_gain'][index] = airdrop_gain
 
-    return_stability = calculate_stability_return(contracts, price_LUSD, data, index)
+    return_stability = calculate_stability_return(contracts, price_ONEU, data, index)
 
-    return [ether_liquidated, return_stability]
+    return [aut_liquidated, return_stability]
 
-def calculate_stability_return(contracts, price_LUSD, data, index):
-    stability_pool_previous = contracts.stabilityPool.getTotalLUSDDeposits() / 1e18
+def calculate_stability_return(contracts, price_ONEU, data, index):
+    stability_pool_previous = contracts.stabilityPool.getTotalONEUDeposits() / 1e18
     if index == 0:
         return_stability = initial_return
     elif stability_pool_previous == 0:
@@ -455,12 +455,12 @@ def calculate_stability_return(contracts, price_LUSD, data, index):
         return_stability = (year/index) * \
             (sum(data['liquidation_gain'][0:index]) +
              sum(data['airdrop_gain'][0:index])
-             ) / (price_LUSD * stability_pool_previous)
+             ) / (price_ONEU * stability_pool_previous)
     else:
         return_stability = (year/month) * \
             (sum(data['liquidation_gain'][index - month:index]) +
              sum(data['airdrop_gain'][index - month:index])
-             ) / (price_LUSD * stability_pool_previous)
+             ) / (price_ONEU * stability_pool_previous)
 
     return return_stability
 
@@ -470,11 +470,11 @@ def isNewTCRAboveCCR(contracts, collChange, isCollIncrease, debtChange, isDebtIn
 
 """Close Troves"""
 
-def close_troves(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, price_LUSD, index):
+def close_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, index):
     if len(active_accounts) == 0:
         return [0]
 
-    if is_recovery_mode(contracts, price_ether_current):
+    if is_recovery_mode(contracts, price_aut_current):
         return [0]
 
     np.random.seed(208+index)
@@ -483,10 +483,10 @@ def close_troves(accounts, contracts, active_accounts, inactive_accounts, price_
 
     if index <= 240:
         number_closetroves = np.random.uniform(0,1)
-    elif price_LUSD >=1:
+    elif price_ONEU >=1:
         number_closetroves = max(0, n_steady * (1+shock_closetroves))
     else:
-        number_closetroves = max(0, n_steady * (1+shock_closetroves)) + beta*(1-price_LUSD)*n_troves
+        number_closetroves = max(0, n_steady * (1+shock_closetroves)) + beta*(1-price_ONEU)*n_troves
 
     number_closetroves = min(int(round(number_closetroves)), len(active_accounts) - 1)
     random.seed(293+100*index)
@@ -497,13 +497,13 @@ def close_troves(accounts, contracts, active_accounts, inactive_accounts, price_
         amounts = contracts.troveManager.getEntireDebtAndColl(account)
         coll = amounts['coll']
         debt = amounts['debt']
-        pending = get_lusd_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, debt)
+        pending = get_oneu_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, debt)
         if pending == 0:
-            if isNewTCRAboveCCR(contracts, coll, False, debt, False, floatToWei(price_ether_current)):
+            if isNewTCRAboveCCR(contracts, coll, False, debt, False, floatToWei(price_aut_current)):
                 contracts.borrowerOperations.closeTrove({ 'from': account })
                 inactive_accounts.append(account_index)
                 active_accounts.pop(drops[i])
-        if is_recovery_mode(contracts, price_ether_current):
+        if is_recovery_mode(contracts, price_aut_current):
             break
 
     return [number_closetroves]
@@ -511,31 +511,31 @@ def close_troves(accounts, contracts, active_accounts, inactive_accounts, price_
 """Adjust Troves"""
 
 def transfer_from_to(contracts, from_account, to_account, amount):
-    balance = contracts.lusdToken.balanceOf(from_account)
+    balance = contracts.oneuToken.balanceOf(from_account)
     transfer_amount = min(balance, amount)
     if transfer_amount == 0:
         return amount
     if from_account == to_account:
         return amount
-    contracts.lusdToken.transfer(to_account, transfer_amount, { 'from': from_account })
+    contracts.oneuToken.transfer(to_account, transfer_amount, { 'from': from_account })
     pending = amount - transfer_amount
 
     return pending
 
-def get_lusd_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, debt):
-    lusdBalance = contracts.lusdToken.balanceOf(account)
-    if debt > lusdBalance:
-        pending = debt - lusdBalance
+def get_oneu_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, debt):
+    oneuBalance = contracts.oneuToken.balanceOf(account)
+    if debt > oneuBalance:
+        pending = debt - oneuBalance
         # first try to withdraw from SP
         initial_deposit = contracts.stabilityPool.deposits(account)[0]
         if initial_deposit > 0:
             contracts.stabilityPool.withdrawFromSP(pending, { 'from': account, 'gas_limit': 8000000, 'allow_revert': True })
             # it can only withdraw up to the deposit, so we check the balance again
-            lusdBalance = contracts.lusdToken.balanceOf(account)
-            pending = debt - lusdBalance
+            oneuBalance = contracts.oneuToken.balanceOf(account)
+            pending = debt - oneuBalance
         # try with whale
         pending = transfer_from_to(contracts, accounts[0], account, pending)
-        # try with active accounts, which are more likely to hold LUSD
+        # try with active accounts, which are more likely to hold ONEU
         for a in active_accounts:
             if pending <= 0:
                 break
@@ -548,7 +548,7 @@ def get_lusd_to_repay(accounts, contracts, active_accounts, inactive_accounts, a
             pending = transfer_from_to(contracts, i_address, account, pending)
 
         if pending > 0:
-            print(f"\n ***Error: not enough LUSD to repay! {debt / 1e18} LUSD for {account}")
+            print(f"\n ***Error: not enough ONEU to repay! {debt / 1e18} ONEU for {account}")
 
         return pending
 
@@ -560,8 +560,8 @@ def get_hints(contracts, coll, debt):
     #print("approx hint", approxHint)
     return contracts.sortedTroves.findInsertPosition(NICR, approxHint[0], approxHint[0])
 
-def get_hints_from_amounts(accounts, contracts, active_accounts, coll, debt, price_ether_current):
-    ICR = coll * price_ether_current / debt
+def get_hints_from_amounts(accounts, contracts, active_accounts, coll, debt, price_aut_current):
+    ICR = coll * price_aut_current / debt
     NICR = contracts.hintHelpers.computeNominalCR(floatToWei(coll), floatToWei(debt))
     return get_hints_from_ICR(accounts, contracts, active_accounts, ICR, NICR)
 
@@ -585,15 +585,15 @@ def get_hints_from_ICR(accounts, contracts, active_accounts, ICR, NICR):
         return [hints[0], hints[1], i]
 
 
-def adjust_troves(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, index):
+def adjust_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, index):
     random.seed(57984-3*index)
     ratio = random.uniform(0,1)
     coll_added_float = 0
-    issuance_LUSD_adjust = 0
+    issuance_ONEU_adjust = 0
 
     for i, working_trove in enumerate(active_accounts):
         account = accounts[working_trove['index']]
-        currentICR = contracts.troveManager.getCurrentICR(account, floatToWei(price_ether_current)) / 1e18
+        currentICR = contracts.troveManager.getCurrentICR(account, floatToWei(price_aut_current)) / 1e18
         amounts = contracts.troveManager.getEntireDebtAndColl(account)
         coll = amounts['coll'] / 1e18
         debt = amounts['debt'] / 1e18
@@ -607,56 +607,56 @@ def adjust_troves(accounts, contracts, active_accounts, inactive_accounts, price
 
         #A part of the troves are adjusted by adjusting debt
         if p >= ratio:
-            debt_new = price_ether_current * coll / working_trove['CR_initial']
-            hints = get_hints_from_amounts(accounts, contracts, active_accounts, coll, debt_new, price_ether_current)
+            debt_new = price_aut_current * coll / working_trove['CR_initial']
+            hints = get_hints_from_amounts(accounts, contracts, active_accounts, coll, debt_new, price_aut_current)
             if debt_new < MIN_NET_DEBT:
                 continue
             if check < -1:
                 # pay back
                 repay_amount = floatToWei(debt - debt_new)
-                pending = get_lusd_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, repay_amount)
+                pending = get_oneu_to_repay(accounts, contracts, active_accounts, inactive_accounts, account, repay_amount)
                 if pending == 0:
-                    contracts.borrowerOperations.repayLUSD(repay_amount, hints[0], hints[1], { 'from': account })
-            elif check > 2 and not is_recovery_mode(contracts, price_ether_current):
-                # withdraw LUSD
+                    contracts.borrowerOperations.repayONEU(repay_amount, hints[0], hints[1], { 'from': account })
+            elif check > 2 and not is_recovery_mode(contracts, price_aut_current):
+                # withdraw ONEU
                 withdraw_amount = debt_new - debt
                 withdraw_amount_wei = floatToWei(withdraw_amount)
-                if isNewTCRAboveCCR(contracts, 0, False, withdraw_amount_wei, True, floatToWei(price_ether_current)):
-                    contracts.borrowerOperations.withdrawLUSD(MAX_FEE, withdraw_amount_wei, hints[0], hints[1], { 'from': account })
+                if isNewTCRAboveCCR(contracts, 0, False, withdraw_amount_wei, True, floatToWei(price_aut_current)):
+                    contracts.borrowerOperations.withdrawONEU(MAX_FEE, withdraw_amount_wei, hints[0], hints[1], { 'from': account })
                     rate_issuance = contracts.troveManager.getBorrowingRateWithDecay() / 1e18
-                    issuance_LUSD_adjust = issuance_LUSD_adjust + rate_issuance * withdraw_amount
+                    issuance_ONEU_adjust = issuance_ONEU_adjust + rate_issuance * withdraw_amount
         #Another part of the troves are adjusted by adjusting collaterals
         elif p < ratio:
-            coll_new = working_trove['CR_initial'] * debt / price_ether_current
-            hints = get_hints_from_amounts(accounts, contracts, active_accounts, coll_new, debt, price_ether_current)
+            coll_new = working_trove['CR_initial'] * debt / price_aut_current
+            hints = get_hints_from_amounts(accounts, contracts, active_accounts, coll_new, debt, price_aut_current)
             if check < -1:
                 # add coll
                 coll_added_float = coll_new - coll
                 coll_added = floatToWei(coll_added_float)
                 contracts.borrowerOperations.addColl(hints[0], hints[1], { 'from': account, 'value': coll_added })
-            elif check > 2 and not is_recovery_mode(contracts, price_ether_current):
-                # withdraw ETH
+            elif check > 2 and not is_recovery_mode(contracts, price_aut_current):
+                # withdraw AUT
                 coll_withdrawn = floatToWei(coll - coll_new)
-                if isNewTCRAboveCCR(contracts, coll_withdrawn, False, 0, False, floatToWei(price_ether_current)):
+                if isNewTCRAboveCCR(contracts, coll_withdrawn, False, 0, False, floatToWei(price_aut_current)):
                     contracts.borrowerOperations.withdrawColl(coll_withdrawn, hints[0], hints[1], { 'from': account })
 
-    return [coll_added_float, issuance_LUSD_adjust]
+    return [coll_added_float, issuance_ONEU_adjust]
 
 """Open Troves"""
 
-def open_trove(accounts, contracts, active_accounts, inactive_accounts, supply_trove, quantity_ether, CR_ratio, rational_inattention, price_ether_current):
+def open_trove(accounts, contracts, active_accounts, inactive_accounts, supply_trove, quantity_aut, CR_ratio, rational_inattention, price_aut_current):
     if len(inactive_accounts) == 0:
         return
-    if is_recovery_mode(contracts, price_ether_current) and CR_ratio < 1.5:
+    if is_recovery_mode(contracts, price_aut_current) and CR_ratio < 1.5:
         return
 
     #hints = get_hints_from_ICR(accounts, active_accounts, CR_ratio)
-    hints = get_hints_from_amounts(accounts, contracts, active_accounts, quantity_ether, supply_trove, price_ether_current)
-    coll = floatToWei(quantity_ether)
-    debtChange = floatToWei(supply_trove) + LUSD_GAS_COMPENSATION
-    lusd = get_lusd_amount_from_net_debt(contracts, floatToWei(supply_trove))
-    if isNewTCRAboveCCR(contracts, coll, True, debtChange, True, floatToWei(price_ether_current)):
-        contracts.borrowerOperations.openTrove(MAX_FEE, lusd, hints[0], hints[1],
+    hints = get_hints_from_amounts(accounts, contracts, active_accounts, quantity_aut, supply_trove, price_aut_current)
+    coll = floatToWei(quantity_aut)
+    debtChange = floatToWei(supply_trove) + ONEU_GAS_COMPENSATION
+    oneu = get_oneu_amount_from_net_debt(contracts, floatToWei(supply_trove))
+    if isNewTCRAboveCCR(contracts, coll, True, debtChange, True, floatToWei(price_aut_current)):
+        contracts.borrowerOperations.openTrove(MAX_FEE, oneu, hints[0], hints[1],
                                                { 'from': accounts[inactive_accounts[0]], 'value': coll })
         new_account = {"index": inactive_accounts[0], "CR_initial": CR_ratio, "Rational_inattention": rational_inattention}
         active_accounts.insert(hints[2], new_account)
@@ -665,21 +665,21 @@ def open_trove(accounts, contracts, active_accounts, inactive_accounts, supply_t
 
     return False
 
-def open_troves(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, price_LUSD, index):
+def open_troves(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, index):
     random.seed(2019*index)
     shock_opentroves = random.normalvariate(0,sd_opentroves)
     n_troves = len(active_accounts)
     rate_issuance = contracts.troveManager.getBorrowingRateWithDecay() / 1e18
     coll_added = 0
-    issuance_LUSD_open = 0
+    issuance_ONEU_open = 0
 
     if index <= 0:
         number_opentroves = initial_open
-    elif price_LUSD <= 1 + rate_issuance:
+    elif price_ONEU <= 1 + rate_issuance:
         number_opentroves = max(0, n_steady * (1+shock_opentroves))
     else:
         number_opentroves = max(0, n_steady * (1+shock_opentroves)) + \
-                        alpha * (price_LUSD - rate_issuance - 1) * n_troves
+                        alpha * (price_ONEU - rate_issuance - 1) * n_troves
 
     number_opentroves = min(int(round(float(number_opentroves))), len(inactive_accounts))
 
@@ -688,30 +688,30 @@ def open_troves(accounts, contracts, active_accounts, inactive_accounts, price_e
         CR_ratio = target_cr_a + target_cr_b * np.random.chisquare(df=target_cr_chi_square_df)
 
         np.random.seed(20 + 10 * i + index)
-        quantity_ether = np.random.gamma(collateral_gamma_k, scale=collateral_gamma_theta)
+        quantity_aut = np.random.gamma(collateral_gamma_k, scale=collateral_gamma_theta)
 
         np.random.seed(209870- index + i*i)
         rational_inattention = np.random.gamma(rational_inattention_gamma_k, scale=rational_inattention_gamma_theta)
-        supply_trove = price_ether_current * quantity_ether / CR_ratio
+        supply_trove = price_aut_current * quantity_aut / CR_ratio
         if supply_trove < MIN_NET_DEBT:
             supply_trove = MIN_NET_DEBT
-            quantity_ether = CR_ratio * supply_trove / price_ether_current
+            quantity_aut = CR_ratio * supply_trove / price_aut_current
 
-        issuance_LUSD_open = issuance_LUSD_open + rate_issuance * supply_trove
-        if open_trove(accounts, contracts, active_accounts, inactive_accounts, supply_trove, quantity_ether, CR_ratio, rational_inattention, price_ether_current):
-            coll_added = coll_added + quantity_ether
+        issuance_ONEU_open = issuance_ONEU_open + rate_issuance * supply_trove
+        if open_trove(accounts, contracts, active_accounts, inactive_accounts, supply_trove, quantity_aut, CR_ratio, rational_inattention, price_aut_current):
+            coll_added = coll_added + quantity_aut
 
-    return [coll_added, issuance_LUSD_open]
+    return [coll_added, issuance_ONEU_open]
 
 
-"""# LUSD Market
+"""# ONEU Market
 
 Stability Pool
 """
 
 def stability_update(accounts, contracts, active_accounts, return_stability, index):
-    supply = contracts.lusdToken.totalSupply() / 1e18
-    stability_pool_previous = contracts.stabilityPool.getTotalLUSDDeposits() / 1e18
+    supply = contracts.oneuToken.totalSupply() / 1e18
+    stability_pool_previous = contracts.stabilityPool.getTotalONEUDeposits() / 1e18
 
     np.random.seed(27+3*index)
     shock_stability = np.random.normal(0,sd_stability)
@@ -732,43 +732,43 @@ def stability_update(accounts, contracts, active_accounts, return_stability, ind
         i = 0
         while remaining > 0 and i < len(active_accounts):
           account = index2address(accounts, active_accounts, i)
-          balance = contracts.lusdToken.balanceOf(account) / 1e18
+          balance = contracts.oneuToken.balanceOf(account) / 1e18
           deposit = min(balance, remaining)
           if deposit > 0:
               contracts.stabilityPool.provideToSP(floatToWei(deposit), ZERO_ADDRESS, { 'from': account, 'gas_limit': 8000000, 'allow_revert': True })
               remaining = remaining - deposit
           i = i + 1
     else:
-        current_deposit = contracts.stabilityPool.getCompoundedLUSDDeposit(accounts[0])
+        current_deposit = contracts.stabilityPool.getCompoundedONEUDeposit(accounts[0])
         if current_deposit > 0:
             new_withdraw = min(floatToWei(stability_pool_previous - stability_pool), current_deposit)
             contracts.stabilityPool.withdrawFromSP(new_withdraw, { 'from': accounts[0] })
 
 
-"""LUSD Price, liquidity pool, and redemption
+"""ONEU Price, liquidity pool, and redemption
 
 **Price Determination**
 
 ---
-With the supply and demand of LUSD tokens defined above, the price of LUSD at the current period is given by the following equilibrium condition:
+With the supply and demand of ONEU tokens defined above, the price of ONEU at the current period is given by the following equilibrium condition:
 > $$S_t = D_t^s + D_t^l = D_t^s + D_{t-1}^l (1+\zeta_t^l)(1+\sigma_t^l) (\frac{P_t^l}{P_{t-1}^l})^\delta$$
 
-where $S$ is the total supply of LUSD.
+where $S$ is the total supply of ONEU.
 
 Solving this equation gives that:
 > $$P_t^l = P_{t-1}^l (\frac{S_t-D_t^s}{D_{t-1}^l(1+\zeta_t^l)(1+\sigma_t^l)})^{1/\delta}$$
 """
 
-def calculate_price(price_LUSD, liquidity_pool, liquidity_pool_next):
+def calculate_price(price_ONEU, liquidity_pool, liquidity_pool_next):
   # liquidity_pool = supply - stability_pool
   # liquidity_pool_next = liquidity_pool_previous * drift_liquidity * (1+shock_liquidity)
-  price_LUSD_current= price_LUSD * (liquidity_pool / liquidity_pool_next) ** (1/delta)
+  price_ONEU_current= price_ONEU * (liquidity_pool / liquidity_pool_next) ** (1/delta)
 
-  return price_LUSD_current
+  return price_ONEU_current
 
 """ **Stabilizers**
 
-There are two stabilizers to attenuate LUSD price deviation from its target range.
+There are two stabilizers to attenuate ONEU price deviation from its target range.
 No action if $P_t^l \in [1-f_t^r, 1.1+f_t^i]$, where $f_t^r$ represents the redemption fee, and $f_t^i$ represents the issuance fee.
 For the moment, we set $f_t^r = 1\%$.
 
@@ -779,7 +779,7 @@ Stabilizer 1: ceiling arbitrageurs
 If $P_t^l > 1.1+f_t^i$, open a new trove with $CR^*=110\%$ and $\tau^*=10\%$. Its debt amounts to
 > $$Q_t^d(c) = \frac{P_t^e Q_t^e(c)}{110\%}.$$
 
-The amount of $Q_t^d(c)$ is expected to bring the LUSD price back to $1.1+f_t^i$. This means that
+The amount of $Q_t^d(c)$ is expected to bring the ONEU price back to $1.1+f_t^i$. This means that
 > $$S_t' = D_t^s + (\frac{1.1+f_t^i}{P_{t-1}^l})^\delta D_{t-1}^l(1+\zeta_t^l)(1+\sigma_t^l)$$
 
 The debt of th new trove is the difference between the original supply and the supply needed to bring price to $1.1+f_t^i$, which is
@@ -796,7 +796,7 @@ with $CR^*=110\%$ and debt = $Q_t^d(c)$
 ---
 Stabilizer 2: floor arbitrageurs
 
-If $P_t^l < 1-f_t^r$, a fraction $\chi_t$ of LUSD in the liquidity pool is used for redemption
+If $P_t^l < 1-f_t^r$, a fraction $\chi_t$ of ONEU in the liquidity pool is used for redemption
 > $$D_t^r = \chi_t D_t^l,$$
 
 where
@@ -804,7 +804,7 @@ where
 
 The redemption eliminates troves with the lowest collateral ratio.
 
-Note that unlike stabilizer 1, stabilizer 2 has impact of LUSD price in
+Note that unlike stabilizer 1, stabilizer 2 has impact of ONEU price in
  the next period. Namely, after the determination of $P_t^l$ and if $P_t^l < 1-f_t^r$, the redemption does not affect $P_t^l$ any more. So no need to
 program stabilizer 2 like what you did for stabilizer 1. The redemption kills some troves and thus affect $P_{t+1}^l$ in the next period as the number of troves shrinks.
 
@@ -834,16 +834,16 @@ Redemption fee revenue amounts to
 sd_redemption = 0.001
 redemption_start = 0.8
 
-def redeem_trove(accounts, contracts, i, price_ether_current):
-    lusd_balance = contracts.lusdToken.balanceOf(accounts[i])
-    [firstRedemptionHint, partialRedemptionHintNICR, truncatedLUSDamount] = contracts.hintHelpers.getRedemptionHints(lusd_balance, price_ether_current, 70)
-    if truncatedLUSDamount == Wei(0):
+def redeem_trove(accounts, contracts, i, price_aut_current):
+    oneu_balance = contracts.oneuToken.balanceOf(accounts[i])
+    [firstRedemptionHint, partialRedemptionHintNICR, truncatedONEUamount] = contracts.hintHelpers.getRedemptionHints(oneu_balance, price_aut_current, 70)
+    if truncatedONEUamount == Wei(0):
         return None
     approxHint = contracts.hintHelpers.getApproxHint(partialRedemptionHintNICR, 2000, 0)
     hints = contracts.sortedTroves.findInsertPosition(partialRedemptionHintNICR, approxHint[0], approxHint[0])
     try:
         tx = contracts.troveManager.redeemCollateral(
-            truncatedLUSDamount,
+            truncatedONEUamount,
             firstRedemptionHint,
             hints[0],
             hints[1],
@@ -856,17 +856,17 @@ def redeem_trove(accounts, contracts, i, price_ether_current):
     except:
         print(f"\n   Redemption failed! ")
         print(f"Trove Manager: {contracts.troveManager.address}")
-        print(f"LUSD Token:    {contracts.lusdToken.address}")
+        print(f"ONEU Token:    {contracts.oneuToken.address}")
         print(f"i: {i}")
         print(f"account: {accounts[i]}")
-        print(f"LUSD bal: {lusd_balance / 1e18}")
-        print(f"truncated: {truncatedLUSDamount / 1e18}")
+        print(f"ONEU bal: {oneu_balance / 1e18}")
+        print(f"truncated: {truncatedONEUamount / 1e18}")
         print(f"Redemption rate: {contracts.troveManager.getRedemptionRateWithDecay() * 100 / 1e18} %")
         print(f"approx: {approxHint[0]}")
         print(f"diff: {approxHint[1]}")
         print(f"diff: {approxHint[1] / 1e18}")
         print(f"seed: {approxHint[2]}")
-        print(f"amount: {truncatedLUSDamount}")
+        print(f"amount: {truncatedONEUamount}")
         print(f"first: {firstRedemptionHint}")
         print(f"hint: {hints[0]}")
         print(f"hint: {hints[1]}")
@@ -877,14 +877,14 @@ def redeem_trove(accounts, contracts, i, price_ether_current):
         #return None
         exit(1)
 
-def price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, price_ether_current, price_LUSD, index):
+def price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, price_aut_current, price_ONEU, index):
 
-    stability_pool = contracts.stabilityPool.getTotalLUSDDeposits() / 1e18
+    stability_pool = contracts.stabilityPool.getTotalONEUDeposits() / 1e18
     redemption_pool = 0
     redemption_fee = 0
-    issuance_LUSD_stabilizer = 0
+    issuance_ONEU_stabilizer = 0
 
-    supply = contracts.lusdToken.totalSupply() / 1e18
+    supply = contracts.oneuToken.totalSupply() / 1e18
     #Liquidity Pool
     liquidity_pool = supply - stability_pool
 
@@ -895,54 +895,54 @@ def price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, pr
     liquidity_pool_next = liquidity_pool * drift_liquidity * (1+shock_liquidity)
 
     #Calculating Price
-    price_LUSD_current = calculate_price(price_LUSD, liquidity_pool, liquidity_pool_next)
+    price_ONEU_current = calculate_price(price_ONEU, liquidity_pool, liquidity_pool_next)
     rate_issuance = contracts.troveManager.getBorrowingRateWithDecay() / 1e18
     rate_redemption = contracts.troveManager.getRedemptionRateWithDecay() / 1e18
 
     #Stabilizer
     #Ceiling Arbitrageurs
-    if price_LUSD_current > 1.1 + rate_issuance:
+    if price_ONEU_current > 1.1 + rate_issuance:
         supply_wanted = stability_pool + \
                         liquidity_pool_next * \
-                        ((1.1+rate_issuance) / price_LUSD)**delta
+                        ((1.1+rate_issuance) / price_ONEU)**delta
         supply_trove = min(supply_wanted - supply, MIN_NET_DEBT)
 
         CR_ratio = 1.1
         rational_inattention = 0.1
-        quantity_ether = supply_trove * CR_ratio / price_ether_current
-        issuance_LUSD_stabilizer = rate_issuance * supply_trove
-        if open_trove(accounts, contracts, active_accounts, inactive_accounts, supply_trove, quantity_ether, CR_ratio, rational_inattention):
-            price_LUSD_current = 1.1 + rate_issuance
+        quantity_aut = supply_trove * CR_ratio / price_aut_current
+        issuance_ONEU_stabilizer = rate_issuance * supply_trove
+        if open_trove(accounts, contracts, active_accounts, inactive_accounts, supply_trove, quantity_aut, CR_ratio, rational_inattention):
+            price_ONEU_current = 1.1 + rate_issuance
             liquidity_pool = supply_wanted - stability_pool
 
 
     #Floor Arbitrageurs
-    if price_LUSD_current < 1 - rate_redemption:
+    if price_ONEU_current < 1 - rate_redemption:
         np.random.seed(30*index)
         shock_redemption = np.random.normal(0, sd_redemption)
         redemption_ratio = max(1, redemption_start * (1+shock_redemption))
 
         supply_target = stability_pool + \
                         liquidity_pool_next * \
-                        ((1-rate_redemption) / price_LUSD)**delta
+                        ((1-rate_redemption) / price_ONEU)**delta
         supply_diff = supply - supply_target
         if supply_diff < redemption_ratio * liquidity_pool:
             redemption_pool = supply_diff
             #liquidity_pool = liquidity_pool - redemption_pool
-            price_LUSD_current = 1 - rate_redemption
+            price_ONEU_current = 1 - rate_redemption
         else:
             redemption_pool = redemption_ratio * liquidity_pool
             #liquidity_pool = (1-redemption_ratio)*liquidity_pool
-            price_LUSD_current = calculate_price(price_LUSD, liquidity_pool, liquidity_pool_next)
+            price_ONEU_current = calculate_price(price_ONEU, liquidity_pool, liquidity_pool_next)
 
         remaining = redemption_pool
         i = 0
         while remaining > 0 and i < len(active_accounts):
           account = index2address(accounts, active_accounts, i)
-          balance = contracts.lusdToken.balanceOf(account) / 1e18
+          balance = contracts.oneuToken.balanceOf(account) / 1e18
           redemption = min(balance, remaining)
           if redemption > 0:
-              tx = redeem_trove(accounts, contracts, 0, price_ether_current)
+              tx = redeem_trove(accounts, contracts, 0, price_aut_current)
               if tx:
                   remove_accounts_from_events(
                     accounts,
@@ -958,15 +958,15 @@ def price_stabilizer(accounts, contracts, active_accounts, inactive_accounts, pr
     #Redemption Fee
     redemption_fee = redemption_pool * (rate_redemption + redemption_pool / supply)
 
-    return [price_LUSD_current, redemption_pool, redemption_fee, issuance_LUSD_stabilizer]
+    return [price_ONEU_current, redemption_pool, redemption_fee, issuance_ONEU_stabilizer]
 
-"""# LQTY Market"""
+"""# OPL Market"""
 
-def LQTY_market(index, data):
-    #quantity_LQTY = (LQTY_total_supply/3)*(1-0.5**(index/period))
+def OPL_market(index, data):
+    #quantity_OPL = (OPL_total_supply/3)*(1-0.5**(index/period))
     np.random.seed(2+3*index)
     if index <= month:
-        price_LQTY_current = price_LQTY[index-1]
+        price_OPL_current = price_OPL[index-1]
         annualized_earning = (index/month)**0.5 * np.random.normal(200000000,500000)
     else:
         revenue_issuance = sum(data['issuance_fee'][index - month:index])
@@ -974,8 +974,8 @@ def LQTY_market(index, data):
         annualized_earning = 365 * (revenue_issuance+revenue_redemption) / 30
         #discounting factor to factor in the risk in early days
         discount=index/period
-        price_LQTY_current = discount * PE_ratio * annualized_earning / LQTY_total_supply
+        price_OPL_current = discount * PE_ratio * annualized_earning / OPL_total_supply
 
-    #MC_LQTY_current = price_LQTY_current * quantity_LQTY
+    #MC_OPL_current = price_OPL_current * quantity_OPL
 
-    return [price_LQTY_current, annualized_earning]
+    return [price_OPL_current, annualized_earning]

@@ -4,14 +4,13 @@ pragma solidity 0.6.11;
 
 import "./IPool.sol";
 
-
 interface IActivePool is IPool {
     // --- Events ---
     event BorrowerOperationsAddressChanged(address _newBorrowerOperationsAddress);
     event TroveManagerAddressChanged(address _newTroveManagerAddress);
-    event ActivePoolLUSDDebtUpdated(uint _LUSDDebt);
-    event ActivePoolETHBalanceUpdated(uint _ETH);
+    event ActivePoolONEUDebtUpdated(uint _ONEUDebt);
+    event ActivePoolAUTBalanceUpdated(uint _AUT);
 
     // --- Functions ---
-    function sendETH(address _account, uint _amount) external;
+    function sendAUT(address _account, uint _amount) external;
 }

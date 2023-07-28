@@ -4,7 +4,6 @@ pragma solidity 0.6.11;
 
 // Common interface for the Trove Manager.
 interface IBorrowerOperations {
-
     // --- Events ---
 
     event TroveManagerAddressChanged(address _newTroveManagerAddress);
@@ -13,14 +12,20 @@ interface IBorrowerOperations {
     event StabilityPoolAddressChanged(address _stabilityPoolAddress);
     event GasPoolAddressChanged(address _gasPoolAddress);
     event CollSurplusPoolAddressChanged(address _collSurplusPoolAddress);
-    event PriceFeedAddressChanged(address  _newPriceFeedAddress);
+    event PriceFeedAddressChanged(address _newPriceFeedAddress);
     event SortedTrovesAddressChanged(address _sortedTrovesAddress);
-    event LUSDTokenAddressChanged(address _lusdTokenAddress);
-    event LQTYStakingAddressChanged(address _lqtyStakingAddress);
+    event ONEUTokenAddressChanged(address _oneuTokenAddress);
+    event OPLStakingAddressChanged(address _oplStakingAddress);
 
     event TroveCreated(address indexed _borrower, uint arrayIndex);
-    event TroveUpdated(address indexed _borrower, uint _debt, uint _coll, uint stake, uint8 operation);
-    event LUSDBorrowingFeePaid(address indexed _borrower, uint _LUSDFee);
+    event TroveUpdated(
+        address indexed _borrower,
+        uint _debt,
+        uint _coll,
+        uint stake,
+        uint8 operation
+    );
+    event ONEUBorrowingFeePaid(address indexed _borrower, uint _ONEUFee);
 
     // --- Functions ---
 
@@ -33,25 +38,46 @@ interface IBorrowerOperations {
         address _collSurplusPoolAddress,
         address _priceFeedAddress,
         address _sortedTrovesAddress,
-        address _lusdTokenAddress,
-        address _lqtyStakingAddress
+        address _oneuTokenAddress,
+        address _oplStakingAddress
     ) external;
 
-    function openTrove(uint _maxFee, uint _LUSDAmount, address _upperHint, address _lowerHint) external payable;
+    function openTrove(
+        uint _maxFee,
+        uint _ONEUAmount,
+        address _upperHint,
+        address _lowerHint
+    ) external payable;
 
     function addColl(address _upperHint, address _lowerHint) external payable;
 
-    function moveETHGainToTrove(address _user, address _upperHint, address _lowerHint) external payable;
+    function moveAUTGainToTrove(
+        address _user,
+        address _upperHint,
+        address _lowerHint
+    ) external payable;
 
     function withdrawColl(uint _amount, address _upperHint, address _lowerHint) external;
 
-    function withdrawLUSD(uint _maxFee, uint _amount, address _upperHint, address _lowerHint) external;
+    function withdrawONEU(
+        uint _maxFee,
+        uint _amount,
+        address _upperHint,
+        address _lowerHint
+    ) external;
 
-    function repayLUSD(uint _amount, address _upperHint, address _lowerHint) external;
+    function repayONEU(uint _amount, address _upperHint, address _lowerHint) external;
 
     function closeTrove() external;
 
-    function adjustTrove(uint _maxFee, uint _collWithdrawal, uint _debtChange, bool isDebtIncrease, address _upperHint, address _lowerHint) external payable;
+    function adjustTrove(
+        uint _maxFee,
+        uint _collWithdrawal,
+        uint _debtChange,
+        bool isDebtIncrease,
+        address _upperHint,
+        address _lowerHint
+    ) external payable;
 
     function claimCollateral() external;
 
