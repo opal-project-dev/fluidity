@@ -3,14 +3,8 @@ import { Signer } from "@ethersproject/abstract-signer";
 
 import { Decimal } from "@fluidity/lib-base";
 
-import autonity from "../deployments/autonity.json";
-// import goerli from "../deployments/goerli.json";
-// import kovan from "../deployments/kovan.json";
-// import rinkeby from "../deployments/rinkeby.json";
-// import ropsten from "../deployments/ropsten.json";
-// import mainnet from "../deployments/mainnet.json";
-// import bakerloo from "../deployments/bakerloo.json";
-// import kiln from "../deployments/kiln.json";
+// Change to autonity if you want to run front-end on chain
+import devOrNull from "../deployments/dev.json";
 
 import { numberify, panic } from "./_utils";
 import { EthersProvider, EthersSigner } from "./types";
@@ -24,18 +18,11 @@ import {
 
 import { _connectToMulticall, _Multicall } from "./_Multicall";
 
-const dev = autonity as _LiquityDeploymentJSON | null;
+const dev = devOrNull as _LiquityDeploymentJSON | null;
 
 const deployments: {
   [chainId: number]: _LiquityDeploymentJSON | undefined;
 } = {
-  // [mainnet.chainId]: mainnet,
-  // [ropsten.chainId]: ropsten,
-  // [rinkeby.chainId]: rinkeby,
-  // [goerli.chainId]: goerli,
-  // [kovan.chainId]: kovan,
-  // [bakerloo.chainId]: bakerloo,
-  // [kiln.chainId]: kiln,
   ...(dev !== null ? { [dev.chainId]: dev } : {})
 };
 
