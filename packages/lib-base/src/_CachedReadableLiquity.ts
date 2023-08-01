@@ -1,6 +1,6 @@
 import { Decimal } from "./Decimal";
 import { Fees } from "./Fees";
-import { LQTYStake } from "./LQTYStake";
+import { OPLStake } from "./OPLStake";
 import { StabilityDeposit } from "./StabilityDeposit";
 import { Trove, TroveWithPendingRedistribution, UserTrove } from "./Trove";
 import { FrontendStatus, ReadableLiquity, TroveListingParams } from "./ReadableLiquity";
@@ -101,75 +101,75 @@ export class _CachedReadableLiquity<T extends unknown[]>
     );
   }
 
-  async getRemainingStabilityPoolLQTYReward(...extraParams: T): Promise<Decimal> {
+  async getRemainingStabilityPoolOPLReward(...extraParams: T): Promise<Decimal> {
     return (
-      this._cache.getRemainingStabilityPoolLQTYReward(...extraParams) ??
-      this._readable.getRemainingStabilityPoolLQTYReward(...extraParams)
+      this._cache.getRemainingStabilityPoolOPLReward(...extraParams) ??
+      this._readable.getRemainingStabilityPoolOPLReward(...extraParams)
     );
   }
 
-  async getLUSDInStabilityPool(...extraParams: T): Promise<Decimal> {
+  async getONEUInStabilityPool(...extraParams: T): Promise<Decimal> {
     return (
-      this._cache.getLUSDInStabilityPool(...extraParams) ??
-      this._readable.getLUSDInStabilityPool(...extraParams)
+      this._cache.getONEUInStabilityPool(...extraParams) ??
+      this._readable.getONEUInStabilityPool(...extraParams)
     );
   }
 
-  async getLUSDBalance(address?: string, ...extraParams: T): Promise<Decimal> {
+  async getONEUBalance(address?: string, ...extraParams: T): Promise<Decimal> {
     return (
-      this._cache.getLUSDBalance(address, ...extraParams) ??
-      this._readable.getLUSDBalance(address, ...extraParams)
+      this._cache.getONEUBalance(address, ...extraParams) ??
+      this._readable.getONEUBalance(address, ...extraParams)
     );
   }
 
-  async getLQTYBalance(address?: string, ...extraParams: T): Promise<Decimal> {
+  async getOPLBalance(address?: string, ...extraParams: T): Promise<Decimal> {
     return (
-      this._cache.getLQTYBalance(address, ...extraParams) ??
-      this._readable.getLQTYBalance(address, ...extraParams)
+      this._cache.getOPLBalance(address, ...extraParams) ??
+      this._readable.getOPLBalance(address, ...extraParams)
     );
   }
 
-  async getUniTokenBalance(address?: string, ...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getUniTokenBalance(address, ...extraParams) ??
-      this._readable.getUniTokenBalance(address, ...extraParams)
-    );
-  }
+  // async getUniTokenBalance(address?: string, ...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getUniTokenBalance(address, ...extraParams) ??
+  //     this._readable.getUniTokenBalance(address, ...extraParams)
+  //   );
+  // }
 
-  async getUniTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getUniTokenAllowance(address, ...extraParams) ??
-      this._readable.getUniTokenAllowance(address, ...extraParams)
-    );
-  }
+  // async getUniTokenAllowance(address?: string, ...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getUniTokenAllowance(address, ...extraParams) ??
+  //     this._readable.getUniTokenAllowance(address, ...extraParams)
+  //   );
+  // }
 
-  async getRemainingLiquidityMiningLQTYReward(...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getRemainingLiquidityMiningLQTYReward(...extraParams) ??
-      this._readable.getRemainingLiquidityMiningLQTYReward(...extraParams)
-    );
-  }
+  // async getRemainingLiquidityMiningOPLReward(...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getRemainingLiquidityMiningOPLReward(...extraParams) ??
+  //     this._readable.getRemainingLiquidityMiningOPLReward(...extraParams)
+  //   );
+  // }
 
-  async getLiquidityMiningStake(address?: string, ...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getLiquidityMiningStake(address, ...extraParams) ??
-      this._readable.getLiquidityMiningStake(address, ...extraParams)
-    );
-  }
+  // async getLiquidityMiningStake(address?: string, ...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getLiquidityMiningStake(address, ...extraParams) ??
+  //     this._readable.getLiquidityMiningStake(address, ...extraParams)
+  //   );
+  // }
 
-  async getTotalStakedUniTokens(...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getTotalStakedUniTokens(...extraParams) ??
-      this._readable.getTotalStakedUniTokens(...extraParams)
-    );
-  }
+  // async getTotalStakedUniTokens(...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getTotalStakedUniTokens(...extraParams) ??
+  //     this._readable.getTotalStakedUniTokens(...extraParams)
+  //   );
+  // }
 
-  async getLiquidityMiningLQTYReward(address?: string, ...extraParams: T): Promise<Decimal> {
-    return (
-      this._cache.getLiquidityMiningLQTYReward(address, ...extraParams) ??
-      this._readable.getLiquidityMiningLQTYReward(address, ...extraParams)
-    );
-  }
+  // async getLiquidityMiningOPLReward(address?: string, ...extraParams: T): Promise<Decimal> {
+  //   return (
+  //     this._cache.getLiquidityMiningOPLReward(address, ...extraParams) ??
+  //     this._readable.getLiquidityMiningOPLReward(address, ...extraParams)
+  //   );
+  // }
 
   async getCollateralSurplusBalance(address?: string, ...extraParams: T): Promise<Decimal> {
     return (
@@ -205,17 +205,17 @@ export class _CachedReadableLiquity<T extends unknown[]>
     return this._cache.getFees(...extraParams) ?? this._readable.getFees(...extraParams);
   }
 
-  async getLQTYStake(address?: string, ...extraParams: T): Promise<LQTYStake> {
+  async getOPLStake(address?: string, ...extraParams: T): Promise<OPLStake> {
     return (
-      this._cache.getLQTYStake(address, ...extraParams) ??
-      this._readable.getLQTYStake(address, ...extraParams)
+      this._cache.getOPLStake(address, ...extraParams) ??
+      this._readable.getOPLStake(address, ...extraParams)
     );
   }
 
-  async getTotalStakedLQTY(...extraParams: T): Promise<Decimal> {
+  async getTotalStakedOPL(...extraParams: T): Promise<Decimal> {
     return (
-      this._cache.getTotalStakedLQTY(...extraParams) ??
-      this._readable.getTotalStakedLQTY(...extraParams)
+      this._cache.getTotalStakedOPL(...extraParams) ??
+      this._readable.getTotalStakedOPL(...extraParams)
     );
   }
 

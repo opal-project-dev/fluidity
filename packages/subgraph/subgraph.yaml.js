@@ -78,7 +78,7 @@ dataSources:
       eventHandlers:
         - event: TroveUpdated(indexed address,uint256,uint256,uint256,uint8)
           handler: handleTroveUpdated
-        - event: LUSDBorrowingFeePaid(indexed address,uint256)
+        - event: ONEUBorrowingFeePaid(indexed address,uint256)
           handler: handleLUSDBorrowingFeePaid
   - name: PriceFeed
     kind: ethereum/contract
@@ -129,8 +129,8 @@ dataSources:
       eventHandlers:
         - event: UserDepositChanged(indexed address,uint256)
           handler: handleUserDepositChanged
-        - event: ETHGainWithdrawn(indexed address,uint256,uint256)
-          handler: handleETHGainWithdrawn
+        - event: AUTGainWithdrawn(indexed address,uint256,uint256)
+          handler: handleAUTGainWithdrawn
         - event: FrontEndRegistered(indexed address,uint256)
           handler: handleFrontendRegistered
         - event: FrontEndTagSet(indexed address,indexed address)
@@ -180,7 +180,7 @@ dataSources:
         - LqtyStakeChange
       abis:
         - name: LQTYStaking
-          file: ../lib-ethers/abi/LQTYStaking.json
+          file: ../lib-ethers/abi/OPLStaking.json
       eventHandlers:
         - event: StakeChanged(indexed address,uint256)
           handler: handleStakeChanged

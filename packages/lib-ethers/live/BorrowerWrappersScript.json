@@ -109,7 +109,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         },
         {
@@ -190,7 +190,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         },
         {
@@ -227,7 +227,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSD",
+      "name": "repayONEU",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -236,7 +236,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LQTYamount",
+          "name": "_OPLamount",
           "type": "uint256"
         }
       ],
@@ -258,7 +258,7 @@
           "type": "uint256"
         }
       ],
-      "name": "transferETH",
+      "name": "transferAUT",
       "outputs": [
         {
           "internalType": "bool",
@@ -315,7 +315,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawLUSD",
+      "name": "withdrawONEU",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

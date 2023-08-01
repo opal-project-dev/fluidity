@@ -4,7 +4,7 @@ import { Decimal } from "./Decimal";
 import { StabilityDeposit } from "./StabilityDeposit";
 import { Trove, TroveWithPendingRedistribution, UserTrove } from "./Trove";
 import { Fees } from "./Fees";
-import { LQTYStake } from "./LQTYStake";
+import { OPLStake } from "./OPLStake";
 import { FrontendStatus } from "./ReadableLiquity";
 
 /**
@@ -25,29 +25,29 @@ export interface LiquityStoreBaseState {
   /** User's native currency balance (e.g. Ether). */
   accountBalance: Decimal;
 
-  /** User's LUSD token balance. */
+  /** User's ONEU token balance. */
   lusdBalance: Decimal;
 
-  /** User's LQTY token balance. */
+  /** User's OPL token balance. */
   lqtyBalance: Decimal;
 
-  /** User's Uniswap ETH/LUSD LP token balance. */
-  uniTokenBalance: Decimal;
+  // /** User's Uniswap AUT/ONEU LP token balance. */
+  // uniTokenBalance: Decimal;
 
-  /** The liquidity mining contract's allowance of user's Uniswap ETH/LUSD LP tokens. */
-  uniTokenAllowance: Decimal;
+  // /** The liquidity mining contract's allowance of user's Uniswap AUT/ONEU LP tokens. */
+  // uniTokenAllowance: Decimal;
 
-  /** Remaining LQTY that will be collectively rewarded to liquidity miners. */
-  remainingLiquidityMiningLQTYReward: Decimal;
+  // /** Remaining OPL that will be collectively rewarded to liquidity miners. */
+  // remainingLiquidityMiningOPLReward: Decimal;
 
-  /** Amount of Uniswap ETH/LUSD LP tokens the user has staked in liquidity mining. */
-  liquidityMiningStake: Decimal;
+  // /** Amount of Uniswap AUT/ONEU LP tokens the user has staked in liquidity mining. */
+  // liquidityMiningStake: Decimal;
 
-  /** Total amount of Uniswap ETH/LUSD LP tokens currently staked in liquidity mining. */
-  totalStakedUniTokens: Decimal;
+  // /** Total amount of Uniswap AUT/ONEU LP tokens currently staked in liquidity mining. */
+  // totalStakedUniTokens: Decimal;
 
-  /** Amount of LQTY the user has earned through mining liquidity. */
-  liquidityMiningLQTYReward: Decimal;
+  // /** Amount of OPL the user has earned through mining liquidity. */
+  // liquidityMiningOPLReward: Decimal;
 
   /**
    * Amount of leftover collateral available for withdrawal to the user.
@@ -61,7 +61,7 @@ export interface LiquityStoreBaseState {
   /** Current price of the native currency (e.g. Ether) in USD. */
   price: Decimal;
 
-  /** Total amount of LUSD currently deposited in the Stability Pool. */
+  /** Total amount of ONEU currently deposited in the Stability Pool. */
   lusdInStabilityPool: Decimal;
 
   /** Total collateral and debt in the Liquity system. */
@@ -87,17 +87,17 @@ export interface LiquityStoreBaseState {
   /** User's stability deposit. */
   stabilityDeposit: StabilityDeposit;
 
-  /** Remaining LQTY that will be collectively rewarded to stability depositors. */
-  remainingStabilityPoolLQTYReward: Decimal;
+  /** Remaining OPL that will be collectively rewarded to stability depositors. */
+  remainingStabilityPoolOPLReward: Decimal;
 
   /** @internal */
   _feesInNormalMode: Fees;
 
-  /** User's LQTY stake. */
-  lqtyStake: LQTYStake;
+  /** User's OPL stake. */
+  lqtyStake: OPLStake;
 
-  /** Total amount of LQTY currently staked. */
-  totalStakedLQTY: Decimal;
+  /** Total amount of OPL currently staked. */
+  totalStakedOPL: Decimal;
 
   /** @internal */
   _riskiestTroveBeforeRedistribution: TroveWithPendingRedistribution;
@@ -130,7 +130,7 @@ export interface LiquityStoreDerivedState {
    * Current redemption rate.
    *
    * @remarks
-   * Note that the actual rate paid by a redemption transaction will depend on the amount of LUSD
+   * Note that the actual rate paid by a redemption transaction will depend on the amount of ONEU
    * being redeemed.
    *
    * Use {@link Fees.redemptionRate} to calculate a precise redemption rate.
@@ -366,45 +366,45 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate.lqtyBalance
       ),
 
-      uniTokenBalance: this._updateIfChanged(
-        eq,
-        "uniTokenBalance",
-        baseState.uniTokenBalance,
-        baseStateUpdate.uniTokenBalance
-      ),
+      // uniTokenBalance: this._updateIfChanged(
+      //   eq,
+      //   "uniTokenBalance",
+      //   baseState.uniTokenBalance,
+      //   baseStateUpdate.uniTokenBalance
+      // ),
 
-      uniTokenAllowance: this._updateIfChanged(
-        eq,
-        "uniTokenAllowance",
-        baseState.uniTokenAllowance,
-        baseStateUpdate.uniTokenAllowance
-      ),
+      // uniTokenAllowance: this._updateIfChanged(
+      //   eq,
+      //   "uniTokenAllowance",
+      //   baseState.uniTokenAllowance,
+      //   baseStateUpdate.uniTokenAllowance
+      // ),
 
-      remainingLiquidityMiningLQTYReward: this._silentlyUpdateIfChanged(
-        eq,
-        baseState.remainingLiquidityMiningLQTYReward,
-        baseStateUpdate.remainingLiquidityMiningLQTYReward
-      ),
+      // remainingLiquidityMiningOPLReward: this._silentlyUpdateIfChanged(
+      //   eq,
+      //   baseState.remainingLiquidityMiningOPLReward,
+      //   baseStateUpdate.remainingLiquidityMiningOPLReward
+      // ),
 
-      liquidityMiningStake: this._updateIfChanged(
-        eq,
-        "liquidityMiningStake",
-        baseState.liquidityMiningStake,
-        baseStateUpdate.liquidityMiningStake
-      ),
+      // liquidityMiningStake: this._updateIfChanged(
+      //   eq,
+      //   "liquidityMiningStake",
+      //   baseState.liquidityMiningStake,
+      //   baseStateUpdate.liquidityMiningStake
+      // ),
 
-      totalStakedUniTokens: this._updateIfChanged(
-        eq,
-        "totalStakedUniTokens",
-        baseState.totalStakedUniTokens,
-        baseStateUpdate.totalStakedUniTokens
-      ),
+      // totalStakedUniTokens: this._updateIfChanged(
+      //   eq,
+      //   "totalStakedUniTokens",
+      //   baseState.totalStakedUniTokens,
+      //   baseStateUpdate.totalStakedUniTokens
+      // ),
 
-      liquidityMiningLQTYReward: this._silentlyUpdateIfChanged(
-        eq,
-        baseState.liquidityMiningLQTYReward,
-        baseStateUpdate.liquidityMiningLQTYReward
-      ),
+      // liquidityMiningOPLReward: this._silentlyUpdateIfChanged(
+      //   eq,
+      //   baseState.liquidityMiningOPLReward,
+      //   baseStateUpdate.liquidityMiningOPLReward
+      // ),
 
       collateralSurplusBalance: this._updateIfChanged(
         eq,
@@ -445,10 +445,10 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate.stabilityDeposit
       ),
 
-      remainingStabilityPoolLQTYReward: this._silentlyUpdateIfChanged(
+      remainingStabilityPoolOPLReward: this._silentlyUpdateIfChanged(
         eq,
-        baseState.remainingStabilityPoolLQTYReward,
-        baseStateUpdate.remainingStabilityPoolLQTYReward
+        baseState.remainingStabilityPoolOPLReward,
+        baseStateUpdate.remainingStabilityPoolOPLReward
       ),
 
       _feesInNormalMode: this._silentlyUpdateIfChanged(
@@ -464,11 +464,11 @@ export abstract class LiquityStore<T = unknown> {
         baseStateUpdate.lqtyStake
       ),
 
-      totalStakedLQTY: this._updateIfChanged(
+      totalStakedOPL: this._updateIfChanged(
         eq,
-        "totalStakedLQTY",
-        baseState.totalStakedLQTY,
-        baseStateUpdate.totalStakedLQTY
+        "totalStakedOPL",
+        baseState.totalStakedOPL,
+        baseStateUpdate.totalStakedOPL
       ),
 
       _riskiestTroveBeforeRedistribution: this._silentlyUpdateIfChanged(

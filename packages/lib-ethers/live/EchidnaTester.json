@@ -30,7 +30,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_AUT",
           "type": "uint256"
         }
       ],
@@ -48,7 +48,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_AUT",
           "type": "uint256"
         },
         {
@@ -76,7 +76,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_AUT",
           "type": "uint256"
         },
         {
@@ -109,7 +109,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_AUT",
           "type": "uint256"
         },
         {
@@ -297,7 +297,7 @@
     },
     {
       "inputs": [],
-      "name": "echidna_ETH_balances",
+      "name": "echidna_AUT_balances",
       "outputs": [
         {
           "internalType": "bool",
@@ -310,7 +310,7 @@
     },
     {
       "inputs": [],
-      "name": "echidna_LUSD_global_balances",
+      "name": "echidna_ONEU_global_balances",
       "outputs": [
         {
           "internalType": "bool",
@@ -469,7 +469,7 @@
       "name": "lusdToken",
       "outputs": [
         {
-          "internalType": "contract LUSDToken",
+          "internalType": "contract ONEUToken",
           "name": "",
           "type": "address"
         }
@@ -486,12 +486,12 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_AUT",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         }
       ],
@@ -509,12 +509,12 @@
         },
         {
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_AUT",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         },
         {
@@ -570,7 +570,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         },
         {
@@ -622,7 +622,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSDExt",
+      "name": "repayONEUExt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -803,7 +803,7 @@
           "type": "uint256"
         }
       ],
-      "name": "withdrawLUSDExt",
+      "name": "withdrawONEUExt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

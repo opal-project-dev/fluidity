@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "LUSDTokenCaller",
-  "sourceName": "contracts/TestContracts/LUSDTokenCaller.sol",
+  "contractName": "ONEUTokenCaller",
+  "sourceName": "contracts/TestContracts/ONEUTokenCaller.sol",
   "abi": [
     {
       "inputs": [
@@ -88,12 +88,12 @@
     {
       "inputs": [
         {
-          "internalType": "contract ILUSDToken",
-          "name": "_LUSD",
+          "internalType": "contract IONEUToken",
+          "name": "_ONEU",
           "type": "address"
         }
       ],
-      "name": "setLUSD",
+      "name": "setONEU",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

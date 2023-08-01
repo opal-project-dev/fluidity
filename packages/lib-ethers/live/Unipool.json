@@ -13,7 +13,7 @@
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressChanged",
+      "name": "OPLTokenAddressChanged",
       "type": "event"
     },
     {
@@ -233,7 +233,7 @@
       "name": "lqtyToken",
       "outputs": [
         {
-          "internalType": "contract ILQTYToken",
+          "internalType": "contract IOPLToken",
           "name": "",
           "type": "address"
         }

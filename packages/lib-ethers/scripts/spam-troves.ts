@@ -3,8 +3,12 @@ import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { Wallet } from "@ethersproject/wallet";
 
-import { Decimal, LUSD_MINIMUM_DEBT, Trove } from "@fluidity/lib-base";
-import { EthersLiquity, EthersLiquityWithStore, BlockPolledLiquityStore } from "@fluidity/lib-ethers";
+import { Decimal, ONEU_MINIMUM_DEBT, Trove } from "@fluidity/lib-base";
+import {
+  EthersLiquity,
+  EthersLiquityWithStore,
+  BlockPolledLiquityStore
+} from "@fluidity/lib-ethers";
 
 import {
   Batched,
@@ -37,7 +41,7 @@ const waitForSuccess = (tx: TransactionResponse) =>
 const createTrove = async (nominalCollateralRatio: Decimal) => {
   const randomWallet = Wallet.createRandom().connect(provider);
 
-  const debt = LUSD_MINIMUM_DEBT.mul(2);
+  const debt = ONEU_MINIMUM_DEBT.mul(2);
   const collateral = debt.mul(nominalCollateralRatio);
 
   await funder

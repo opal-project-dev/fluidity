@@ -6,7 +6,7 @@ import {
   Decimal,
   Fees,
   FrontendStatus,
-  LQTYStake,
+  OPLStake,
   ObservableLiquity,
   ReadableLiquity,
   StabilityDeposit,
@@ -262,23 +262,23 @@ export class SubgraphLiquity implements ReadableLiquity, ObservableLiquity {
     throw new Error("Method not implemented.");
   }
 
-  getLUSDInStabilityPool() {
+  getONEUInStabilityPool() {
     return tokensInStabilityPool.get(this.client, undefined);
   }
 
-  watchLUSDInStabilityPool(onLUSDInStabilityPoolChanged: (lusdInStabilityPool: Decimal) => void) {
-    return tokensInStabilityPool.watch(this.client, onLUSDInStabilityPoolChanged, undefined);
+  watchONEUInStabilityPool(onONEUInStabilityPoolChanged: (lusdInStabilityPool: Decimal) => void) {
+    return tokensInStabilityPool.watch(this.client, onONEUInStabilityPoolChanged, undefined);
   }
 
-  getLUSDBalance(address?: string): Promise<Decimal> {
+  getONEUBalance(address?: string): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 
-  watchLUSDBalance(onLUSDBalanceChanged: (balance: Decimal) => void, address?: string): () => void {
+  watchONEUBalance(onONEUBalanceChanged: (balance: Decimal) => void, address?: string): () => void {
     throw new Error("Method not implemented.");
   }
 
-  getLQTYBalance(address?: string): Promise<Decimal> {
+  getOPLBalance(address?: string): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 
@@ -328,11 +328,11 @@ export class SubgraphLiquity implements ReadableLiquity, ObservableLiquity {
     throw new Error("Method not implemented.");
   }
 
-  getLQTYStake(address?: string): Promise<LQTYStake> {
+  getOPLStake(address?: string): Promise<OPLStake> {
     throw new Error("Method not implemented.");
   }
 
-  getTotalStakedLQTY(): Promise<Decimal> {
+  getTotalStakedOPL(): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 
@@ -348,7 +348,7 @@ export class SubgraphLiquity implements ReadableLiquity, ObservableLiquity {
     throw new Error("Method not implemented.");
   }
 
-  getRemainingLiquidityMiningLQTYReward(): Promise<Decimal> {
+  getRemainingLiquidityMiningOPLReward(): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 
@@ -356,7 +356,7 @@ export class SubgraphLiquity implements ReadableLiquity, ObservableLiquity {
     throw new Error("Method not implemented.");
   }
 
-  getLiquidityMiningLQTYReward(address?: string): Promise<Decimal> {
+  getLiquidityMiningOPLReward(address?: string): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 
@@ -364,7 +364,7 @@ export class SubgraphLiquity implements ReadableLiquity, ObservableLiquity {
     throw new Error("Method not implemented.");
   }
 
-  getRemainingStabilityPoolLQTYReward(): Promise<Decimal> {
+  getRemainingStabilityPoolOPLReward(): Promise<Decimal> {
     throw new Error("Method not implemented.");
   }
 }

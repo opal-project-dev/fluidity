@@ -54,12 +54,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "snapshotETH",
+            "name": "snapshotAUT",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "snapshotLUSDDebt",
+            "name": "snapshotONEUDebt",
             "type": "uint256"
           }
         ],

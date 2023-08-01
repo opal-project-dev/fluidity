@@ -9,7 +9,7 @@ import {
   FrontendStatus,
   LiquidationDetails,
   LiquityStore,
-  LQTYStake,
+  OPLStake,
   RedemptionDetails,
   StabilityDeposit,
   StabilityDepositChangeDetails,
@@ -205,62 +205,62 @@ export class EthersLiquity implements ReadableEthersLiquity, TransactableLiquity
     return this._readable.getStabilityDeposit(address, overrides);
   }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getRemainingStabilityPoolLQTYReward} */
-  getRemainingStabilityPoolLQTYReward(overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getRemainingStabilityPoolLQTYReward(overrides);
+  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getRemainingStabilityPoolOPLReward} */
+  getRemainingStabilityPoolOPLReward(overrides?: EthersCallOverrides): Promise<Decimal> {
+    return this._readable.getRemainingStabilityPoolOPLReward(overrides);
   }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getLUSDInStabilityPool} */
-  getLUSDInStabilityPool(overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getLUSDInStabilityPool(overrides);
+  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getONEUInStabilityPool} */
+  getONEUInStabilityPool(overrides?: EthersCallOverrides): Promise<Decimal> {
+    return this._readable.getONEUInStabilityPool(overrides);
   }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getLUSDBalance} */
-  getLUSDBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getLUSDBalance(address, overrides);
+  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getONEUBalance} */
+  getONEUBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
+    return this._readable.getONEUBalance(address, overrides);
   }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getLQTYBalance} */
-  getLQTYBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getLQTYBalance(address, overrides);
+  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getOPLBalance} */
+  getOPLBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
+    return this._readable.getOPLBalance(address, overrides);
   }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getUniTokenBalance} */
-  getUniTokenBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getUniTokenBalance(address, overrides);
-  }
+  // /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getUniTokenBalance} */
+  // getUniTokenBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
+  //   return this._readable.getUniTokenBalance(address, overrides);
+  // }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getUniTokenAllowance} */
-  getUniTokenAllowance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getUniTokenAllowance(address, overrides);
-  }
+  // /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getUniTokenAllowance} */
+  // getUniTokenAllowance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
+  //   return this._readable.getUniTokenAllowance(address, overrides);
+  // }
 
-  /** @internal */
-  _getRemainingLiquidityMiningLQTYRewardCalculator(
-    overrides?: EthersCallOverrides
-  ): Promise<(blockTimestamp: number) => Decimal> {
-    return this._readable._getRemainingLiquidityMiningLQTYRewardCalculator(overrides);
-  }
+  // /** @internal */
+  // _getRemainingLiquidityMiningOPLRewardCalculator(
+  //   overrides?: EthersCallOverrides
+  // ): Promise<(blockTimestamp: number) => Decimal> {
+  //   return this._readable._getRemainingLiquidityMiningOPLRewardCalculator(overrides);
+  // }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getRemainingLiquidityMiningLQTYReward} */
-  getRemainingLiquidityMiningLQTYReward(overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getRemainingLiquidityMiningLQTYReward(overrides);
-  }
+  // /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getRemainingLiquidityMiningOPLReward} */
+  // getRemainingLiquidityMiningOPLReward(overrides?: EthersCallOverrides): Promise<Decimal> {
+  //   return this._readable.getRemainingLiquidityMiningOPLReward(overrides);
+  // }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getLiquidityMiningStake} */
-  getLiquidityMiningStake(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getLiquidityMiningStake(address, overrides);
-  }
+  // /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getLiquidityMiningStake} */
+  // getLiquidityMiningStake(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
+  //   return this._readable.getLiquidityMiningStake(address, overrides);
+  // }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getTotalStakedUniTokens} */
-  getTotalStakedUniTokens(overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getTotalStakedUniTokens(overrides);
-  }
+  // /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getTotalStakedUniTokens} */
+  // getTotalStakedUniTokens(overrides?: EthersCallOverrides): Promise<Decimal> {
+  //   return this._readable.getTotalStakedUniTokens(overrides);
+  // }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getLiquidityMiningLQTYReward} */
-  getLiquidityMiningLQTYReward(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getLiquidityMiningLQTYReward(address, overrides);
-  }
+  // /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getLiquidityMiningOPLReward} */
+  // getLiquidityMiningOPLReward(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
+  //   return this._readable.getLiquidityMiningOPLReward(address, overrides);
+  // }
 
   /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getCollateralSurplusBalance} */
   getCollateralSurplusBalance(address?: string, overrides?: EthersCallOverrides): Promise<Decimal> {
@@ -297,14 +297,14 @@ export class EthersLiquity implements ReadableEthersLiquity, TransactableLiquity
     return this._readable.getFees(overrides);
   }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getLQTYStake} */
-  getLQTYStake(address?: string, overrides?: EthersCallOverrides): Promise<LQTYStake> {
-    return this._readable.getLQTYStake(address, overrides);
+  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getOPLStake} */
+  getOPLStake(address?: string, overrides?: EthersCallOverrides): Promise<OPLStake> {
+    return this._readable.getOPLStake(address, overrides);
   }
 
-  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getTotalStakedLQTY} */
-  getTotalStakedLQTY(overrides?: EthersCallOverrides): Promise<Decimal> {
-    return this._readable.getTotalStakedLQTY(overrides);
+  /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getTotalStakedOPL} */
+  getTotalStakedOPL(overrides?: EthersCallOverrides): Promise<Decimal> {
+    return this._readable.getTotalStakedOPL(overrides);
   }
 
   /** {@inheritDoc @fluidity/lib-base#ReadableLiquity.getFrontendStatus} */
@@ -386,32 +386,32 @@ export class EthersLiquity implements ReadableEthersLiquity, TransactableLiquity
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.borrowLUSD}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.borrowONEU}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  borrowLUSD(
+  borrowONEU(
     amount: Decimalish,
     maxBorrowingRate?: Decimalish,
     overrides?: EthersTransactionOverrides
   ): Promise<TroveAdjustmentDetails> {
-    return this.send.borrowLUSD(amount, maxBorrowingRate, overrides).then(waitForSuccess);
+    return this.send.borrowONEU(amount, maxBorrowingRate, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.repayLUSD}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.repayONEU}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  repayLUSD(
+  repayONEU(
     amount: Decimalish,
     overrides?: EthersTransactionOverrides
   ): Promise<TroveAdjustmentDetails> {
-    return this.send.repayLUSD(amount, overrides).then(waitForSuccess);
+    return this.send.repayONEU(amount, overrides).then(waitForSuccess);
   }
 
   /** @internal */
@@ -448,32 +448,32 @@ export class EthersLiquity implements ReadableEthersLiquity, TransactableLiquity
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.depositLUSDInStabilityPool}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.depositONEUInStabilityPool}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  depositLUSDInStabilityPool(
+  depositONEUInStabilityPool(
     amount: Decimalish,
     frontendTag?: string,
     overrides?: EthersTransactionOverrides
   ): Promise<StabilityDepositChangeDetails> {
-    return this.send.depositLUSDInStabilityPool(amount, frontendTag, overrides).then(waitForSuccess);
+    return this.send.depositONEUInStabilityPool(amount, frontendTag, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.withdrawLUSDFromStabilityPool}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.withdrawONEUFromStabilityPool}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  withdrawLUSDFromStabilityPool(
+  withdrawONEUFromStabilityPool(
     amount: Decimalish,
     overrides?: EthersTransactionOverrides
   ): Promise<StabilityDepositChangeDetails> {
-    return this.send.withdrawLUSDFromStabilityPool(amount, overrides).then(waitForSuccess);
+    return this.send.withdrawONEUFromStabilityPool(amount, overrides).then(waitForSuccess);
   }
 
   /**
@@ -503,48 +503,48 @@ export class EthersLiquity implements ReadableEthersLiquity, TransactableLiquity
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.sendLUSD}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.sendONEU}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  sendLUSD(
+  sendONEU(
     toAddress: string,
     amount: Decimalish,
     overrides?: EthersTransactionOverrides
   ): Promise<void> {
-    return this.send.sendLUSD(toAddress, amount, overrides).then(waitForSuccess);
+    return this.send.sendONEU(toAddress, amount, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.sendLQTY}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.sendOPL}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  sendLQTY(
+  sendOPL(
     toAddress: string,
     amount: Decimalish,
     overrides?: EthersTransactionOverrides
   ): Promise<void> {
-    return this.send.sendLQTY(toAddress, amount, overrides).then(waitForSuccess);
+    return this.send.sendOPL(toAddress, amount, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.redeemLUSD}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.redeemONEU}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  redeemLUSD(
+  redeemONEU(
     amount: Decimalish,
     maxRedemptionRate?: Decimalish,
     overrides?: EthersTransactionOverrides
   ): Promise<RedemptionDetails> {
-    return this.send.redeemLUSD(amount, maxRedemptionRate, overrides).then(waitForSuccess);
+    return this.send.redeemONEU(amount, maxRedemptionRate, overrides).then(waitForSuccess);
   }
 
   /**
@@ -559,25 +559,25 @@ export class EthersLiquity implements ReadableEthersLiquity, TransactableLiquity
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.stakeLQTY}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.stakeOPL}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  stakeLQTY(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
-    return this.send.stakeLQTY(amount, overrides).then(waitForSuccess);
+  stakeOPL(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
+    return this.send.stakeOPL(amount, overrides).then(waitForSuccess);
   }
 
   /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.unstakeLQTY}
+   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.unstakeOPL}
    *
    * @throws
    * Throws {@link EthersTransactionFailedError} in case of transaction failure.
    * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
    */
-  unstakeLQTY(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
-    return this.send.unstakeLQTY(amount, overrides).then(waitForSuccess);
+  unstakeOPL(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
+    return this.send.unstakeOPL(amount, overrides).then(waitForSuccess);
   }
 
   /**
@@ -602,69 +602,69 @@ export class EthersLiquity implements ReadableEthersLiquity, TransactableLiquity
     return this.send.registerFrontend(kickbackRate, overrides).then(waitForSuccess);
   }
 
-  /** @internal */
-  _mintUniToken(
-    amount: Decimalish,
-    address?: string,
-    overrides?: EthersTransactionOverrides
-  ): Promise<void> {
-    return this.send._mintUniToken(amount, address, overrides).then(waitForSuccess);
-  }
+  // /** @internal */
+  // _mintUniToken(
+  //   amount: Decimalish,
+  //   address?: string,
+  //   overrides?: EthersTransactionOverrides
+  // ): Promise<void> {
+  //   return this.send._mintUniToken(amount, address, overrides).then(waitForSuccess);
+  // }
 
-  /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.approveUniTokens}
-   *
-   * @throws
-   * Throws {@link EthersTransactionFailedError} in case of transaction failure.
-   * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
-   */
-  approveUniTokens(allowance?: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
-    return this.send.approveUniTokens(allowance, overrides).then(waitForSuccess);
-  }
+  // /**
+  //  * {@inheritDoc @fluidity/lib-base#TransactableLiquity.approveUniTokens}
+  //  *
+  //  * @throws
+  //  * Throws {@link EthersTransactionFailedError} in case of transaction failure.
+  //  * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
+  //  */
+  // approveUniTokens(allowance?: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
+  //   return this.send.approveUniTokens(allowance, overrides).then(waitForSuccess);
+  // }
 
-  /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.stakeUniTokens}
-   *
-   * @throws
-   * Throws {@link EthersTransactionFailedError} in case of transaction failure.
-   * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
-   */
-  stakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
-    return this.send.stakeUniTokens(amount, overrides).then(waitForSuccess);
-  }
+  // /**
+  //  * {@inheritDoc @fluidity/lib-base#TransactableLiquity.stakeUniTokens}
+  //  *
+  //  * @throws
+  //  * Throws {@link EthersTransactionFailedError} in case of transaction failure.
+  //  * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
+  //  */
+  // stakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
+  //   return this.send.stakeUniTokens(amount, overrides).then(waitForSuccess);
+  // }
 
-  /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.unstakeUniTokens}
-   *
-   * @throws
-   * Throws {@link EthersTransactionFailedError} in case of transaction failure.
-   * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
-   */
-  unstakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
-    return this.send.unstakeUniTokens(amount, overrides).then(waitForSuccess);
-  }
+  // /**
+  //  * {@inheritDoc @fluidity/lib-base#TransactableLiquity.unstakeUniTokens}
+  //  *
+  //  * @throws
+  //  * Throws {@link EthersTransactionFailedError} in case of transaction failure.
+  //  * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
+  //  */
+  // unstakeUniTokens(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void> {
+  //   return this.send.unstakeUniTokens(amount, overrides).then(waitForSuccess);
+  // }
 
-  /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.withdrawLQTYRewardFromLiquidityMining}
-   *
-   * @throws
-   * Throws {@link EthersTransactionFailedError} in case of transaction failure.
-   * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
-   */
-  withdrawLQTYRewardFromLiquidityMining(overrides?: EthersTransactionOverrides): Promise<void> {
-    return this.send.withdrawLQTYRewardFromLiquidityMining(overrides).then(waitForSuccess);
-  }
+  // /**
+  //  * {@inheritDoc @fluidity/lib-base#TransactableLiquity.withdrawOPLRewardFromLiquidityMining}
+  //  *
+  //  * @throws
+  //  * Throws {@link EthersTransactionFailedError} in case of transaction failure.
+  //  * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
+  //  */
+  // withdrawOPLRewardFromLiquidityMining(overrides?: EthersTransactionOverrides): Promise<void> {
+  //   return this.send.withdrawOPLRewardFromLiquidityMining(overrides).then(waitForSuccess);
+  // }
 
-  /**
-   * {@inheritDoc @fluidity/lib-base#TransactableLiquity.exitLiquidityMining}
-   *
-   * @throws
-   * Throws {@link EthersTransactionFailedError} in case of transaction failure.
-   * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
-   */
-  exitLiquidityMining(overrides?: EthersTransactionOverrides): Promise<void> {
-    return this.send.exitLiquidityMining(overrides).then(waitForSuccess);
-  }
+  // /**
+  //  * {@inheritDoc @fluidity/lib-base#TransactableLiquity.exitLiquidityMining}
+  //  *
+  //  * @throws
+  //  * Throws {@link EthersTransactionFailedError} in case of transaction failure.
+  //  * Throws {@link EthersTransactionCancelledError} if the transaction is cancelled or replaced.
+  //  */
+  // exitLiquidityMining(overrides?: EthersTransactionOverrides): Promise<void> {
+  //   return this.send.exitLiquidityMining(overrides).then(waitForSuccess);
+  // }
 }
 
 /**

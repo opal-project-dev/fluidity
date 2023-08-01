@@ -3,7 +3,7 @@ import fs from "fs";
 import {
   Decimal,
   Difference,
-  LUSD_MINIMUM_DEBT,
+  ONEU_MINIMUM_DEBT,
   Trove,
   TroveWithPendingRedistribution
 } from "@fluidity/lib-base";
@@ -84,15 +84,15 @@ export const chaos = async ({
       } else if (x < 0.7) {
         const deposit = await liquity.getStabilityDeposit();
 
-        if (deposit.initialLUSD.isZero || x < 0.6) {
+        if (deposit.initialONEU.isZero || x < 0.6) {
           await fixture.depositRandomAmountInStabilityPool(user.address, liquity);
         } else {
           await fixture.withdrawRandomAmountFromStabilityPool(user.address, liquity, deposit);
         }
       } else if (x < 0.9) {
-        const stake = await liquity.getLQTYStake();
+        const stake = await liquity.getOPLStake();
 
-        if (stake.stakedLQTY.isZero || x < 0.8) {
+        if (stake.stakedOPL.isZero || x < 0.8) {
           await fixture.stakeRandomAmount(user.address, liquity);
         } else {
           await fixture.unstakeRandomAmount(user.address, liquity, stake);
@@ -101,8 +101,8 @@ export const chaos = async ({
         await fixture.redeemRandomAmount(user.address, liquity);
       }
 
-      // await fixture.sweepLUSD(liquity);
-      await fixture.sweepLQTY(liquity);
+      // await fixture.sweepONEU(liquity);
+      await fixture.sweepOPL(liquity);
 
       const listOfTroves = await getListOfTrovesBeforeRedistribution(deployerLiquity);
       const totalRedistributed = await deployerLiquity.getTotalRedistributed();
@@ -144,8 +144,8 @@ export const order = async () => {
 
     if (funderTrove.isEmpty) {
       const targetTrove = new Trove(
-        LUSD_MINIMUM_DEBT.mulDiv(targetCollateralRatio, initialPrice),
-        LUSD_MINIMUM_DEBT
+        ONEU_MINIMUM_DEBT.mulDiv(targetCollateralRatio, initialPrice),
+        ONEU_MINIMUM_DEBT
       );
 
       const fees = await funderLiquity.getFees();

@@ -98,17 +98,17 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_AUT",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDLoss",
+          "name": "_ONEULoss",
           "type": "uint256"
         }
       ],
-      "name": "ETHGainWithdrawn",
+      "name": "AUTGainWithdrawn",
       "type": "event"
     },
     {
@@ -268,11 +268,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LQTY",
+          "name": "_OPL",
           "type": "uint256"
         }
       ],
-      "name": "LQTYPaidToDepositor",
+      "name": "OPLPaidToDepositor",
       "type": "event"
     },
     {
@@ -287,11 +287,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LQTY",
+          "name": "_OPL",
           "type": "uint256"
         }
       ],
-      "name": "LQTYPaidToFrontEnd",
+      "name": "OPLPaidToFrontEnd",
       "type": "event"
     },
     {
@@ -300,11 +300,11 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "_newLUSDTokenAddress",
+          "name": "_newONEUTokenAddress",
           "type": "address"
         }
       ],
-      "name": "LUSDTokenAddressChanged",
+      "name": "ONEUTokenAddressChanged",
       "type": "event"
     },
     {
@@ -394,7 +394,7 @@
           "type": "uint256"
         }
       ],
-      "name": "StabilityPoolETHBalanceUpdated",
+      "name": "StabilityPoolAUTBalanceUpdated",
       "type": "event"
     },
     {
@@ -407,7 +407,7 @@
           "type": "uint256"
         }
       ],
-      "name": "StabilityPoolLUSDBalanceUpdated",
+      "name": "StabilityPoolONEUBalanceUpdated",
       "type": "event"
     },
     {
@@ -469,7 +469,7 @@
           "type": "address"
         }
       ],
-      "name": "getCompoundedLUSDDeposit",
+      "name": "getCompoundedONEUDeposit",
       "outputs": [
         {
           "internalType": "uint256",
@@ -488,7 +488,7 @@
           "type": "address"
         }
       ],
-      "name": "getDepositorETHGain",
+      "name": "getDepositorAUTGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -507,7 +507,7 @@
           "type": "address"
         }
       ],
-      "name": "getDepositorLQTYGain",
+      "name": "getDepositorAUTGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -520,7 +520,7 @@
     },
     {
       "inputs": [],
-      "name": "getETH",
+      "name": "getAUT",
       "outputs": [
         {
           "internalType": "uint256",
@@ -539,7 +539,7 @@
           "type": "address"
         }
       ],
-      "name": "getFrontEndLQTYGain",
+      "name": "getFrontEndOPLGain",
       "outputs": [
         {
           "internalType": "uint256",
@@ -552,7 +552,7 @@
     },
     {
       "inputs": [],
-      "name": "getTotalLUSDDeposits",
+      "name": "getTotalONEUDeposits",
       "outputs": [
         {
           "internalType": "uint256",
@@ -668,7 +668,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawETHGainToTrove",
+      "name": "withdrawAUTGainToTrove",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

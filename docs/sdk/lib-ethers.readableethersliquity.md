@@ -31,26 +31,20 @@ The constructor for this class is marked as internal. Third-party code should no
 |  [getCollateralSurplusBalance(address, overrides)](./lib-ethers.readableethersliquity.getcollateralsurplusbalance.md) |  | Get the amount of leftover collateral available for withdrawal by an address. |
 |  [getFees(overrides)](./lib-ethers.readableethersliquity.getfees.md) |  | Get a calculator for current fees. |
 |  [getFrontendStatus(address, overrides)](./lib-ethers.readableethersliquity.getfrontendstatus.md) |  | Check whether an address is registered as a Liquity frontend, and what its kickback rate is. |
-|  [getLiquidityMiningLQTYReward(address, overrides)](./lib-ethers.readableethersliquity.getliquiditymininglqtyreward.md) |  | Get the amount of LQTY earned by an address through mining liquidity. |
-|  [getLiquidityMiningStake(address, overrides)](./lib-ethers.readableethersliquity.getliquidityminingstake.md) |  | Get the amount of Uniswap ETH/LUSD LP tokens currently staked by an address in liquidity mining. |
-|  [getLQTYBalance(address, overrides)](./lib-ethers.readableethersliquity.getlqtybalance.md) |  | Get the amount of LQTY held by an address. |
-|  [getLQTYStake(address, overrides)](./lib-ethers.readableethersliquity.getlqtystake.md) |  | Get the current state of an LQTY Stake. |
-|  [getLUSDBalance(address, overrides)](./lib-ethers.readableethersliquity.getlusdbalance.md) |  | Get the amount of LUSD held by an address. |
-|  [getLUSDInStabilityPool(overrides)](./lib-ethers.readableethersliquity.getlusdinstabilitypool.md) |  | Get the total amount of LUSD currently deposited in the Stability Pool. |
 |  [getNumberOfTroves(overrides)](./lib-ethers.readableethersliquity.getnumberoftroves.md) |  | Get number of Troves that are currently open. |
+|  [getONEUBalance(address, overrides)](./lib-ethers.readableethersliquity.getoneubalance.md) |  | Get the amount of ONEU held by an address. |
+|  [getONEUInStabilityPool(overrides)](./lib-ethers.readableethersliquity.getoneuinstabilitypool.md) |  | Get the total amount of ONEU currently deposited in the Stability Pool. |
+|  [getOPLBalance(address, overrides)](./lib-ethers.readableethersliquity.getoplbalance.md) |  | Get the amount of OPL held by an address. |
+|  [getOPLStake(address, overrides)](./lib-ethers.readableethersliquity.getoplstake.md) |  | Get the current state of an OPL Stake. |
 |  [getPrice(overrides)](./lib-ethers.readableethersliquity.getprice.md) |  | Get the current price of the native currency (e.g. Ether) in USD. |
-|  [getRemainingLiquidityMiningLQTYReward(overrides)](./lib-ethers.readableethersliquity.getremainingliquiditymininglqtyreward.md) |  | Get the remaining LQTY that will be collectively rewarded to liquidity miners. |
-|  [getRemainingStabilityPoolLQTYReward(overrides)](./lib-ethers.readableethersliquity.getremainingstabilitypoollqtyreward.md) |  | Get the remaining LQTY that will be collectively rewarded to stability depositors. |
+|  [getRemainingStabilityPoolOPLReward(overrides)](./lib-ethers.readableethersliquity.getremainingstabilitypooloplreward.md) |  | Get the remaining OPL that will be collectively rewarded to stability depositors. |
 |  [getStabilityDeposit(address, overrides)](./lib-ethers.readableethersliquity.getstabilitydeposit.md) |  | Get the current state of a Stability Deposit. |
 |  [getTotal(overrides)](./lib-ethers.readableethersliquity.gettotal.md) |  | Get the total amount of collateral and debt in the Liquity system. |
 |  [getTotalRedistributed(overrides)](./lib-ethers.readableethersliquity.gettotalredistributed.md) |  | Get the total collateral and debt per stake that has been liquidated through redistribution. |
-|  [getTotalStakedLQTY(overrides)](./lib-ethers.readableethersliquity.gettotalstakedlqty.md) |  | Get the total amount of LQTY currently staked. |
-|  [getTotalStakedUniTokens(overrides)](./lib-ethers.readableethersliquity.gettotalstakedunitokens.md) |  | Get the total amount of Uniswap ETH/LUSD LP tokens currently staked in liquidity mining. |
+|  [getTotalStakedOPL(overrides)](./lib-ethers.readableethersliquity.gettotalstakedopl.md) |  | Get the total amount of OPL currently staked. |
 |  [getTrove(address, overrides)](./lib-ethers.readableethersliquity.gettrove.md) |  | Get the current state of a Trove. |
 |  [getTroveBeforeRedistribution(address, overrides)](./lib-ethers.readableethersliquity.gettrovebeforeredistribution.md) |  | Get a Trove in its state after the last direct modification. |
 |  [getTroves(params, overrides)](./lib-ethers.readableethersliquity.gettroves_1.md) |  | Get a slice from the list of Troves. |
-|  [getUniTokenAllowance(address, overrides)](./lib-ethers.readableethersliquity.getunitokenallowance.md) |  | Get the liquidity mining contract's allowance of a holder's Uniswap ETH/LUSD LP tokens. |
-|  [getUniTokenBalance(address, overrides)](./lib-ethers.readableethersliquity.getunitokenbalance.md) |  | Get the amount of Uniswap ETH/LUSD LP tokens held by an address. |
 |  [hasStore()](./lib-ethers.readableethersliquity.hasstore.md) |  | Check whether this <code>ReadableEthersLiquity</code> is a [ReadableEthersLiquityWithStore](./lib-ethers.readableethersliquitywithstore.md)<!-- -->. |
 |  [hasStore(store)](./lib-ethers.readableethersliquity.hasstore_1.md) |  | Check whether this <code>ReadableEthersLiquity</code> is a [ReadableEthersLiquityWithStore](./lib-ethers.readableethersliquitywithstore.md)<!-- -->&lt;[BlockPolledLiquityStore](./lib-ethers.blockpolledliquitystore.md)<!-- -->&gt;<!-- -->. |
 

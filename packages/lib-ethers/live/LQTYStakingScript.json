@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "LQTYStakingScript",
-  "sourceName": "contracts/Proxy/LQTYStakingScript.sol",
+  "contractName": "OPLStakingScript",
+  "sourceName": "contracts/Proxy/OPLStakingScript.sol",
   "abi": [
     {
       "inputs": [
@@ -18,7 +18,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_LQTYamount",
+          "name": "_OPLamount",
           "type": "uint256"
         }
       ],

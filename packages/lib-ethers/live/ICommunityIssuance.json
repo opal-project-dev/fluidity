@@ -13,7 +13,7 @@
           "type": "address"
         }
       ],
-      "name": "LQTYTokenAddressSet",
+      "name": "OPLTokenAddressSet",
       "type": "event"
     },
     {
@@ -35,16 +35,16 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_totalLQTYIssued",
+          "name": "_totalOPLIssued",
           "type": "uint256"
         }
       ],
-      "name": "TotalLQTYIssuedUpdated",
+      "name": "TotalOPLIssuedUpdated",
       "type": "event"
     },
     {
       "inputs": [],
-      "name": "issueLQTY",
+      "name": "issueOPL",
       "outputs": [
         {
           "internalType": "uint256",
@@ -64,11 +64,11 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LQTYamount",
+          "name": "_OPLamount",
           "type": "uint256"
         }
       ],
-      "name": "sendLQTY",
+      "name": "sendOPL",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

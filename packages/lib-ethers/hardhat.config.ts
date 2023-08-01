@@ -77,6 +77,9 @@ const oracleAddresses = {
   kovan: {
     chainlink: "0x9326BFA02ADD2366b30bacB125260Af641031331",
     tellor: "0x20374E579832859f180536A69093A126Db1c8aE9" // Playground
+  },
+  autonity: {
+    chainlink: "0xce40AF5bFeDa2ECAc145C0185B43a1b6b202F73E"
   }
 };
 
@@ -113,8 +116,8 @@ const config: HardhatUserConfig = {
     },
 
     bakerloo: {
-        url: "https://rpc2.bakerloo.autonity.network:8545",
-        accounts: [deployerAccount]
+      url: "https://rpc2.bakerloo.autonity.network:8545",
+      accounts: [deployerAccount]
     },
 
     ...infuraNetwork("ropsten"),
@@ -125,6 +128,11 @@ const config: HardhatUserConfig = {
 
     kiln: {
       url: "https://rpc.kiln.themerge.dev",
+      accounts: [deployerAccount]
+    },
+
+    autonity: {
+      url: "https://rpc1.piccadilly.autonity.org/",
       accounts: [deployerAccount]
     }
   },
@@ -198,13 +206,13 @@ task("deploy", "Deploys the contracts to the network")
   )
   .addOptionalParam(
     "createUniswapPair",
-    "Create a real Uniswap v2 WETH-LUSD pair instead of a mock ERC20 token",
+    "Create a real Uniswap v2 WAUT-ONEU pair instead of a mock ERC20 token",
     undefined,
     types.boolean
   )
   .setAction(
     async ({ channel, gasPrice, useRealPriceFeed, createUniswapPair }: DeployParams, env) => {
-      const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
+      //const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
       const [deployer] = await env.ethers.getSigners();
 
       useRealPriceFeed ??= env.network.name === "mainnet";
@@ -216,14 +224,14 @@ task("deploy", "Deploys the contracts to the network")
       let wethAddress: string | undefined = undefined;
       if (createUniswapPair) {
         if (!hasWETH(env.network.name)) {
-          throw new Error(`WETH not deployed on ${env.network.name}`);
+          throw new Error(`WAUT not deployed on ${env.network.name}`);
         }
         wethAddress = wethAddresses[env.network.name];
       }
 
       setSilent(false);
 
-      const deployment = await env.deployLiquity(deployer, useRealPriceFeed, wethAddress, overrides);
+      const deployment = await env.deployLiquity(deployer, useRealPriceFeed, wethAddress);
 
       if (useRealPriceFeed) {
         const contracts = _connectToContracts(deployer, deployment);
@@ -231,19 +239,10 @@ task("deploy", "Deploys the contracts to the network")
         assert(!_priceFeedIsTestnet(contracts.priceFeed));
 
         if (hasOracles(env.network.name)) {
-          const tellorCallerAddress = await deployTellorCaller(
-            deployer,
-            getContractFactory(env),
-            oracleAddresses[env.network.name].tellor,
-            overrides
-          );
-
           console.log(`Hooking up PriceFeed with oracles ...`);
 
           const tx = await contracts.priceFeed.setAddresses(
-            oracleAddresses[env.network.name].chainlink,
-            tellorCallerAddress,
-            overrides
+            oracleAddresses[env.network.name].chainlink
           );
 
           await tx.wait();

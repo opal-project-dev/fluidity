@@ -35,11 +35,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_ETH",
+          "name": "_AUT",
           "type": "uint256"
         }
       ],
-      "name": "DefaultPoolETHBalanceUpdated",
+      "name": "DefaultPoolAUTBalanceUpdated",
       "type": "event"
     },
     {
@@ -48,11 +48,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDDebt",
+          "name": "_ONEUDebt",
           "type": "uint256"
         }
       ],
-      "name": "DefaultPoolLUSDDebtUpdated",
+      "name": "DefaultPoolONEUDebtUpdated",
       "type": "event"
     },
     {
@@ -65,7 +65,7 @@
           "type": "uint256"
         }
       ],
-      "name": "ETHBalanceUpdated",
+      "name": "AUTBalanceUpdated",
       "type": "event"
     },
     {
@@ -97,7 +97,7 @@
           "type": "uint256"
         }
       ],
-      "name": "LUSDBalanceUpdated",
+      "name": "ONEUBalanceUpdated",
       "type": "event"
     },
     {
@@ -134,14 +134,14 @@
           "type": "uint256"
         }
       ],
-      "name": "decreaseLUSDDebt",
+      "name": "decreaseONEUDebt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [],
-      "name": "getETH",
+      "name": "getAUT",
       "outputs": [
         {
           "internalType": "uint256",
@@ -154,7 +154,7 @@
     },
     {
       "inputs": [],
-      "name": "getLUSDDebt",
+      "name": "getONEUDebt",
       "outputs": [
         {
           "internalType": "uint256",
@@ -173,7 +173,7 @@
           "type": "uint256"
         }
       ],
-      "name": "increaseLUSDDebt",
+      "name": "increaseONEUDebt",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -186,7 +186,7 @@
           "type": "uint256"
         }
       ],
-      "name": "sendETHToActivePool",
+      "name": "sendAUTToActivePool",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

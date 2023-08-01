@@ -3,14 +3,8 @@ import { Signer } from "@ethersproject/abstract-signer";
 
 import { Decimal } from "@fluidity/lib-base";
 
+// Change to autonity if you want to run front-end on chain
 import devOrNull from "../deployments/dev.json";
-import goerli from "../deployments/goerli.json";
-import kovan from "../deployments/kovan.json";
-import rinkeby from "../deployments/rinkeby.json";
-import ropsten from "../deployments/ropsten.json";
-import mainnet from "../deployments/mainnet.json";
-import bakerloo from "../deployments/bakerloo.json";
-// import kiln from "../deployments/kiln.json";
 
 import { numberify, panic } from "./_utils";
 import { EthersProvider, EthersSigner } from "./types";
@@ -29,13 +23,6 @@ const dev = devOrNull as _LiquityDeploymentJSON | null;
 const deployments: {
   [chainId: number]: _LiquityDeploymentJSON | undefined;
 } = {
-  [mainnet.chainId]: mainnet,
-  [ropsten.chainId]: ropsten,
-  [rinkeby.chainId]: rinkeby,
-  [goerli.chainId]: goerli,
-  [kovan.chainId]: kovan,
-  [bakerloo.chainId]: bakerloo,
-  // [kiln.chainId]: kiln,
   ...(dev !== null ? { [dev.chainId]: dev } : {})
 };
 
@@ -75,11 +62,11 @@ export interface EthersLiquityConnection extends EthersLiquityConnectionOptional
   /** Time period (in seconds) after `deploymentDate` during which redemptions are disabled. */
   readonly bootstrapPeriod: number;
 
-  /** Total amount of LQTY allocated for rewarding stability depositors. */
-  readonly totalStabilityPoolLQTYReward: Decimal;
+  /** Total amount of OPL allocated for rewarding stability depositors. */
+  readonly totalStabilityPoolOPLReward: Decimal;
 
-  /** Amount of LQTY collectively rewarded to stakers of the liquidity mining pool per second. */
-  readonly liquidityMiningLQTYRewardRate: Decimal;
+  /** Amount of OPL collectively rewarded to stakers of the liquidity mining pool per second. */
+  // readonly liquidityMiningOPLRewardRate: Decimal;
 
   /** A mapping of Liquity contracts' names to their addresses. */
   readonly addresses: Record<string, string>;
@@ -108,8 +95,8 @@ const connectionFrom = (
   _multicall: _Multicall | undefined,
   {
     deploymentDate,
-    totalStabilityPoolLQTYReward,
-    liquidityMiningLQTYRewardRate,
+    totalStabilityPoolOPLReward,
+    // liquidityMiningOPLRewardRate,
     ...deployment
   }: _LiquityDeploymentJSON,
   optionalParams?: EthersLiquityConnectionOptionalParams
@@ -128,8 +115,8 @@ const connectionFrom = (
     _contracts,
     _multicall,
     deploymentDate: new Date(deploymentDate),
-    totalStabilityPoolLQTYReward: Decimal.from(totalStabilityPoolLQTYReward),
-    liquidityMiningLQTYRewardRate: Decimal.from(liquidityMiningLQTYRewardRate),
+    totalStabilityPoolOPLReward: Decimal.from(totalStabilityPoolOPLReward),
+    // liquidityMiningOPLRewardRate: Decimal.from(liquidityMiningOPLRewardRate),
     ...deployment,
     ...optionalParams
   });
@@ -248,7 +235,7 @@ const validStoreOptions = ["blockPolled"];
  */
 export interface EthersLiquityConnectionOptionalParams {
   /**
-   * Address whose Trove, Stability Deposit, LQTY Stake and balances will be read by default.
+   * Address whose Trove, Stability Deposit, OPL Stake and balances will be read by default.
    *
    * @remarks
    * For example {@link EthersLiquity.getTrove | getTrove(address?)} will return the Trove owned by
@@ -260,11 +247,11 @@ export interface EthersLiquityConnectionOptionalParams {
   readonly userAddress?: string;
 
   /**
-   * Address that will receive LQTY rewards from newly created Stability Deposits by default.
+   * Address that will receive OPL rewards from newly created Stability Deposits by default.
    *
    * @remarks
    * For example
-   * {@link EthersLiquity.depositLUSDInStabilityPool | depositLUSDInStabilityPool(amount, frontendTag?)}
+   * {@link EthersLiquity.depositONEUInStabilityPool | depositONEUInStabilityPool(amount, frontendTag?)}
    * will tag newly made Stability Deposits with this address when its `frontendTag` parameter is
    * omitted.
    */

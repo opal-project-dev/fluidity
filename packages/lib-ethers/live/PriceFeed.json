@@ -63,7 +63,7 @@
     },
     {
       "inputs": [],
-      "name": "ETHUSD_TELLOR_REQ_ID",
+      "name": "AUTUSD_TELLOR_REQ_ID",
       "outputs": [
         {
           "internalType": "uint256",

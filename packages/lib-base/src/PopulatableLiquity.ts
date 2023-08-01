@@ -42,16 +42,16 @@ export interface PopulatedLiquityTransaction<
  * @remarks
  * The Liquity protocol fulfills redemptions by repaying the debt of Troves in ascending order of
  * their collateralization ratio, and taking a portion of their collateral in exchange. Due to the
- * {@link @fluidity/lib-base#LUSD_MINIMUM_DEBT | minimum debt} requirement that Troves must fulfill,
- * some LUSD amounts are not possible to redeem exactly.
+ * {@link @fluidity/lib-base#ONEU_MINIMUM_DEBT | minimum debt} requirement that Troves must fulfill,
+ * some ONEU amounts are not possible to redeem exactly.
  *
- * When {@link @fluidity/lib-base#PopulatableLiquity.redeemLUSD | redeemLUSD()} is called with an
- * amount that can't be fully redeemed, the amount will be truncated (see the `redeemableLUSDAmount`
+ * When {@link @fluidity/lib-base#PopulatableLiquity.redeemONEU | redeemONEU()} is called with an
+ * amount that can't be fully redeemed, the amount will be truncated (see the `redeemableONEUAmount`
  * property). When this happens, the redeemer can either redeem the truncated amount by sending the
  * transaction unchanged, or prepare a new transaction by
  * {@link @fluidity/lib-base#PopulatedRedemption.increaseAmountByMinimumNetDebt | increasing the amount}
  * to the next lowest possible value, which is the sum of the truncated amount and
- * {@link @fluidity/lib-base#LUSD_MINIMUM_NET_DEBT}.
+ * {@link @fluidity/lib-base#ONEU_MINIMUM_NET_DEBT}.
  *
  * @public
  */
@@ -60,13 +60,13 @@ export interface PopulatedRedemption<P = unknown, S = unknown, R = unknown>
     P,
     SentLiquityTransaction<S, LiquityReceipt<R, RedemptionDetails>>
   > {
-  /** Amount of LUSD the redeemer is trying to redeem. */
-  readonly attemptedLUSDAmount: Decimal;
+  /** Amount of ONEU the redeemer is trying to redeem. */
+  readonly attemptedONEUAmount: Decimal;
 
-  /** Maximum amount of LUSD that is currently redeemable from `attemptedLUSDAmount`. */
-  readonly redeemableLUSDAmount: Decimal;
+  /** Maximum amount of ONEU that is currently redeemable from `attemptedONEUAmount`. */
+  readonly redeemableONEUAmount: Decimal;
 
-  /** Whether `redeemableLUSDAmount` is less than `attemptedLUSDAmount`. */
+  /** Whether `redeemableONEUAmount` is less than `attemptedONEUAmount`. */
   readonly isTruncated: boolean;
 
   /**
@@ -158,8 +158,8 @@ export interface PopulatableLiquity<R = unknown, S = unknown, P = unknown>
     >
   >;
 
-  /** {@inheritDoc TransactableLiquity.borrowLUSD} */
-  borrowLUSD(
+  /** {@inheritDoc TransactableLiquity.borrowONEU} */
+  borrowONEU(
     amount: Decimalish,
     maxBorrowingRate?: Decimalish
   ): Promise<
@@ -169,8 +169,8 @@ export interface PopulatableLiquity<R = unknown, S = unknown, P = unknown>
     >
   >;
 
-  /** {@inheritDoc TransactableLiquity.repayLUSD} */
-  repayLUSD(
+  /** {@inheritDoc TransactableLiquity.repayONEU} */
+  repayONEU(
     amount: Decimalish
   ): Promise<
     PopulatedLiquityTransaction<
@@ -198,8 +198,8 @@ export interface PopulatableLiquity<R = unknown, S = unknown, P = unknown>
     PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, LiquidationDetails>>>
   >;
 
-  /** {@inheritDoc TransactableLiquity.depositLUSDInStabilityPool} */
-  depositLUSDInStabilityPool(
+  /** {@inheritDoc TransactableLiquity.depositONEUInStabilityPool} */
+  depositONEUInStabilityPool(
     amount: Decimalish,
     frontendTag?: string
   ): Promise<
@@ -209,8 +209,8 @@ export interface PopulatableLiquity<R = unknown, S = unknown, P = unknown>
     >
   >;
 
-  /** {@inheritDoc TransactableLiquity.withdrawLUSDFromStabilityPool} */
-  withdrawLUSDFromStabilityPool(
+  /** {@inheritDoc TransactableLiquity.withdrawONEUFromStabilityPool} */
+  withdrawONEUFromStabilityPool(
     amount: Decimalish
   ): Promise<
     PopulatedLiquityTransaction<
@@ -235,20 +235,20 @@ export interface PopulatableLiquity<R = unknown, S = unknown, P = unknown>
     >
   >;
 
-  /** {@inheritDoc TransactableLiquity.sendLUSD} */
-  sendLUSD(
+  /** {@inheritDoc TransactableLiquity.sendONEU} */
+  sendONEU(
     toAddress: string,
     amount: Decimalish
   ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableLiquity.sendLQTY} */
-  sendLQTY(
+  /** {@inheritDoc TransactableLiquity.sendOPL} */
+  sendOPL(
     toAddress: string,
     amount: Decimalish
   ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableLiquity.redeemLUSD} */
-  redeemLUSD(
+  /** {@inheritDoc TransactableLiquity.redeemONEU} */
+  redeemONEU(
     amount: Decimalish,
     maxRedemptionRate?: Decimalish
   ): Promise<PopulatedRedemption<P, S, R>>;
@@ -258,13 +258,13 @@ export interface PopulatableLiquity<R = unknown, S = unknown, P = unknown>
     PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>
   >;
 
-  /** {@inheritDoc TransactableLiquity.stakeLQTY} */
-  stakeLQTY(
+  /** {@inheritDoc TransactableLiquity.stakeOPL} */
+  stakeOPL(
     amount: Decimalish
   ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableLiquity.unstakeLQTY} */
-  unstakeLQTY(
+  /** {@inheritDoc TransactableLiquity.unstakeOPL} */
+  unstakeOPL(
     amount: Decimalish
   ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
 
@@ -273,30 +273,30 @@ export interface PopulatableLiquity<R = unknown, S = unknown, P = unknown>
     PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>
   >;
 
-  /** {@inheritDoc TransactableLiquity.approveUniTokens} */
-  approveUniTokens(
-    allowance?: Decimalish
-  ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
+  // /** {@inheritDoc TransactableLiquity.approveUniTokens} */
+  // approveUniTokens(
+  //   allowance?: Decimalish
+  // ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableLiquity.stakeUniTokens} */
-  stakeUniTokens(
-    amount: Decimalish
-  ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
+  // /** {@inheritDoc TransactableLiquity.stakeUniTokens} */
+  // stakeUniTokens(
+  //   amount: Decimalish
+  // ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableLiquity.unstakeUniTokens} */
-  unstakeUniTokens(
-    amount: Decimalish
-  ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
+  // /** {@inheritDoc TransactableLiquity.unstakeUniTokens} */
+  // unstakeUniTokens(
+  //   amount: Decimalish
+  // ): Promise<PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>>;
 
-  /** {@inheritDoc TransactableLiquity.withdrawLQTYRewardFromLiquidityMining} */
-  withdrawLQTYRewardFromLiquidityMining(): Promise<
-    PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>
-  >;
+  // /** {@inheritDoc TransactableLiquity.withdrawOPLRewardFromLiquidityMining} */
+  // withdrawOPLRewardFromLiquidityMining(): Promise<
+  //   PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>
+  // >;
 
-  /** {@inheritDoc TransactableLiquity.exitLiquidityMining} */
-  exitLiquidityMining(): Promise<
-    PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>
-  >;
+  // /** {@inheritDoc TransactableLiquity.exitLiquidityMining} */
+  // exitLiquidityMining(): Promise<
+  //   PopulatedLiquityTransaction<P, SentLiquityTransaction<S, LiquityReceipt<R, void>>>
+  // >;
 
   /** {@inheritDoc TransactableLiquity.registerFrontend} */
   registerFrontend(

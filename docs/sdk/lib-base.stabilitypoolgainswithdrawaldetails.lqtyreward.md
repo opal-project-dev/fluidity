@@ -4,7 +4,7 @@
 
 ## StabilityPoolGainsWithdrawalDetails.lqtyReward property
 
-Amount of LQTY rewarded to the depositor in this transaction.
+Amount of OPL rewarded to the depositor in this transaction.
 
 <b>Signature:</b>
 

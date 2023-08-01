@@ -12,7 +12,7 @@ import { DisabledEditableRow, StaticRow } from "../Trove/Editor";
 import { ClaimAndMove } from "./actions/ClaimAndMove";
 import { ClaimRewards } from "./actions/ClaimRewards";
 import { useStabilityView } from "./context/StabilityViewContext";
-import { RemainingLQTY } from "./RemainingLQTY";
+import { RemainingOPL } from "./RemainingOPL";
 import { Yield } from "./Yield";
 import { InfoIcon } from "../InfoIcon";
 
@@ -26,7 +26,7 @@ export const ActiveDeposit: React.FC = () => {
   const { dispatchEvent } = useStabilityView();
   const { stabilityDeposit, trove, lusdInStabilityPool } = useLiquitySelector(selector);
 
-  const poolShare = stabilityDeposit.currentLUSD.mulDiv(100, lusdInStabilityPool);
+  const poolShare = stabilityDeposit.currentONEU.mulDiv(100, lusdInStabilityPool);
 
   const handleAdjustDeposit = useCallback(() => {
     dispatchEvent("ADJUST_DEPOSIT_PRESSED");
@@ -54,7 +54,7 @@ export const ActiveDeposit: React.FC = () => {
         Stability Pool
         {!isWaitingForTransaction && (
           <Flex sx={{ justifyContent: "flex-end" }}>
-            <RemainingLQTY />
+            <RemainingOPL />
           </Flex>
         )}
       </Heading>
@@ -63,7 +63,7 @@ export const ActiveDeposit: React.FC = () => {
           <DisabledEditableRow
             label="Deposit"
             inputId="deposit-lusd"
-            amount={stabilityDeposit.currentLUSD.prettify()}
+            amount={stabilityDeposit.currentONEU.prettify()}
             unit={COIN}
           />
 

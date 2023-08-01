@@ -65,7 +65,7 @@
           "type": "address"
         }
       ],
-      "name": "LQTYStakingAddressChanged",
+      "name": "OPLStakingAddressChanged",
       "type": "event"
     },
     {
@@ -80,11 +80,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_LUSDFee",
+          "name": "_ONEUFee",
           "type": "uint256"
         }
       ],
-      "name": "LUSDBorrowingFeePaid",
+      "name": "ONEUBorrowingFeePaid",
       "type": "event"
     },
     {
@@ -97,7 +97,7 @@
           "type": "address"
         }
       ],
-      "name": "LUSDTokenAddressChanged",
+      "name": "ONEUTokenAddressChanged",
       "type": "event"
     },
     {
@@ -315,7 +315,7 @@
           "type": "address"
         }
       ],
-      "name": "moveETHGainToTrove",
+      "name": "moveAUTGainToTrove",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -329,7 +329,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_LUSDAmount",
+          "name": "_ONEUAmount",
           "type": "uint256"
         },
         {
@@ -366,7 +366,7 @@
           "type": "address"
         }
       ],
-      "name": "repayLUSD",
+      "name": "repayONEU",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -475,7 +475,7 @@
           "type": "address"
         }
       ],
-      "name": "withdrawLUSD",
+      "name": "withdrawONEU",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

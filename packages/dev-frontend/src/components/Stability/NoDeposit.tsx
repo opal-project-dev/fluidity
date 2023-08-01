@@ -3,7 +3,7 @@ import { Card, Heading, Box, Flex, Button } from "theme-ui";
 import { InfoMessage } from "../InfoMessage";
 import { useStabilityView } from "./context/StabilityViewContext";
 import { DisabledEditableRow } from "../Trove/Editor";
-import { RemainingLQTY } from "./RemainingLQTY";
+import { RemainingOPL } from "./RemainingOPL";
 import { Yield } from "./Yield";
 import { COIN } from "../../strings";
 
@@ -19,7 +19,7 @@ export const NoDeposit: React.FC = props => {
       <Heading>
         Stability Pool
         <Flex sx={{ justifyContent: "flex-end" }}>
-          <RemainingLQTY />
+          <RemainingOPL />
         </Flex>
       </Heading>
       <Box sx={{ p: [2, 3] }}>
