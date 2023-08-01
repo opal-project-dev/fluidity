@@ -15,7 +15,7 @@ import { LiquidatePage } from "./pages/LiquidatePage";
 
 import { TroveViewProvider } from "./components/Trove/context/TroveViewProvider";
 import { StabilityViewProvider } from "./components/Stability/context/StabilityViewProvider";
-import { StakingViewProvider } from "./components/Staking/context/StakingViewProvider";
+import { Farm } from "./pages/Farm";
 
 type LiquityFrontendProps = {
   loader?: React.ReactNode;
@@ -39,31 +39,32 @@ export const LiquityFrontend: React.FC<LiquityFrontendProps> = ({ loader }) => {
       <Router>
         <TroveViewProvider>
           <StabilityViewProvider>
-            <StakingViewProvider>
-                <Flex sx={{ flexDirection: "column", minHeight: "100%" }}>
-                  <Header/>
+              <Flex sx={{ flexDirection: "column", minHeight: "100%" }}>
+                <Header/>
 
-                  <Container
-                    variant="main"
-                    sx={{
-                      display: "flex",
-                      flexGrow: 1,
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center"
-                    }}
-                  >
-                    <Switch>
-                      <Route path="/" exact>
-                        <PageSwitcher />
+                <Container
+                  variant="main"
+                  sx={{
+                    display: "flex",
+                    flexGrow: 1,
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <Switch>
+                    <Route path="/" exact>
+                      <PageSwitcher />
+                    </Route>
+                    <Route path="/farm">
+                        <Farm />
                       </Route>
-                      <Route path="/liquidate">
-                        <LiquidatePage />
-                      </Route>
-                    </Switch>
-                  </Container>
-                </Flex>
-            </StakingViewProvider>
+                    <Route path="/liquidate">
+                      <LiquidatePage />
+                    </Route>
+                  </Switch>
+                </Container>
+              </Flex>
           </StabilityViewProvider>
         </TroveViewProvider>
       </Router>
