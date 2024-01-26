@@ -19,7 +19,7 @@
     "docs": "run-s docs:*",
     "docs:collect-sdk-apis": "node scripts/collect-sdk-apis.js",
     "docs:api-documenter": "api-documenter generate -i temp/sdk-apis -o docs/sdk",
-    "prepare": "run-s prepare:*",
+    "prepare": "run-s 'prepare:*'",
     "prepare:lib-base": "yarn workspace @fluidity/lib-base prepare",
     "prepare:lib-ethers": "run-s prepare:lib-ethers:*",
     "prepare:lib-ethers:deployments": "yarn workspace @fluidity/lib-ethers prepare:deployments",
@@ -29,7 +29,6 @@
     "prepare:lib-subgraph": "yarn workspace @fluidity/lib-subgraph prepare",
     "prepare:providers": "yarn workspace @fluidity/providers prepare",
     "prepare:subgraph": "yarn workspace @fluidity/subgraph prepare",
-    "prepare:docs": "run-s docs",
     "rebuild": "run-s prepare build",
     "start-dev-frontend": "yarn workspace @fluidity/dev-frontend start"
   },

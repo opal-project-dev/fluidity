@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "create-local": "graph create liquity/liquity --node http://127.0.0.1:8020",
-    "prepare": "run-s prepare:*",
+    "prepare": "run-s 'prepare:*'",
     "prepare:manifest": "node subgraph.yaml.js",
     "prepare:codegen": "graph codegen",
     "prepare-local": "run-s prepare-local:*",
