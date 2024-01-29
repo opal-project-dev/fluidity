@@ -161,9 +161,9 @@ const ProtocolStats: React.FC<ProtocolStatsProps> = ({ filterStats }) => {
     return (
         <>
             {
-                filterStats?.map((statFilter) => {
+                filterStats?.map((statFilter, index) => {
                     const stat = statSelector(statFilter);
-                    return (<BigStatistic name={stat.name} tooltip={stat.tooltip}>{stat.body}</BigStatistic>);
+                    return (<BigStatistic name={stat.name} tooltip={stat.tooltip} key={index}>{stat.body}</BigStatistic>);
                 })
             }
         </>

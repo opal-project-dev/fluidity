@@ -141,6 +141,8 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
 
         setTimeout(() => {
           this._blockListenerScheduled = false;
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           [...this._blockListeners].forEach(([, listener]) => listener(this._seenBlock));
         }, 50);
       }
@@ -237,6 +239,8 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
         passReceipt(undefined);
 
         return this._addBlockListener(listener, passReceipt);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
       } else if (eventName === "block") {
         return this._addBlockListener(...this._wrap(listener, pass));
       } else {
@@ -263,6 +267,8 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
         passReceiptOnce(undefined);
 
         return this._addBlockListener(listener, passReceiptOnce);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
       } else if (eventName === "block") {
         return this._addBlockListener(...this._wrap(listener, passOnce));
       } else {
@@ -271,6 +277,8 @@ export const WebSocketAugmented = <T extends new (...args: any[]) => BaseProvide
     }
 
     off(eventName: EventType, listener: Listener) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (isTransactionHash(eventName) || eventName === "block") {
         return this._removeBlockListener(listener);
       } else {

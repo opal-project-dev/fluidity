@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "theme-ui";
 
 import { Icon } from "./Icon";
 
-export const ActionDescription: React.FC = ({ children }) => (
+export const ActionDescription = ({ children }: {children: React.ReactNode}) => (
   <Box
     sx={{
       display: "flex",
@@ -26,6 +26,6 @@ export const ActionDescription: React.FC = ({ children }) => (
   </Box>
 );
 
-export const Amount: React.FC = ({ children }) => (
+export const Amount = ({ children }: {children: React.ReactNode}) => (
   <Text sx={{ fontWeight: "bold", whiteSpace: "nowrap" }}>{children}</Text>
 );

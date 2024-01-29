@@ -5,6 +5,7 @@ import { useTransactionFunction } from "../../Transaction";
 
 type ClaimAndMoveProps = {
   disabled?: boolean;
+  children?: React.ReactNode;
 };
 
 export const ClaimAndMove: React.FC<ClaimAndMoveProps> = ({ disabled, children }) => {

@@ -21,12 +21,16 @@ type NameLookup = {
 
 const interfaceLookupFrom = (contractLookup: ContractLookup): InterfaceLookup => {
   return Object.fromEntries(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     Object.entries(contractLookup).map(([, contract]) => [contract.address, contract.interface])
   );
 };
 
 const nameLookupFrom = (contractLookup: ContractLookup): NameLookup => {
   return Object.fromEntries(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     Object.entries(contractLookup).map(([name, contract]) => [contract.address, name])
   );
 };

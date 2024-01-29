@@ -9,6 +9,7 @@ type WaitingDialogProps = {
   waitReason: React.ReactNode;
   cancelLabel?: string;
   onCancel: () => void;
+  children?: React.ReactNode;
 };
 
 export const WaitingDialog: React.FC<WaitingDialogProps> = ({

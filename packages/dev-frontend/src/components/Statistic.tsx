@@ -5,6 +5,7 @@ import { InfoIcon } from "./InfoIcon";
 type StatisticProps = {
   name: React.ReactNode;
   tooltip?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const Statistic: React.FC<StatisticProps> = ({ name, tooltip, children }) => {

@@ -10,6 +10,7 @@ type TroveActionProps = {
   change: Exclude<TroveChange<Decimal>, { type: "invalidCreation" }>;
   maxBorrowingRate: Decimal;
   borrowingFeeDecayToleranceMinutes: number;
+  children?: React.ReactNode;
 };
 
 export const TroveAction: React.FC<TroveActionProps> = ({

@@ -23,6 +23,7 @@ type LiquityContextValue = {
 const LiquityContext = createContext<LiquityContextValue | undefined>(undefined);
 
 type LiquityProviderProps = {
+  children?: React.ReactNode;
   loader?: React.ReactNode;
   unsupportedNetworkFallback?: (chainId: number) => React.ReactNode;
   unsupportedMainnetFallback?: React.ReactNode;

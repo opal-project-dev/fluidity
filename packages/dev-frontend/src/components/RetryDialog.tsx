@@ -9,6 +9,7 @@ type RetryDialogProps = {
   retryLabel?: string;
   onCancel: () => void;
   onRetry: () => void;
+  children?: React.ReactNode;
 };
 
 export const RetryDialog: React.FC<RetryDialogProps> = ({

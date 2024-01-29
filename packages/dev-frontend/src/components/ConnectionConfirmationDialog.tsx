@@ -7,14 +7,15 @@ type ConnectionConfirmationDialogProps = {
   title: string;
   icon?: React.ReactNode;
   onCancel: () => void;
+  children?: React.ReactNode;
 };
 
-export const ConnectionConfirmationDialog: React.FC<ConnectionConfirmationDialogProps> = ({
+export const ConnectionConfirmationDialog = ({
   title,
   icon,
   onCancel,
   children
-}) => (
+}: ConnectionConfirmationDialogProps) => (
   <WaitingDialog
     title={title}
     icon={icon}

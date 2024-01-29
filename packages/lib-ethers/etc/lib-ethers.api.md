@@ -18,7 +18,6 @@ import { LiquityReceipt } from '@fluidity/lib-base';
 import { LiquityStore } from '@fluidity/lib-base';
 import { LiquityStoreState } from '@fluidity/lib-base';
 import { MinedReceipt } from '@fluidity/lib-base';
-import { ObservableLiquity } from '@fluidity/lib-base';
 import { OPLStake } from '@fluidity/lib-base';
 import { PopulatableLiquity } from '@fluidity/lib-base';
 import { PopulatedLiquityTransaction } from '@fluidity/lib-base';
@@ -278,27 +277,6 @@ export type EthersTransactionReceipt = TransactionReceipt;
 
 // @public
 export type EthersTransactionResponse = TransactionResponse;
-
-// @alpha (undocumented)
-export class ObservableEthersLiquity implements ObservableLiquity {
-    constructor(readable: ReadableEthersLiquity);
-    // (undocumented)
-    watchNumberOfTroves(onNumberOfTrovesChanged: (numberOfTroves: number) => void): () => void;
-    // (undocumented)
-    watchONEUBalance(onONEUBalanceChanged: (balance: Decimal) => void, address?: string): () => void;
-    // (undocumented)
-    watchONEUInStabilityPool(onONEUInStabilityPoolChanged: (lusdInStabilityPool: Decimal) => void): () => void;
-    // (undocumented)
-    watchPrice(onPriceChanged: (price: Decimal) => void): () => void;
-    // (undocumented)
-    watchStabilityDeposit(onStabilityDepositChanged: (stabilityDeposit: StabilityDeposit) => void, address?: string): () => void;
-    // (undocumented)
-    watchTotal(onTotalChanged: (total: Trove) => void): () => void;
-    // (undocumented)
-    watchTotalRedistributed(onTotalRedistributedChanged: (totalRedistributed: Trove) => void): () => void;
-    // (undocumented)
-    watchTroveWithoutRewards(onTroveChanged: (trove: TroveWithPendingRedistribution) => void, address?: string): () => void;
-}
 
 // @public
 export class PopulatableEthersLiquity implements PopulatableLiquity<EthersTransactionReceipt, EthersTransactionResponse, EthersPopulatedTransaction> {

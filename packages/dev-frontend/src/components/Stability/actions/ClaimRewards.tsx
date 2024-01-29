@@ -6,6 +6,7 @@ import { useTransactionFunction } from "../../Transaction";
 
 type ClaimRewardsProps = {
   disabled?: boolean;
+  children?: React.ReactNode;
 };
 
 export const ClaimRewards: React.FC<ClaimRewardsProps> = ({ disabled, children }) => {

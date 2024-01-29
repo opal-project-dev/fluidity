@@ -5,7 +5,8 @@ type CoinGeckoSimplePriceResponse<T extends string, U extends string> = {
     [Q in U]: number;
   };
 };
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const hasProp = <T, P extends string>(o: T, p: P): o is T & { [_ in P]: unknown } => p in o;
 
 const validateCoinGeckoSimplePriceResponse = <T extends string, U extends string>(

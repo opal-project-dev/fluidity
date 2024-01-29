@@ -1,12 +1,12 @@
 {
   "chainId": 65100001,
   "version": "ec6bab307c2a7414a5631268aa7f48c25ee897ff",
-  "deploymentDate": 1690444278000,
+  "deploymentDate": 1704289839000,
   "bootstrapPeriod": 1209600,
   "totalStabilityPoolOPLReward": "32000000",
   "_priceFeedIsTestnet": true,
   "_isDev": false,
-  "startBlock": 15899364,
+  "startBlock": 4037020,
   "addresses": {
     "activePool": "0x15B3a31B647D620E2779C1bab1b52B4977E9Da9C",
     "borrowerOperations": "0x49c77286b223211ab1029D061eC2a65292897b50",

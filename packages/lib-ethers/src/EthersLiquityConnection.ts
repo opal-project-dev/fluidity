@@ -4,7 +4,7 @@ import { Signer } from "@ethersproject/abstract-signer";
 import { Decimal } from "@fluidity/lib-base";
 
 // Change to autonity if you want to run front-end on chain
-import devOrNull from "../deployments/dev.json";
+import devOrNull from "../deployments/autonity.json";
 
 import { numberify, panic } from "./_utils";
 import { EthersProvider, EthersSigner } from "./types";
