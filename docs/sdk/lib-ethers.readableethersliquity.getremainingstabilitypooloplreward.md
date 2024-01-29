@@ -6,7 +6,7 @@
 
 Get the remaining OPL that will be collectively rewarded to stability depositors.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 getRemainingStabilityPoolOPLReward(overrides?: EthersCallOverrides): Promise<Decimal>;
@@ -18,7 +18,7 @@ getRemainingStabilityPoolOPLReward(overrides?: EthersCallOverrides): Promise<Dec
 |  --- | --- | --- |
 |  overrides | [EthersCallOverrides](./lib-ethers.etherscalloverrides.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[Decimal](./lib-base.decimal.md)<!-- -->&gt;
 

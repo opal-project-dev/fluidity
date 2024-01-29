@@ -6,7 +6,7 @@
 
 Amount of ONEU left in the Stability Deposit.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly currentONEU: Decimal;

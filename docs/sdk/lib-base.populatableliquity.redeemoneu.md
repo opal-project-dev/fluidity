@@ -6,7 +6,7 @@
 
 Redeem ONEU to native currency (e.g. Ether) at face value.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 redeemONEU(amount: Decimalish, maxRedemptionRate?: Decimalish): Promise<PopulatedRedemption<P, S, R>>;
@@ -19,7 +19,7 @@ redeemONEU(amount: Decimalish, maxRedemptionRate?: Decimalish): Promise<Populate
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of ONEU to be redeemed. |
 |  maxRedemptionRate | [Decimalish](./lib-base.decimalish.md) | Maximum acceptable [redemption rate](./lib-base.fees.redemptionrate.md)<!-- -->. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[PopulatedRedemption](./lib-base.populatedredemption.md)<!-- -->&lt;P, S, R&gt;&gt;
 

@@ -6,7 +6,7 @@
 
 Withdraw OPL from staking.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 unstakeOPL(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
@@ -18,7 +18,7 @@ unstakeOPL(amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt
 |  --- | --- | --- |
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of OPL to withdraw. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[SentLiquityTransaction](./lib-base.sentliquitytransaction.md)<!-- -->&lt;S, [LiquityReceipt](./lib-base.liquityreceipt.md)<!-- -->&lt;R, void&gt;&gt;&gt;
 

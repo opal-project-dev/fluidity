@@ -6,7 +6,7 @@
 
 User's OPL stake.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 lqtyStake: OPLStake;

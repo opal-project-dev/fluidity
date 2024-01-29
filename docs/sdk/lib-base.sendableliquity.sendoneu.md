@@ -6,7 +6,7 @@
 
 Send ONEU tokens to an address.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendONEU(toAddress: string, amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
@@ -19,7 +19,7 @@ sendONEU(toAddress: string, amount: Decimalish): Promise<SentLiquityTransaction<
 |  toAddress | string | Address of receipient. |
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of ONEU to send. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[SentLiquityTransaction](./lib-base.sentliquitytransaction.md)<!-- -->&lt;S, [LiquityReceipt](./lib-base.liquityreceipt.md)<!-- -->&lt;R, void&gt;&gt;&gt;
 

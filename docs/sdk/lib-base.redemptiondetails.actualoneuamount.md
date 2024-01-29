@@ -6,7 +6,7 @@
 
 Amount of ONEU that was actually redeemed by the transaction.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 actualONEUAmount: Decimal;

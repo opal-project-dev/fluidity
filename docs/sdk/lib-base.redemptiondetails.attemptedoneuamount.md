@@ -6,7 +6,7 @@
 
 Amount of ONEU the redeemer tried to redeem.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 attemptedONEUAmount: Decimal;

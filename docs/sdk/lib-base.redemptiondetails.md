@@ -6,7 +6,7 @@
 
 Details of a [redeemONEU()](./lib-base.transactableliquity.redeemoneu.md) transaction.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface RedemptionDetails 
@@ -14,10 +14,10 @@ export interface RedemptionDetails
 
 ## Properties
 
-|  Property | Type | Description |
-|  --- | --- | --- |
-|  [actualONEUAmount](./lib-base.redemptiondetails.actualoneuamount.md) | [Decimal](./lib-base.decimal.md) | Amount of ONEU that was actually redeemed by the transaction. |
-|  [attemptedONEUAmount](./lib-base.redemptiondetails.attemptedoneuamount.md) | [Decimal](./lib-base.decimal.md) | Amount of ONEU the redeemer tried to redeem. |
-|  [collateralTaken](./lib-base.redemptiondetails.collateraltaken.md) | [Decimal](./lib-base.decimal.md) | Amount of collateral (e.g. Ether) taken from Troves by the transaction. |
-|  [fee](./lib-base.redemptiondetails.fee.md) | [Decimal](./lib-base.decimal.md) | Amount of native currency (e.g. Ether) deducted as fee from collateral taken. |
+|  Property | Modifiers | Type | Description |
+|  --- | --- | --- | --- |
+|  [actualONEUAmount](./lib-base.redemptiondetails.actualoneuamount.md) |  | [Decimal](./lib-base.decimal.md) | Amount of ONEU that was actually redeemed by the transaction. |
+|  [attemptedONEUAmount](./lib-base.redemptiondetails.attemptedoneuamount.md) |  | [Decimal](./lib-base.decimal.md) | Amount of ONEU the redeemer tried to redeem. |
+|  [collateralTaken](./lib-base.redemptiondetails.collateraltaken.md) |  | [Decimal](./lib-base.decimal.md) | Amount of collateral (e.g. Ether) taken from Troves by the transaction. |
+|  [fee](./lib-base.redemptiondetails.fee.md) |  | [Decimal](./lib-base.decimal.md) | Amount of native currency (e.g. Ether) deducted as fee from collateral taken. |
 

@@ -6,7 +6,7 @@
 
 Withdraw OPL from staking.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 unstakeOPL(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<void>;
@@ -19,7 +19,7 @@ unstakeOPL(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of OPL to withdraw. |
 |  overrides | [EthersTransactionOverrides](./lib-ethers.etherstransactionoverrides.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;void&gt;
 

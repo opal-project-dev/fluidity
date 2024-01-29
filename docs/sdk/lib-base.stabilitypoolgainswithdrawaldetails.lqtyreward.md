@@ -6,7 +6,7 @@
 
 Amount of OPL rewarded to the depositor in this transaction.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 lqtyReward: Decimal;

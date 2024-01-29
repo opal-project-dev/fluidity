@@ -6,7 +6,7 @@
 
 Adjust existing Trove by repaying some of its debt.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 repayONEU(amount: Decimalish): Promise<TroveAdjustmentDetails>;
@@ -18,7 +18,7 @@ repayONEU(amount: Decimalish): Promise<TroveAdjustmentDetails>;
 |  --- | --- | --- |
 |  amount | [Decimalish](./lib-base.decimalish.md) | The amount of ONEU to repay. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[TroveAdjustmentDetails](./lib-base.troveadjustmentdetails.md)<!-- -->&gt;
 
@@ -32,6 +32,5 @@ Equivalent to:
 
 ```typescript
 adjustTrove({ repayONEU: amount })
-
 ```
 

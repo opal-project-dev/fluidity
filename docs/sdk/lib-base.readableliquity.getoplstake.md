@@ -6,7 +6,7 @@
 
 Get the current state of an OPL Stake.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 getOPLStake(address?: string): Promise<OPLStake>;
@@ -18,7 +18,7 @@ getOPLStake(address?: string): Promise<OPLStake>;
 |  --- | --- | --- |
 |  address | string | Address that owns the OPL Stake. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[OPLStake](./lib-base.oplstake.md)<!-- -->&gt;
 

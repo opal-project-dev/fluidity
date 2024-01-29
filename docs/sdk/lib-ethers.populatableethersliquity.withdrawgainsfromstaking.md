@@ -6,7 +6,7 @@
 
 Withdraw [collateral gain](./lib-base.oplstake.collateralgain.md) and [ONEU gain](./lib-base.oplstake.lusdgain.md) from OPL stake.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 withdrawGainsFromStaking(overrides?: EthersTransactionOverrides): Promise<PopulatedEthersLiquityTransaction<void>>;
@@ -18,7 +18,7 @@ withdrawGainsFromStaking(overrides?: EthersTransactionOverrides): Promise<Popula
 |  --- | --- | --- |
 |  overrides | [EthersTransactionOverrides](./lib-ethers.etherstransactionoverrides.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[PopulatedEthersLiquityTransaction](./lib-ethers.populatedethersliquitytransaction.md)<!-- -->&lt;void&gt;&gt;
 

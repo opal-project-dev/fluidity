@@ -6,7 +6,7 @@
 
 Calculate the current redemption rate.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 redemptionRate(redeemedFractionOfSupply?: Decimalish, when?: Date): Decimal;
@@ -19,7 +19,7 @@ redemptionRate(redeemedFractionOfSupply?: Decimalish, when?: Date): Decimal;
 |  redeemedFractionOfSupply | [Decimalish](./lib-base.decimalish.md) | The amount of ONEU being redeemed divided by the total supply. |
 |  when | Date | Optional timestamp that can be used to calculate what the redemption rate would decay to at a point of time in the future. |
 
-<b>Returns:</b>
+**Returns:**
 
 [Decimal](./lib-base.decimal.md)
 
@@ -42,6 +42,5 @@ const redeemedONEUAmount = Decimal.from(100);
 const redeemedFractionOfSupply = redeemedONEUAmount.div(total.debt);
 const redemptionRate = fees.redemptionRate(redeemedFractionOfSupply);
 const redemptionFeeONEU = redemptionRate.mul(redeemedONEUAmount);
-
 ```
 

@@ -6,7 +6,7 @@
 
 Withdraw OPL from staking.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 unstakeOPL(amount: Decimalish): Promise<void>;
@@ -18,7 +18,7 @@ unstakeOPL(amount: Decimalish): Promise<void>;
 |  --- | --- | --- |
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of OPL to withdraw. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;void&gt;
 

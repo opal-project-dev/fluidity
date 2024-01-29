@@ -6,7 +6,7 @@
 
 Adjust existing Trove by repaying some of its debt.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 repayONEU(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<TroveAdjustmentDetails>;
@@ -19,7 +19,7 @@ repayONEU(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<T
 |  amount | [Decimalish](./lib-base.decimalish.md) | The amount of ONEU to repay. |
 |  overrides | [EthersTransactionOverrides](./lib-ethers.etherstransactionoverrides.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[TroveAdjustmentDetails](./lib-base.troveadjustmentdetails.md)<!-- -->&gt;
 
@@ -33,6 +33,5 @@ Equivalent to:
 
 ```typescript
 adjustTrove({ repayONEU: amount })
-
 ```
 

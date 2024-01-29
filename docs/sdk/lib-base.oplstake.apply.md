@@ -6,7 +6,7 @@
 
 Apply a [OPLStakeChange](./lib-base.oplstakechange.md) to this `OPLStake`<!-- -->.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 apply(change: OPLStakeChange<Decimalish> | undefined): Decimal;
@@ -18,7 +18,7 @@ apply(change: OPLStakeChange<Decimalish> | undefined): Decimal;
 |  --- | --- | --- |
 |  change | [OPLStakeChange](./lib-base.oplstakechange.md)<!-- -->&lt;[Decimalish](./lib-base.decimalish.md)<!-- -->&gt; \| undefined |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [Decimal](./lib-base.decimal.md)
 

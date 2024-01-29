@@ -6,12 +6,12 @@
 
 Withdraw [collateral gain](./lib-base.oplstake.collateralgain.md) and [ONEU gain](./lib-base.oplstake.lusdgain.md) from OPL stake.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 withdrawGainsFromStaking(): Promise<void>;
 ```
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;void&gt;
 

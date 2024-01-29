@@ -6,7 +6,7 @@
 
 The amount of OPL that's staked.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly stakedOPL: Decimal;
