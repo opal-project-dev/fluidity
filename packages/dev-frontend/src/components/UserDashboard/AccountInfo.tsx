@@ -38,9 +38,10 @@ const ProtocolTokens: React.FC = () => {
         <Flex sx={{ justifyContent: "center", flexDirection: "column", alignItems: "centeer", gap: 1}}>
             <Flex sx={{ alignItems: "center", justifyContent: "center" }}>
                 {
-                    tokens.map((token) => (
+                    tokens.map((token, index) => (
                         <Button
                             variant="token"
+                            key={index}
                             onClick={() => { addToken(token) }}
                             sx={{ py: 1, px: 2, mx: 2, fontSize: 1, border: 2 }}>
                             {token.symbol}
