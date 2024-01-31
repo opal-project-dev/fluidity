@@ -2,7 +2,7 @@ configVersion: 1
 project: "web-client"
 ---
 image: builder
-from: node:18.20.0-alpine
+from: node:16.20.2-alpine3.18
 git:
   - add: /
     to: /app
@@ -17,6 +17,7 @@ shell:
     - apk --no-cache --update --virtual build-dependencies add python3 make g++
   install: 
     - cd /app
+    - yarn version
     - yarn install
   setup: 
     - cd /app
