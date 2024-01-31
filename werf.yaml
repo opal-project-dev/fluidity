@@ -10,12 +10,12 @@ git:
       install:
         - package.json
         - yarn.lock
-        - yarn set version classic
       setup: 
         - "**/*"
 shell: 
   beforeInstall:
     - apk --no-cache --update --virtual build-dependencies add python3 make g++
+    - yarn set version classic
   install: 
     - cd /app
     - yarn version
