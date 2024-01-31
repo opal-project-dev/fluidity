@@ -10,6 +10,7 @@ git:
       install:
         - package.json
         - yarn.lock
+        - yarn set version classic
       setup: 
         - "**/*"
 shell: 
