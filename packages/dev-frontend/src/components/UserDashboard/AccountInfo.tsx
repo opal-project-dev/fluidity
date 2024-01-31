@@ -30,8 +30,8 @@ const ProtocolTokens: React.FC = () => {
     const { liquity: { connection: { addresses } } } = useLiquity();
 
     const tokens: tokenAddress[] = [
-        { symbol: "OUSD", address: addresses["lusdToken"] },
-        { symbol: "OPAL", address: addresses["lqtyToken"] }
+        { symbol: "oNEU", address: addresses["oneuToken"] },
+        { symbol: "OPL", address: addresses["oplToken"] }
     ]
 
     return (
