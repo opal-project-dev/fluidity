@@ -15,7 +15,7 @@ git:
 shell: 
   beforeInstall:
     - apk --no-cache --update --virtual build-dependencies add python3 make g++ git
-    - yarn set version 3.2.1
+    - yarn set version common
   install: 
     - cd /app
     - yarn install
