@@ -14,7 +14,7 @@ git:
         - "**/*"
 shell: 
   beforeInstall:
-    - apk --no-cache --update --virtual build-dependencies add python3 make g++
+    - apk --no-cache --update --virtual build-dependencies add python3 make g++ git
     - yarn set version 1.22.19
   install: 
     - cd /app
