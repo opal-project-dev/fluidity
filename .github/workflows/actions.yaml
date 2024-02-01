@@ -25,5 +25,5 @@ jobs:
 
       - name: Run Build
         run: |
-          docker build -t ghcr.io/opal-project-dev/fluidity:$GITHUB_SHA
+          docker build -t ghcr.io/opal-project-dev/fluidity:$GITHUB_SHA .
           docker push ghcr.io/opal-project-dev/fluidity:$GITHUB_SHA
