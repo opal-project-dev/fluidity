@@ -1,6 +1,7 @@
 # Editor temp files
 *~
 
+.git
 # macOS Finder attribute files
 .DS_Store
 
