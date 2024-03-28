@@ -6,7 +6,7 @@
 
 Maximum amount of ONEU that is currently redeemable from `attemptedONEUAmount`<!-- -->.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly redeemableONEUAmount: Decimal;

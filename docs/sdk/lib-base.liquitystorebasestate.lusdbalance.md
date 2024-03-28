@@ -6,7 +6,7 @@
 
 User's ONEU token balance.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 lusdBalance: Decimal;

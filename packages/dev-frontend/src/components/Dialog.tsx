@@ -11,6 +11,7 @@ type DialogProps = {
   icon?: React.ReactNode;
   cancelLabel?: string;
   onCancel: () => void;
+  children?: React.ReactNode;
 };
 
 const iconFromIntent = (intent: DialogIntent | undefined) => {

@@ -23,6 +23,7 @@ type LiquityContextValue = {
 const LiquityContext = createContext<LiquityContextValue | undefined>(undefined);
 
 type LiquityProviderProps = {
+  children?: React.ReactNode;
   loader?: React.ReactNode;
   unsupportedNetworkFallback?: (chainId: number) => React.ReactNode;
   unsupportedMainnetFallback?: React.ReactNode;
@@ -34,7 +35,7 @@ const wsParams = (network: string, infuraApiKey: string): [string, string] => [
 ];
 
 const projectNetworks: { [name: string]: Network } = {
-  autonity: { chainId: 65100000, name: "autonity" }
+  autonity: { chainId: 65100001, name: "autonity" }
 }
 
 const getNetwork = (network: Networkish): Network => {

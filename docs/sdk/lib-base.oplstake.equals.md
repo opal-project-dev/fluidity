@@ -6,7 +6,7 @@
 
 Compare to another instance of `OPLStake`<!-- -->.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 equals(that: OPLStake): boolean;
@@ -18,7 +18,7 @@ equals(that: OPLStake): boolean;
 |  --- | --- | --- |
 |  that | [OPLStake](./lib-base.oplstake.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 boolean
 

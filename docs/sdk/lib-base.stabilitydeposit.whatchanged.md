@@ -6,7 +6,7 @@
 
 Calculate the difference between the `currentONEU` in this Stability Deposit and `thatONEU`<!-- -->.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 whatChanged(thatONEU: Decimalish): StabilityDepositChange<Decimal> | undefined;
@@ -18,7 +18,7 @@ whatChanged(thatONEU: Decimalish): StabilityDepositChange<Decimal> | undefined;
 |  --- | --- | --- |
 |  thatONEU | [Decimalish](./lib-base.decimalish.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [StabilityDepositChange](./lib-base.stabilitydepositchange.md)<!-- -->&lt;[Decimal](./lib-base.decimal.md)<!-- -->&gt; \| undefined
 

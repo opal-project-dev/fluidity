@@ -6,7 +6,7 @@
 
 Make a new Stability Deposit, or top up existing one.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 depositONEUInStabilityPool(amount: Decimalish, frontendTag?: string): Promise<SentLiquityTransaction<S, LiquityReceipt<R, StabilityDepositChangeDetails>>>;
@@ -19,7 +19,7 @@ depositONEUInStabilityPool(amount: Decimalish, frontendTag?: string): Promise<Se
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of ONEU to add to new or existing deposit. |
 |  frontendTag | string | Address that should receive a share of this deposit's OPL rewards. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[SentLiquityTransaction](./lib-base.sentliquitytransaction.md)<!-- -->&lt;S, [LiquityReceipt](./lib-base.liquityreceipt.md)<!-- -->&lt;R, [StabilityDepositChangeDetails](./lib-base.stabilitydepositchangedetails.md)<!-- -->&gt;&gt;&gt;
 

@@ -6,7 +6,7 @@
 
 Get the total amount of OPL currently staked.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 getTotalStakedOPL(overrides?: EthersCallOverrides): Promise<Decimal>;
@@ -18,7 +18,7 @@ getTotalStakedOPL(overrides?: EthersCallOverrides): Promise<Decimal>;
 |  --- | --- | --- |
 |  overrides | [EthersCallOverrides](./lib-ethers.etherscalloverrides.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[Decimal](./lib-base.decimal.md)<!-- -->&gt;
 

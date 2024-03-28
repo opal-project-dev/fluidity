@@ -5,6 +5,7 @@ import { Icon } from "./Icon";
 type InfoMessageProps = {
   title: string;
   icon?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const InfoMessage: React.FC<InfoMessageProps> = ({ title, children, icon }) => (

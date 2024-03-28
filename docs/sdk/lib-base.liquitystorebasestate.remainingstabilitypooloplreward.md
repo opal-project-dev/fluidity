@@ -6,7 +6,7 @@
 
 Remaining OPL that will be collectively rewarded to stability depositors.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 remainingStabilityPoolOPLReward: Decimal;

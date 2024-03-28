@@ -6,12 +6,12 @@
 
 Get the total amount of OPL currently staked.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 getTotalStakedOPL(): Promise<Decimal>;
 ```
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[Decimal](./lib-base.decimal.md)<!-- -->&gt;
 

@@ -6,7 +6,7 @@
 
 Send OPL tokens to an address.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendOPL(toAddress: string, amount: Decimalish): Promise<SentLiquityTransaction<S, LiquityReceipt<R, void>>>;
@@ -19,7 +19,7 @@ sendOPL(toAddress: string, amount: Decimalish): Promise<SentLiquityTransaction<S
 |  toAddress | string | Address of receipient. |
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of OPL to send. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[SentLiquityTransaction](./lib-base.sentliquitytransaction.md)<!-- -->&lt;S, [LiquityReceipt](./lib-base.liquityreceipt.md)<!-- -->&lt;R, void&gt;&gt;&gt;
 

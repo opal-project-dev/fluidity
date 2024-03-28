@@ -30,17 +30,18 @@ const ProtocolTokens: React.FC = () => {
     const { liquity: { connection: { addresses } } } = useLiquity();
 
     const tokens: tokenAddress[] = [
-        { symbol: "OUSD", address: addresses["lusdToken"] },
-        { symbol: "OPAL", address: addresses["lqtyToken"] }
+        { symbol: "oNEU", address: addresses["oneuToken"] },
+        { symbol: "OPL", address: addresses["oplToken"] }
     ]
 
     return (
         <Flex sx={{ justifyContent: "center", flexDirection: "column", alignItems: "centeer", gap: 1}}>
             <Flex sx={{ alignItems: "center", justifyContent: "center" }}>
                 {
-                    tokens.map((token) => (
+                    tokens.map((token, index) => (
                         <Button
                             variant="token"
+                            key={index}
                             onClick={() => { addToken(token) }}
                             sx={{ py: 1, px: 2, mx: 2, fontSize: 1, border: 2 }}>
                             {token.symbol}

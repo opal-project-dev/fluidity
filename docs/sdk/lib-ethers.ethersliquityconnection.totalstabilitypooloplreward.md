@@ -6,7 +6,7 @@
 
 Total amount of OPL allocated for rewarding stability depositors.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly totalStabilityPoolOPLReward: Decimal;

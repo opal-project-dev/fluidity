@@ -6,7 +6,7 @@
 
 Send ONEU tokens to an address.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 sendONEU(toAddress: string, amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<PopulatedEthersLiquityTransaction<void>>;
@@ -20,7 +20,7 @@ sendONEU(toAddress: string, amount: Decimalish, overrides?: EthersTransactionOve
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of ONEU to send. |
 |  overrides | [EthersTransactionOverrides](./lib-ethers.etherstransactionoverrides.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[PopulatedEthersLiquityTransaction](./lib-ethers.populatedethersliquitytransaction.md)<!-- -->&lt;void&gt;&gt;
 

@@ -6,7 +6,7 @@
 
 Stake OPL to start earning fee revenue or increase existing stake.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 stakeOPL(amount: Decimalish): Promise<void>;
@@ -18,7 +18,7 @@ stakeOPL(amount: Decimalish): Promise<void>;
 |  --- | --- | --- |
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of OPL to add to new or existing stake. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;void&gt;
 

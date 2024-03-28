@@ -28,6 +28,7 @@ type StabilityDepositEditorProps = {
   editedLUSD: Decimal;
   changePending: boolean;
   dispatch: (action: { type: "setDeposit"; newValue: Decimalish } | { type: "revert" }) => void;
+  children?: React.ReactNode;
 };
 
 export const StabilityDepositEditor: React.FC<StabilityDepositEditorProps> = ({

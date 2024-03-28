@@ -6,7 +6,7 @@
 
 Calculate the difference between this `OPLStake` and `thatStakedOPL`<!-- -->.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 whatChanged(thatStakedOPL: Decimalish): OPLStakeChange<Decimal> | undefined;
@@ -18,7 +18,7 @@ whatChanged(thatStakedOPL: Decimalish): OPLStakeChange<Decimal> | undefined;
 |  --- | --- | --- |
 |  thatStakedOPL | [Decimalish](./lib-base.decimalish.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 [OPLStakeChange](./lib-base.oplstakechange.md)<!-- -->&lt;[Decimal](./lib-base.decimal.md)<!-- -->&gt; \| undefined
 

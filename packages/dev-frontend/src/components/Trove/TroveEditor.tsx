@@ -25,6 +25,7 @@ type TroveEditorProps = {
   fee: Decimal;
   borrowingRate: Decimal;
   changePending: boolean;
+  children?: React.ReactNode;
   dispatch: (
     action: { type: "setCollateral" | "setDebt"; newValue: Decimalish } | { type: "revert" }
   ) => void;

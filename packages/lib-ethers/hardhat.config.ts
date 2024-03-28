@@ -13,9 +13,7 @@ import { task, HardhatUserConfig, types, extendEnvironment } from "hardhat/confi
 import { HardhatRuntimeEnvironment, NetworkUserConfig } from "hardhat/types";
 import "@nomiclabs/hardhat-ethers";
 
-import { Decimal } from "@fluidity/lib-base";
-
-import { deployAndSetupContracts, deployTellorCaller, setSilent } from "./utils/deploy";
+import { deployAndSetupContracts, setSilent } from "./utils/deploy";
 import { _connectToContracts, _LiquityDeploymentJSON, _priceFeedIsTestnet } from "./src/contracts";
 
 import accounts from "./accounts.json";
@@ -79,7 +77,7 @@ const oracleAddresses = {
     tellor: "0x20374E579832859f180536A69093A126Db1c8aE9" // Playground
   },
   autonity: {
-    chainlink: "0xce40AF5bFeDa2ECAc145C0185B43a1b6b202F73E"
+    chainlink: "0x5a9120077780A068708940D0A6D14d172166A274"
   }
 };
 
@@ -162,8 +160,12 @@ const getContractFactory: (
 ) => (name: string, signer: Signer) => Promise<ContractFactory> = useLiveVersion
   ? env => (name, signer) => {
       const { abi, bytecode } = getLiveArtifact(name);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       return env.ethers.getContractFactory(abi, bytecode, signer);
     }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
   : env => env.ethers.getContractFactory;
 
 extendEnvironment(env => {
@@ -213,6 +215,8 @@ task("deploy", "Deploys the contracts to the network")
   .setAction(
     async ({ channel, gasPrice, useRealPriceFeed, createUniswapPair }: DeployParams, env) => {
       //const overrides = { gasPrice: gasPrice && Decimal.from(gasPrice).div(1000000000).hex };
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const [deployer] = await env.ethers.getSigners();
 
       useRealPriceFeed ??= env.network.name === "mainnet";

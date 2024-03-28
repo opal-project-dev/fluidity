@@ -8,6 +8,7 @@ import { useTransactionFunction } from "../Transaction";
 type StabilityDepositActionProps = {
   transactionId: string;
   change: StabilityDepositChange<Decimal>;
+  children?: React.ReactNode;
 };
 
 const selectFrontendRegistered = ({ frontend }: LiquityStoreState) =>

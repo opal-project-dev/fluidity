@@ -40,8 +40,7 @@ const getInitialView = (stabilityDeposit: StabilityDeposit): StabilityView => {
 
 const select = ({ stabilityDeposit }: LiquityStoreState): StabilityDeposit => stabilityDeposit;
 
-export const StabilityViewProvider: React.FC = props => {
-  const { children } = props;
+export const StabilityViewProvider = ({ children }: { children?: React.ReactNode;}) => {
   const stabilityDeposit = useLiquitySelector(select);
 
   const [view, setView] = useState<StabilityView>(getInitialView(stabilityDeposit));

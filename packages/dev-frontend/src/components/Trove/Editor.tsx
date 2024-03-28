@@ -8,6 +8,7 @@ type RowProps = SxProp & {
   labelId?: string;
   labelFor?: string;
   infoIcon?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const Row: React.FC<RowProps> = ({ sx, label, labelId, labelFor, children, infoIcon }) => {
@@ -72,6 +73,7 @@ type StaticAmountsProps = {
   pendingAmount?: string;
   pendingColor?: string;
   onClick?: () => void;
+  children?: React.ReactNode;
 };
 
 export const StaticAmounts: React.FC<StaticAmountsProps & SxProp> = ({
@@ -175,6 +177,7 @@ export const StaticRow: React.FC<StaticRowProps> = ({
 
 type DisabledEditableRowProps = Omit<StaticAmountsProps, "labelledBy" | "onClick"> & {
   label: string;
+  children?: React.ReactNode;
 };
 
 export const DisabledEditableRow: React.FC<DisabledEditableRowProps> = ({
@@ -201,6 +204,7 @@ type EditableRowProps = DisabledEditableRowProps & {
   setEditedAmount: (editedAmount: string) => void;
   maxAmount?: string;
   maxedOut?: boolean;
+  children?: React.ReactNode;
 };
 
 export const EditableRow: React.FC<EditableRowProps> = ({

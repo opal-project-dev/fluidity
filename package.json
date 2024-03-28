@@ -14,6 +14,9 @@
       "**/react-scripts"
     ]
   },
+  "engines": {
+    "node": "16.20.0"
+  },
   "release": {
     "extends": "semantic-release-monorepo",
     "branches": [
@@ -44,11 +47,11 @@
     "build:dev-frontend": "yarn workspace @fluidity/dev-frontend build",
     "build:subgraph": "yarn workspace @fluidity/subgraph build",
     "deploy": "yarn workspace @fluidity/lib-ethers hardhat deploy",
-    "docs": "run-s docs:*",
+    "docs": "run-s 'docs:*'",
     "docs:collect-sdk-apis": "node scripts/collect-sdk-apis.js",
     "docs:api-documenter": "api-documenter generate -i temp/sdk-apis -o docs/sdk",
     "fuzzer": "yarn workspace @fluidity/fuzzer fuzzer",
-    "prepare": "run-s prepare:*",
+    "prepare": "run-s 'prepare:*'",
     "prepare:contracts": "yarn workspace @fluidity/contracts prepare",
     "prepare:lib-base": "yarn workspace @fluidity/lib-base prepare",
     "prepare:lib-ethers": "yarn workspace @fluidity/lib-ethers prepare",
@@ -98,8 +101,5 @@
     "prettier": "^2.1.2",
     "semantic-release": "^17.4.2",
     "semantic-release-monorepo": "^7.0.4"
-  },
-  "dependencies": {
-    "caniuse-lite": "^1.0.30001313"
   }
 }

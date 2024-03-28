@@ -6,7 +6,7 @@
 
 State variables read from the blockchain.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export interface LiquityStoreBaseState 
@@ -14,22 +14,22 @@ export interface LiquityStoreBaseState
 
 ## Properties
 
-|  Property | Type | Description |
-|  --- | --- | --- |
-|  [accountBalance](./lib-base.liquitystorebasestate.accountbalance.md) | [Decimal](./lib-base.decimal.md) | User's native currency balance (e.g. Ether). |
-|  [collateralSurplusBalance](./lib-base.liquitystorebasestate.collateralsurplusbalance.md) | [Decimal](./lib-base.decimal.md) | Amount of leftover collateral available for withdrawal to the user. |
-|  [frontend](./lib-base.liquitystorebasestate.frontend.md) | [FrontendStatus](./lib-base.frontendstatus.md) | Status of currently used frontend. |
-|  [lqtyBalance](./lib-base.liquitystorebasestate.lqtybalance.md) | [Decimal](./lib-base.decimal.md) | User's OPL token balance. |
-|  [lqtyStake](./lib-base.liquitystorebasestate.lqtystake.md) | [OPLStake](./lib-base.oplstake.md) | User's OPL stake. |
-|  [lusdBalance](./lib-base.liquitystorebasestate.lusdbalance.md) | [Decimal](./lib-base.decimal.md) | User's ONEU token balance. |
-|  [lusdInStabilityPool](./lib-base.liquitystorebasestate.lusdinstabilitypool.md) | [Decimal](./lib-base.decimal.md) | Total amount of ONEU currently deposited in the Stability Pool. |
-|  [numberOfTroves](./lib-base.liquitystorebasestate.numberoftroves.md) | number | Number of Troves that are currently open. |
-|  [ownFrontend](./lib-base.liquitystorebasestate.ownfrontend.md) | [FrontendStatus](./lib-base.frontendstatus.md) | Status of user's own frontend. |
-|  [price](./lib-base.liquitystorebasestate.price.md) | [Decimal](./lib-base.decimal.md) | Current price of the native currency (e.g. Ether) in USD. |
-|  [remainingStabilityPoolOPLReward](./lib-base.liquitystorebasestate.remainingstabilitypooloplreward.md) | [Decimal](./lib-base.decimal.md) | Remaining OPL that will be collectively rewarded to stability depositors. |
-|  [stabilityDeposit](./lib-base.liquitystorebasestate.stabilitydeposit.md) | [StabilityDeposit](./lib-base.stabilitydeposit.md) | User's stability deposit. |
-|  [total](./lib-base.liquitystorebasestate.total.md) | [Trove](./lib-base.trove.md) | Total collateral and debt in the Liquity system. |
-|  [totalRedistributed](./lib-base.liquitystorebasestate.totalredistributed.md) | [Trove](./lib-base.trove.md) | Total collateral and debt per stake that has been liquidated through redistribution. |
-|  [totalStakedOPL](./lib-base.liquitystorebasestate.totalstakedopl.md) | [Decimal](./lib-base.decimal.md) | Total amount of OPL currently staked. |
-|  [troveBeforeRedistribution](./lib-base.liquitystorebasestate.trovebeforeredistribution.md) | [TroveWithPendingRedistribution](./lib-base.trovewithpendingredistribution.md) | User's Trove in its state after the last direct modification. |
+|  Property | Modifiers | Type | Description |
+|  --- | --- | --- | --- |
+|  [accountBalance](./lib-base.liquitystorebasestate.accountbalance.md) |  | [Decimal](./lib-base.decimal.md) | User's native currency balance (e.g. Ether). |
+|  [collateralSurplusBalance](./lib-base.liquitystorebasestate.collateralsurplusbalance.md) |  | [Decimal](./lib-base.decimal.md) | Amount of leftover collateral available for withdrawal to the user. |
+|  [frontend](./lib-base.liquitystorebasestate.frontend.md) |  | [FrontendStatus](./lib-base.frontendstatus.md) | Status of currently used frontend. |
+|  [lqtyBalance](./lib-base.liquitystorebasestate.lqtybalance.md) |  | [Decimal](./lib-base.decimal.md) | User's OPL token balance. |
+|  [lqtyStake](./lib-base.liquitystorebasestate.lqtystake.md) |  | [OPLStake](./lib-base.oplstake.md) | User's OPL stake. |
+|  [lusdBalance](./lib-base.liquitystorebasestate.lusdbalance.md) |  | [Decimal](./lib-base.decimal.md) | User's ONEU token balance. |
+|  [lusdInStabilityPool](./lib-base.liquitystorebasestate.lusdinstabilitypool.md) |  | [Decimal](./lib-base.decimal.md) | Total amount of ONEU currently deposited in the Stability Pool. |
+|  [numberOfTroves](./lib-base.liquitystorebasestate.numberoftroves.md) |  | number | Number of Troves that are currently open. |
+|  [ownFrontend](./lib-base.liquitystorebasestate.ownfrontend.md) |  | [FrontendStatus](./lib-base.frontendstatus.md) | Status of user's own frontend. |
+|  [price](./lib-base.liquitystorebasestate.price.md) |  | [Decimal](./lib-base.decimal.md) | Current price of the native currency (e.g. Ether) in USD. |
+|  [remainingStabilityPoolOPLReward](./lib-base.liquitystorebasestate.remainingstabilitypooloplreward.md) |  | [Decimal](./lib-base.decimal.md) | Remaining OPL that will be collectively rewarded to stability depositors. |
+|  [stabilityDeposit](./lib-base.liquitystorebasestate.stabilitydeposit.md) |  | [StabilityDeposit](./lib-base.stabilitydeposit.md) | User's stability deposit. |
+|  [total](./lib-base.liquitystorebasestate.total.md) |  | [Trove](./lib-base.trove.md) | Total collateral and debt in the Liquity system. |
+|  [totalRedistributed](./lib-base.liquitystorebasestate.totalredistributed.md) |  | [Trove](./lib-base.trove.md) | Total collateral and debt per stake that has been liquidated through redistribution. |
+|  [totalStakedOPL](./lib-base.liquitystorebasestate.totalstakedopl.md) |  | [Decimal](./lib-base.decimal.md) | Total amount of OPL currently staked. |
+|  [troveBeforeRedistribution](./lib-base.liquitystorebasestate.trovebeforeredistribution.md) |  | [TroveWithPendingRedistribution](./lib-base.trovewithpendingredistribution.md) | User's Trove in its state after the last direct modification. |
 

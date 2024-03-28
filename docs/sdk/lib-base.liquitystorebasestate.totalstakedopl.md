@@ -6,7 +6,7 @@
 
 Total amount of OPL currently staked.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 totalStakedOPL: Decimal;

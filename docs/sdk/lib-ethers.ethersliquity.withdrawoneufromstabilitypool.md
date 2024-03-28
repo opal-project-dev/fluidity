@@ -6,7 +6,7 @@
 
 Withdraw ONEU from Stability Deposit.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 withdrawONEUFromStabilityPool(amount: Decimalish, overrides?: EthersTransactionOverrides): Promise<StabilityDepositChangeDetails>;
@@ -19,7 +19,7 @@ withdrawONEUFromStabilityPool(amount: Decimalish, overrides?: EthersTransactionO
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of ONEU to withdraw. |
 |  overrides | [EthersTransactionOverrides](./lib-ethers.etherstransactionoverrides.md) |  |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[StabilityDepositChangeDetails](./lib-base.stabilitydepositchangedetails.md)<!-- -->&gt;
 

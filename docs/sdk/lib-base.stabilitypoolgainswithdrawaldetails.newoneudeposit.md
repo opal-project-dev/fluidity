@@ -6,7 +6,7 @@
 
 Amount of ONEU in the deposit directly after this transaction.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 newONEUDeposit: Decimal;

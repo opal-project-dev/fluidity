@@ -6,12 +6,12 @@
 
 Calculate the Trove's liquidation price for AUT.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 liquidationPrice(): Decimal;
 ```
-<b>Returns:</b>
+**Returns:**
 
 [Decimal](./lib-base.decimal.md)
 

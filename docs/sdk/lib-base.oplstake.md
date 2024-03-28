@@ -6,7 +6,7 @@
 
 Represents a user's OPL stake and accrued gains.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 export declare class OPLStake 

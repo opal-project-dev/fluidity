@@ -152,7 +152,8 @@ export interface _RawTransactionReplacedError extends Error {
   replacement: EthersTransactionResponse;
   receipt: EthersTransactionReceipt;
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const hasProp = <T, P extends string>(o: T, p: P): o is T & { [_ in P]: unknown } => p in o;
 
 const isTransactionFailedError = (error: Error): error is RawTransactionFailedError =>
@@ -656,11 +657,9 @@ export class PopulatableEthersLiquity
 
       ({ logs, from: userAddress }) => {
         const gainsWithdrawalDetails = this._extractStabilityPoolGainsWithdrawalDetails(logs);
-
-        const [withdrawONEU] = lusdToken
-          .extractEvents(logs, "Transfer")
-          .filter(({ args: { from, to } }) => from === stabilityPool.address && to === userAddress)
-          .map(({ args: { value } }) => decimalify(value));
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore 
+        const [withdrawONEU] = lusdToken.extractEvents(logs, "Transfer").filter(({ args: { from, to } }) =>  from === stabilityPool.address && to === userAddress).map(({ args: { value } }) => decimalify(value));
 
         return {
           ...gainsWithdrawalDetails,

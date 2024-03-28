@@ -6,7 +6,7 @@
 
 Withdraw ONEU from Stability Deposit.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 withdrawONEUFromStabilityPool(amount: Decimalish): Promise<StabilityDepositChangeDetails>;
@@ -18,7 +18,7 @@ withdrawONEUFromStabilityPool(amount: Decimalish): Promise<StabilityDepositChang
 |  --- | --- | --- |
 |  amount | [Decimalish](./lib-base.decimalish.md) | Amount of ONEU to withdraw. |
 
-<b>Returns:</b>
+**Returns:**
 
 Promise&lt;[StabilityDepositChangeDetails](./lib-base.stabilitydepositchangedetails.md)<!-- -->&gt;
 

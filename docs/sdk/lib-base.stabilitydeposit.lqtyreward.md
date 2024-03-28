@@ -6,7 +6,7 @@
 
 Amount of OPL rewarded since the last modification of the Stability Deposit.
 
-<b>Signature:</b>
+**Signature:**
 
 ```typescript
 readonly lqtyReward: Decimal;

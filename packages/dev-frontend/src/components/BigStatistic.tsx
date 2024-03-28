@@ -7,6 +7,7 @@ type StatisticProps = {
     name: React.ReactNode;
     tooltip?: React.ReactNode;
     variant?: string;
+    children?: React.ReactNode;
 };
 
 export const BigStatistic: React.FC<StatisticProps> = ({ variant = "info", name, tooltip, children }) => {
