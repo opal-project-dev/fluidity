@@ -77,7 +77,7 @@ const oracleAddresses = {
     tellor: "0x20374E579832859f180536A69093A126Db1c8aE9" // Playground
   },
   autonity: {
-    chainlink: "0x5a9120077780A068708940D0A6D14d172166A274"
+    chainlink: "0xF90C621fbD915d4790Bf5f13e7186A34bD71a735"
   }
 };
 

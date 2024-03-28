@@ -35,7 +35,7 @@ const wsParams = (network: string, infuraApiKey: string): [string, string] => [
 ];
 
 const projectNetworks: { [name: string]: Network } = {
-  autonity: { chainId: 65100001, name: "autonity" }
+  autonity: { chainId: 65100002, name: "autonity" }
 }
 
 const getNetwork = (network: Networkish): Network => {

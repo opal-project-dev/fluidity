@@ -5,10 +5,10 @@ import { NetworkConnector } from './Network'
 const POLLING_INTERVAL = 10000
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [65100001]
+  supportedChainIds: [65100002]
 })
 
 export const network = new NetworkConnector({
-  urls: { 65100001: "https://rpc1.piccadilly.autonity.org/"  }, //TODO: Use a env variable
+  urls: { 65100002: "https://rpc1.piccadilly.autonity.org/"  }, //TODO: Use a env variable
   pollingInterval: POLLING_INTERVAL
 })
