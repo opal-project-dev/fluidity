@@ -4,6 +4,8 @@ require("@nomiclabs/hardhat-etherscan");
 require("solidity-coverage");
 require("hardhat-gas-reporter");
 
+require("dotenv").config();
+
 const accounts = require("./hardhatAccountsList2k.js");
 const accountsList = accounts.accountsList;
 

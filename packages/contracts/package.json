@@ -24,7 +24,8 @@
     "ethereumjs-util": "^7.0.9",
     "ethers": "^5.4.3",
     "solc": "^0.6.11",
-    "xmlhttprequest": "^1.8.0"
+    "xmlhttprequest": "^1.8.0",
+    "dotenv": "16.4.5"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
