@@ -4,6 +4,8 @@ require("@nomiclabs/hardhat-etherscan");
 require("solidity-coverage");
 require("hardhat-gas-reporter");
 
+require("dotenv").config();
+
 const accounts = require("./hardhatAccountsList2k.js");
 const accountsList = accounts.accountsList;
 
@@ -85,6 +87,10 @@ module.exports = {
           "0x3ec7cedbafd0cb9ec05bf9f7ccfa1e8b42b3e3a02c75addfccbfeb328d1b383b"
         )
       ]
+    },
+    piccadilly: {
+      url: `https://rpc1.piccadilly.autonity.org/`,
+      accounts: [`${process.env.PRIVATE_KEY}`]
     },
     rinkeby: {
       url: alchemyUrlRinkeby(),
