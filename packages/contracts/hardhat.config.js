@@ -86,6 +86,10 @@ module.exports = {
         )
       ]
     },
+    piccadilly: {
+      url: `https://rpc1.piccadilly.autonity.org/`,
+      accounts: [`${process.env.PRIVATE_KEY}`]
+    },
     rinkeby: {
       url: alchemyUrlRinkeby(),
       gas: 10000000, // tx gas limit
